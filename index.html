@@ -584,9 +584,22 @@ window.addEventListener('load',()=>{
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('f_B').value=today;
   document.getElementById('filter_date').value=today;
-  document.getElementById('f_D').value=19;
-  calcAll();
+  // ดึงคงพยาบาลจากเวรล่าสุดใน Sheet ก่อน, ถ้าไม่มีใช้ 19
+  fetchLastKong();
 });
+
+function fetchLastKong(){
+  var url=getUrl();
+  if(!url){ document.getElementById('f_D').value=19; calcAll(); return; }
+  fetch(url+'?action=getLastShift')
+    .then(r=>r.json())
+    .then(d=>{
+      var val=(d.value!==undefined && d.value!==null && d.value!=='') ? d.value : 19;
+      document.getElementById('f_D').value=val;
+      calcAll();
+    })
+    .catch(()=>{ document.getElementById('f_D').value=19; calcAll(); });
+}
 
 // ── Config ──
 function saveCfg(){
@@ -641,14 +654,8 @@ function toggleCheck(el){
   el.closest('.check-item').classList.toggle('checked',el.checked);
 }
 
-// ── Load prev shift ──
-function loadPrev(){
-  var url=getUrl();
-  if(!url)return;
-  fetch(url+'?action=getLastShift').then(r=>r.json()).then(d=>{
-    if(d.value!==undefined){document.getElementById('f_D').value=d.value;calcAll();}
-  }).catch(()=>{});
-}
+// ── Load prev shift ── (เรียกทั้งตอนโหลดหน้า และตอนเปลี่ยนเวร)
+function loadPrev(){ fetchLastKong(); }
 
 // ── Helpers ──
 function gv(id){var el=document.getElementById(id);return el?el.value:'';}
@@ -732,8 +739,7 @@ function resetForm(){
   ['t_AJ','t_AM','t_AP','t_BA','t_BF','t_BH'].forEach(id=>document.getElementById(id).checked=false);
   ['c_AJ','c_AM','c_AP','c_BA','c_BF','c_BH'].forEach(id=>document.getElementById(id).classList.remove('show'));
   document.querySelectorAll('input[name=oxy]').forEach(c=>{c.checked=false;c.closest('.check-item').classList.remove('checked');});
-  document.getElementById('f_D').value=19;
-  calcAll();
+  fetchLastKong();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -741,20 +747,55 @@ function resetForm(){
 function loadDisplay(){
   var url=getUrl();
   var area=document.getElementById('display_area');
+  area.innerHTML='<div class="empty"><div class="eico">⏳</div><div>กำลังโหลด...</div></div>';
+  
+  // รวม local + sheet
+  var local=getLocal();
+  
   if(url){
-    area.innerHTML='<div class="empty"><div class="eico">⏳</div><div>กำลังโหลด...</div></div>';
-    fetch(url+'?action=getData').then(r=>r.json()).then(rows=>{allData=rows.slice(1);filterRender();})
-      .catch(()=>{allData=getLocal();filterRender();});
-  } else {allData=getLocal();filterRender();}
+    fetch(url+'?action=getData')
+      .then(r=>r.json())
+      .then(rows=>{
+        // rows จาก sheet (ข้ามแถว header แถว 1)
+        var sheetRows = Array.isArray(rows) ? rows.filter((_,i)=>i>0&&rows[i][0]!==''&&rows[i][0]!==null) : [];
+        // merge: ถ้า ID ซ้ำให้ใช้ sheet (sheet เป็น source of truth)
+        var sheetIds = new Set(sheetRows.map(r=>String(r[0])));
+        var localOnly = local.filter(r=>!sheetIds.has(String(r[0])));
+        allData = sheetRows.concat(localOnly);
+        // เรียงใหม่ date desc
+        allData.sort((a,b)=>{
+          var da=normalizeDate(a[1]), db=normalizeDate(b[1]);
+          return db.localeCompare(da);
+        });
+        filterRender();
+      })
+      .catch(()=>{allData=local;filterRender();});
+  } else {
+    allData=local;
+    filterRender();
+  }
 }
+
+// แปลงวันที่ให้เป็น YYYY-MM-DD เสมอ (รองรับ Date object, string หลาย format)
+function normalizeDate(val){
+  if(!val) return '';
+  if(val instanceof Date) return val.toISOString().split('T')[0];
+  var s=val.toString();
+  // YYYY-MM-DD already
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
+  // Google Sheet ส่งมาเป็น "Wed Apr 30 2026 ..."
+  try{ var d=new Date(s); if(!isNaN(d)) return d.toISOString().split('T')[0]; }catch(e){}
+  return s.substring(0,10);
+}
+
 function filterRender(){
-  var df=document.getElementById('filter_date').value;
+  var df=document.getElementById('filter_date').value; // YYYY-MM-DD
   var sf=document.getElementById('filter_shift').value;
   var rows=allData.filter(r=>{
-    var rd=(r[1]||'').toString().substring(0,10);
-    var rs=(r[2]||'').toString();
-    if(df&&rd!==df)return false;
-    if(sf&&rs!==sf)return false;
+    var rd=normalizeDate(r[1]);
+    var rs=(r[2]||'').toString().trim();
+    if(df && rd!==df) return false;
+    if(sf && rs!==sf) return false;
     return true;
   });
   renderDisplay(rows);
@@ -769,7 +810,7 @@ function renderDisplay(rows){
 }
 
 function buildCards(r,idx){
-  var shift=V(r,2), date=(r[1]||'').toString().substring(0,10);
+  var shift=V(r,2), date=normalizeDate(r[1]);
   var bj=r[61]?'คุณ'+r[61]:'—', bk=r[62]?'คุณ'+r[62]:'คุณอัญญารัตน์';
   var scId='sc_'+idx;
 
