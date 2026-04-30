@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บันทึกเหตุการณ์เวร</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================
+     BRAND GUIDE THEME — Deep Forest Green + Lime + Gold
+     ===================================================== */
+  :root {
+    /* Primary palette */
+    --green-deep:   #1f4e3d;   /* dark forest green — nav, card headers */
+    --green-mid:    #2d6a4f;   /* medium green */
+    --green-light:  #52b788;   /* soft emerald */
+    --lime:         #8bc34a;   /* lime green accent */
+    --lime-bright:  #a8d847;   /* bright lime highlight */
+    --gold:         #c9a84c;   /* warm gold */
+    --khaki:        #e8dfc0;   /* pale khaki / parchment */
+    --sage:         #d4e8d0;   /* very light sage */
+    --sage-mid:     #b7d4b0;
+
+    /* Neutrals */
+    --white:        #ffffff;
+    --off-white:    #f5f7f4;
+    --gray-50:      #f0f2ef;
+    --gray-100:     #e4e8e2;
+    --gray-200:     #c8cfc5;
+    --gray-400:     #8a9487;
+    --gray-700:     #3c4a38;
+    --ink:          #1a2418;   /* near-black text */
+
+    /* Semantic */
+    --primary:      var(--green-deep);
+    --accent:       var(--lime);
+    --accent2:      var(--gold);
+
+    /* Shadows — green-tinted */
+    --shadow-sm:  0 1px 4px rgba(31,78,61,0.10);
+    --shadow-md:  0 4px 16px rgba(31,78,61,0.13);
+    --shadow-lg:  0 8px 32px rgba(31,78,61,0.18);
+    --shadow-card: 0 2px 12px rgba(31,78,61,0.09), 0 1px 3px rgba(31,78,61,0.06);
+
+    --radius:    14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', 'IBM Plex Sans Thai', sans-serif;
+    background: var(--off-white);
+    min-height: 100vh;
+    color: var(--ink);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle geometric background */
+  body::before {
+    content: '';
+    position: fixed; top: 0; right: 0;
+    width: 420px; height: 420px;
+    background: radial-gradient(ellipse at top right, rgba(139,195,74,0.08) 0%, transparent 65%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; bottom: 0; left: 0;
+    width: 340px; height: 340px;
+    background: radial-gradient(ellipse at bottom left, rgba(31,78,61,0.06) 0%, transparent 65%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--green-deep);
+    padding: 0 2rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.22);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 62px;
+  }
+  .nav-logo {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 1rem; font-weight: 700; letter-spacing: 0.03em;
+    color: #ffffff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 8px rgba(139,195,74,0.7);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:0.7} }
+
+  .nav-tabs { display: flex; gap: 6px; }
+  .tab-btn {
+    padding: 7px 20px; border-radius: 6px; border: 1.5px solid transparent;
+    font-family: 'Sarabun', sans-serif; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.25s;
+    background: transparent; color: rgba(255,255,255,0.72);
+    letter-spacing: 0.02em;
+  }
+  .tab-btn.active {
+    background: var(--lime);
+    color: var(--green-deep);
+    border-color: var(--lime);
+    box-shadow: 0 3px 12px rgba(139,195,74,0.4);
+  }
+  .tab-btn:not(.active):hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* PAGES */
+  .page { display: none; animation: fadeUp 0.35s ease; }
+  .page.active { display: block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+  /* MAIN WRAPPER */
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+
+  /* PAGE TITLE */
+  .page-title {
+    margin-bottom: 2rem;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    border-bottom: 2px solid var(--gray-100);
+    padding-bottom: 1.2rem;
+  }
+  .page-title h1 {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 1.6rem; font-weight: 700;
+    color: var(--green-deep);
+    letter-spacing: -0.01em;
+  }
+  .page-title p { color: var(--gray-400); font-size: 0.88rem; margin-top: 3px; }
+  .page-title-badge {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--green-light);
+    background: rgba(82,183,136,0.1);
+    border: 1px solid rgba(82,183,136,0.3);
+    padding: 4px 12px; border-radius: 20px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.25s, transform 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--lime), var(--green-light));
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+
+  .card-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 1.5rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    background: var(--green-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(31,78,61,0.25);
+  }
+  .card-title {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 1.05rem; font-weight: 700; color: var(--green-deep);
+  }
+  .card-sub { font-size: 0.8rem; color: var(--gray-400); margin-top: 2px; }
+
+  /* STAFF BANNER */
+  .staff-banner { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .staff-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm); padding: 10px 16px;
+    font-size: 0.88rem; flex: 1; min-width: 220px;
+    box-shadow: var(--shadow-sm);
+  }
+  .staff-chip-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .staff-chip label { font-weight: 600; font-size: 0.72rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; }
+  .staff-chip .name-display { font-weight: 700; font-size: 0.95rem; color: var(--green-deep); margin-top: 1px; }
+  .staff-chip select {
+    border: none; background: transparent;
+    font-family: 'Sarabun', sans-serif; font-size: 0.95rem;
+    font-weight: 700; color: var(--green-deep); cursor: pointer; outline: none; padding: 0;
+    margin-top: 1px;
+  }
+
+  /* FORM GRID */
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-full { grid-column: 1/-1; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--green-mid);
+    margin: 1.4rem 0 0.75rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--gray-100);
+  }
+
+  /* FORM GROUP */
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label {
+    font-size: 0.8rem; font-weight: 600; color: var(--gray-700);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .form-group label .col-tag {
+    font-size: 0.66rem; background: var(--sage);
+    color: var(--green-mid); border-radius: 4px; padding: 1px 5px;
+    font-weight: 700; letter-spacing: 0.04em;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-100);
+    background: var(--white);
+    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
+    color: var(--ink); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--green-light);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.15);
+  }
+  .form-group input[readonly] {
+    background: var(--sage);
+    color: var(--green-mid); font-weight: 600;
+    cursor: not-allowed; border-color: var(--sage-mid);
+  }
+  .form-group textarea { resize: vertical; min-height: 72px; }
+  .form-group .computed {
+    background: var(--sage);
+    border-color: var(--sage-mid); font-weight: 700; color: var(--green-deep);
+  }
+
+  /* CONDITIONAL FIELD */
+  .conditional-group {
+    background: var(--gray-50);
+    border: 1.5px dashed var(--gray-200);
+    border-radius: var(--radius-sm); padding: 1rem;
+    margin-top: 0.5rem;
+    animation: fadeIn 0.25s ease;
+    display: none;
+  }
+  .conditional-group.show { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* RISK EVENT */
+  .risk-block {
+    background: #fffdf4;
+    border: 1.5px dashed rgba(201,168,76,0.45);
+    border-radius: var(--radius-sm); padding: 1rem 1.2rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  .risk-block.show { display: block; }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+  }
+  .badge-warn { background: #fef3c7; color: #78350f; }
+  .badge-ok   { background: var(--sage); color: var(--green-deep); }
+  .badge-info { background: rgba(139,195,74,0.12); color: var(--green-mid); border: 1px solid rgba(139,195,74,0.3); }
+
+  /* SUBMIT BTN */
+  .btn-submit {
+    width: 100%; padding: 14px;
+    background: var(--green-deep);
+    color: white; border: none; border-radius: var(--radius-sm);
+    font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.25s;
+    box-shadow: 0 4px 14px rgba(31,78,61,0.35);
+    letter-spacing: 0.04em;
+    position: relative; overflow: hidden;
+  }
+  .btn-submit::after {
+    content: '';
+    position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139,195,74,0.18), transparent);
+    transition: left 0.5s;
+  }
+  .btn-submit:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,78,61,0.4); }
+  .btn-submit:hover::after { left: 100%; }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* CONFIG PANEL */
+  .config-box {
+    background: var(--gray-50);
+    border: 1.5px dashed var(--gray-200);
+    border-radius: var(--radius-sm); padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .config-box label { font-size: 0.82rem; font-weight: 700; color: var(--green-deep); }
+  .config-box input {
+    width: 100%; margin-top: 6px; padding: 10px 14px;
+    border-radius: var(--radius-sm); border: 1.5px solid var(--gray-200);
+    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
+    background: white; color: var(--ink);
+  }
+  .config-saved { color: var(--green-mid); font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
+
+  /* ===== DISPLAY PAGE ===== */
+  .display-controls {
+    display: flex; gap: 1rem; align-items: center;
+    flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .display-controls select, .display-controls input[type=date] {
+    padding: 9px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
+    color: var(--ink); outline: none;
+  }
+  .btn-refresh {
+    padding: 9px 20px; border-radius: var(--radius-sm); border: none;
+    background: var(--lime); color: var(--green-deep);
+    font-family: 'Sarabun', sans-serif; font-weight: 700; cursor: pointer;
+    box-shadow: 0 3px 10px rgba(139,195,74,0.35); transition: all 0.2s;
+  }
+  .btn-refresh:hover { background: var(--lime-bright); transform: translateY(-1px); }
+
+  .shift-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-card);
+    overflow: hidden; margin-bottom: 1.5rem;
+    animation: fadeUp 0.3s ease;
+  }
+  .shift-card-header {
+    padding: 1rem 1.5rem;
+    background: var(--green-deep);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .shift-title { font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+  .shift-badge {
+    padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+  }
+  .shift-ดึก  { background: #1a2418; color: var(--lime); border: 1px solid var(--lime); }
+  .shift-เช้า { background: var(--khaki); color: #5c4a14; }
+  .shift-บ่าย { background: var(--sage); color: var(--green-deep); }
+
+  .shift-body { padding: 1.2rem 1.5rem; }
+  .stat-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .stat-chip {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-sm); padding: 8px 14px; text-align: center;
+    min-width: 88px;
+    transition: box-shadow 0.2s;
+  }
+  .stat-chip:hover { box-shadow: var(--shadow-sm); }
+  .stat-chip .sv { font-size: 1.25rem; font-weight: 700; color: var(--green-deep); }
+  .stat-chip .sk { font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; }
+  .stat-divider { height: 1px; background: var(--gray-100); margin: 1rem 0; }
+  .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.55rem; }
+  .detail-item { font-size: 0.83rem; display: flex; gap: 6px; }
+  .detail-item .dk { color: var(--gray-400); font-weight: 600; min-width: 110px; }
+  .detail-item .dv { color: var(--ink); }
+  .event-box {
+    background: #fffdf4;
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 14px;
+    font-size: 0.84rem; color: var(--ink); margin-top: 0.8rem;
+  }
+  .event-title { font-weight: 700; color: #7a5c10; font-size: 0.8rem; margin-bottom: 4px; }
+  .empty-state {
+    text-align: center; padding: 4rem 2rem;
+    color: var(--gray-400); font-size: 1rem;
+  }
+  .empty-state .icon { font-size: 2.8rem; margin-bottom: 1rem; opacity: 0.45; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--green-deep);
+    color: white; padding: 13px 22px; border-radius: var(--radius-sm);
+    font-weight: 600; font-size: 0.92rem;
+    box-shadow: 0 8px 28px rgba(31,78,61,0.5);
+    z-index: 9999; transform: translateY(80px); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    border-left: 4px solid var(--lime);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* VALIDATION ERROR */
+  .field-error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229,57,53,0.12) !important; }
+  .error-msg { font-size: 0.75rem; color: #e53935; margin-top: 2px; }
+
+  @media (max-width: 700px) {
+    .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .form-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .page-title { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="dot"></div>
+      บันทึกเหตุการณ์เวร
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="showPage('form')">✏️ บันทึกข้อมูล</button>
+      <button class="tab-btn" onclick="showPage('display')">📊 แสดงข้อมูล</button>
+      <button class="tab-btn" onclick="showPage('config')">⚙️ ตั้งค่า</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== PAGE: FORM ========== -->
+<div class="page active" id="page-form">
+<div class="main">
+  <div class="page-title">
+    <div>
+      <h1>บันทึกเหตุการณ์เวร</h1>
+      <p>กรอกข้อมูลประจำเวรให้ครบถ้วน</p>
+    </div>
+    <span class="page-title-badge">SHIFT RECORD</span>
+  </div>
+
+  <form id="mainForm" onsubmit="submitForm(event)">
+
+  <!-- ===== CARD 1 ===== -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">🏥</div>
+      <div>
+        <div class="card-title">ข้อมูลผู้ป่วยและสถิติประจำเวร</div>
+        <div class="card-sub">คอลัมน์ B–Z, AD–AI</div>
+      </div>
+    </div>
+
+    <!-- Staff banner (BJ + BK) -->
+    <div class="staff-banner">
+      <div class="staff-chip">
+        <div class="staff-chip-icon">👩‍⚕️</div>
+        <div>
+          <label>หัวหน้าเวร (BJ)</label>
+          <div>
+            <select id="f_BJ" onchange="updateStaffDisplay()">
+              <option value="">— เลือกหัวหน้าเวร —</option>
+              <option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option>
+              <option>เบญจมาศ</option><option>สาคร</option><option>นวลตา</option>
+              <option>สุนันทา</option><option>อัญชลี</option><option>จารุวรรณ</option>
+              <option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option>
+              <option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option>
+              <option>สุพรรณี</option><option>อริสรา</option><option>อุ้มบุญ</option>
+              <option>ชนาภา</option><option>กนกพร</option><option>วริศรา</option>
+              <option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="staff-chip">
+        <div class="staff-chip-icon">🏥</div>
+        <div>
+          <label>หัวหน้าหอ (BK)</label>
+          <div class="name-display" id="head_display">คุณอัญญารัตน์</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: วันที่, C: เวร -->
+    <div class="section-label">📅 ข้อมูลทั่วไป</div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>วันที่ <span class="col-tag">B</span></label>
+        <input type="date" id="f_B" required>
+      </div>
+      <div class="form-group">
+        <label>เวร <span class="col-tag">C</span></label>
+        <select id="f_C" required onchange="loadPrevShiftData()">
+          <option value="">— เลือกเวร —</option>
+          <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ยอดยกมา <span class="col-tag">D</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
+        <input type="number" id="f_D" class="computed" readonly placeholder="จาก คงพยาบาล เวรก่อน">
+      </div>
+    </div>
+
+    <!-- E-J: รับใหม่ ฯลฯ -->
+    <div class="section-label">🔄 การเคลื่อนไหวผู้ป่วย</div>
+    <div class="form-grid-4">
+      <div class="form-group">
+        <label>รับใหม่ <span class="col-tag">E</span></label>
+        <input type="number" id="f_E" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>รับย้าย <span class="col-tag">F</span></label>
+        <input type="number" id="f_F" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>ย้าย <span class="col-tag">G</span></label>
+        <input type="number" id="f_G" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>กลับบ้าน <span class="col-tag">H</span></label>
+        <input type="number" id="f_H" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>Refer <span class="col-tag">I</span></label>
+        <input type="number" id="f_I" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>ถึงแก่กรรม <span class="col-tag">J</span></label>
+        <input type="number" id="f_J" min="0" value="0" oninput="calcKong()">
+      </div>
+      <div class="form-group">
+        <label>คงพยาบาล <span class="col-tag">K</span></label>
+        <input type="number" id="f_K" class="computed" readonly>
+      </div>
+    </div>
+
+    <!-- L-O: ประเภท -->
+    <div class="section-label">🏷️ ประเภทผู้ป่วย <span id="type_check" style="font-size:0.8rem;margin-left:8px"></span></div>
+    <div class="form-grid-4">
+      <div class="form-group">
+        <label>ประเภท 4 <span class="col-tag">L</span></label>
+        <input type="number" id="f_L" min="0" value="0" oninput="checkTypeSum()">
+      </div>
+      <div class="form-group">
+        <label>ประเภท 3 <span class="col-tag">M</span></label>
+        <input type="number" id="f_M" min="0" value="0" oninput="checkTypeSum()">
+      </div>
+      <div class="form-group">
+        <label>ประเภท 2 <span class="col-tag">N</span></label>
+        <input type="number" id="f_N" min="0" value="0" oninput="checkTypeSum()">
+      </div>
+      <div class="form-group">
+        <label>ประเภท 1 <span class="col-tag">O</span></label>
+        <input type="number" id="f_O" min="0" value="0" oninput="checkTypeSum()">
+      </div>
+    </div>
+
+    <!-- P,Q,R -->
+    <div class="section-label">📈 ตัวชี้วัด</div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>Productivity <span class="col-tag">P</span></label>
+        <input type="number" id="f_P" step="0.01" oninput="calcProdRuam()">
+      </div>
+      <div class="form-group">
+        <label>อัตราการครองเตียง % <span class="col-tag">Q</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
+        <input type="number" id="f_Q" class="computed" readonly step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Productivity รวม <span class="col-tag">R</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
+        <input type="number" id="f_R" class="computed" readonly step="0.01">
+      </div>
+    </div>
+
+    <!-- S-V: กำลังพล -->
+    <div class="section-label">👩‍⚕️ กำลังพล</div>
+    <div class="form-grid-4">
+      <div class="form-group">
+        <label>Tube (ในเวร) <span class="col-tag">S</span></label>
+        <input type="number" id="f_S" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>RN <span class="col-tag">T</span></label>
+        <input type="number" id="f_T" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>Aide/PN <span class="col-tag">U</span></label>
+        <input type="number" id="f_U" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>Worker <span class="col-tag">V</span></label>
+        <input type="number" id="f_V" min="0" value="0">
+      </div>
+    </div>
+
+    <!-- W-Z: Trauma -->
+    <div class="section-label">🚑 ประเภทผู้บาดเจ็บ</div>
+    <div class="form-grid-4">
+      <div class="form-group">
+        <label>Trauma <span class="col-tag">W</span></label>
+        <input type="number" id="f_W" min="0" value="0" oninput="calcMultiple()">
+      </div>
+      <div class="form-group">
+        <label>Neuro <span class="col-tag">X</span></label>
+        <input type="number" id="f_X" min="0" value="0" oninput="calcMultiple()">
+      </div>
+      <div class="form-group">
+        <label>Plastic <span class="col-tag">Y</span></label>
+        <input type="number" id="f_Y" min="0" value="0" oninput="calcMultiple()">
+      </div>
+      <div class="form-group">
+        <label>Multiple Injury <span class="col-tag">Z</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
+        <input type="number" id="f_Z" class="computed" readonly>
+      </div>
+    </div>
+
+    <!-- AD-AI: เฝ้าระวัง ฯลฯ -->
+    <div class="section-label">🛏️ การเฝ้าระวังและเตรียมผู้ป่วย</div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>เฝ้าระวัง Fall (เตียง) <span class="col-tag">AD</span></label>
+        <input type="text" id="f_AD" placeholder="เช่น 12,20,30">
+      </div>
+      <div class="form-group">
+        <label>เฝ้าระวัง Bed sore (เตียง) <span class="col-tag">AE</span></label>
+        <input type="text" id="f_AE" placeholder="เช่น 15,21">
+      </div>
+      <div class="form-group">
+        <label>เตรียมตรวจ <span class="col-tag">AF</span></label>
+        <input type="text" id="f_AF" placeholder="เตียง...">
+      </div>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>เตรียมผ่าตัด <span class="col-tag">AG</span></label>
+        <input type="text" id="f_AG" placeholder="เตียง...">
+      </div>
+      <div class="form-group">
+        <label>ชื่อซ้ำ <span class="col-tag">AH</span></label>
+        <input type="text" id="f_AH" placeholder="เช่น เตียง 13 กับ 24">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1rem">
+      <label>ชื่อคล้าย <span class="col-tag">AI</span></label>
+      <input type="text" id="f_AI" placeholder="รายละเอียดชื่อคล้าย">
+    </div>
+  </div><!-- end card 1 -->
+
+  <!-- ===== CARD 2 ===== -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📋</div>
+      <div>
+        <div class="card-title">อุปกรณ์ เหตุการณ์ และบุคลากร</div>
+        <div class="card-sub">คอลัมน์ AA–AC, AJ–BK</div>
+      </div>
+    </div>
+
+    <!-- Staff banner (BJ + BK) ซ้ำการ์ด 2 -->
+    <div class="staff-banner">
+      <div class="staff-chip">
+        <div class="staff-chip-icon">👩‍⚕️</div>
+        <div>
+          <label>หัวหน้าเวร (BJ)</label>
+          <div class="name-display" id="bj_display2">—</div>
+        </div>
+      </div>
+      <div class="staff-chip">
+        <div class="staff-chip-icon">🏥</div>
+        <div>
+          <label>หัวหน้าหอ (BK)</label>
+          <div class="name-display">คุณอัญญารัตน์</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AA-AC อุปกรณ์ -->
+    <div class="section-label">🚑 สถานะอุปกรณ์</div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label>รถ Emergency <span class="col-tag">AA</span></label>
+        <select id="f_AA">
+          <option>พร้อมใช้</option><option>ไม่พร้อมใช้</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>รถ Defibrillator <span class="col-tag">AB</span></label>
+        <select id="f_AB">
+          <option>พร้อมใช้</option><option>ไม่พร้อมใช้</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ถัง Oxygen <span class="col-tag">AC</span></label>
+        <select id="f_AC" multiple style="height:110px">
+          <option>พร้อมใช้</option>
+          <option>ไม่พร้อมใช้</option>
+          <option>เหลือ 1 ถัง</option>
+          <option>เหลือ 2 ถัง</option>
+          <option>ไปWardอื่น/OR</option>
+        </select>
+        <small style="color:#9061d1;font-size:0.75rem">Ctrl+คลิก เพื่อเลือกหลายตัวเลือก</small>
+      </div>
+    </div>
+
+    <!-- AJ-AO ของมีค่า/ของค้าง -->
+    <div class="section-label">💼 ของมีค่าและของค้าง</div>
+    <div class="form-grid-2">
+      <div>
+        <div class="form-group">
+          <label>ของมีค่า OK <span class="col-tag">AJ</span></label>
+          <select id="f_AJ" onchange="toggleCond('f_AJ','cond_valuables','มี')">
+            <option>ไม่มี</option><option>มี</option>
+          </select>
+        </div>
+        <div class="conditional-group" id="cond_valuables">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>รายละเอียดของมีค่า <span class="col-tag">AK</span></label>
+              <textarea id="f_AK" placeholder="ระบุรายละเอียด..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>สถานะของมีค่า <span class="col-tag">AL</span></label>
+              <input type="text" id="f_AL" placeholder="เช่น รอญาติ">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label>ของค้าง <span class="col-tag">AM</span></label>
+          <select id="f_AM" onchange="toggleCond('f_AM','cond_pending','มี')">
+            <option>ไม่มี</option><option>มี</option>
+          </select>
+        </div>
+        <div class="conditional-group" id="cond_pending">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>รายละเอียดของค้าง <span class="col-tag">AN</span></label>
+              <textarea id="f_AN" placeholder="ระบุรายละเอียด..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>สถานะของค้าง <span class="col-tag">AO</span></label>
+              <input type="text" id="f_AO" placeholder="เช่น ส่งนึ่ง">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AP เหตุการณ์ความเสี่ยง -->
+    <div class="section-label">⚠️ เหตุการณ์ความเสี่ยง</div>
+    <div class="form-group">
+      <label>เหตุการณ์ความเสี่ยง <span class="col-tag">AP</span></label>
+      <select id="f_AP" onchange="toggleCond('f_AP','cond_risk','มี')">
+        <option>ไม่มี</option><option>มี</option>
+      </select>
+    </div>
+    <div class="conditional-group risk-block" id="cond_risk">
+      <!-- เหตุการณ์ 1 -->
+      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🔴 เหตุการณ์ที่ 1</div>
+      <div class="form-grid-3" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>ความเสี่ยงเหตุการณ์ 1 <span class="col-tag">AQ</span></label>
+          <input type="text" id="f_AQ" placeholder="เช่น Missed diagnosis">
+        </div>
+        <div class="form-group col-span-2">
+          <label>รายละเอียดเหตุการณ์ 1 <span class="col-tag">AR</span></label>
+          <textarea id="f_AR" placeholder="รายละเอียด..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>HN เหตุการณ์ 1 <span class="col-tag">AS</span></label>
+          <input type="text" id="f_AS" placeholder="HN...">
+        </div>
+      </div>
+      <!-- เหตุการณ์ 2 -->
+      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🟡 เหตุการณ์ที่ 2</div>
+      <div class="form-grid-3" style="margin-bottom:1rem">
+        <div class="form-group">
+          <label>ความเสี่ยงเหตุการณ์ 2 <span class="col-tag">AT</span></label>
+          <input type="text" id="f_AT" placeholder="ระบุ...">
+        </div>
+        <div class="form-group col-span-2">
+          <label>รายละเอียดเหตุการณ์ 2 <span class="col-tag">AU</span></label>
+          <textarea id="f_AU" placeholder="รายละเอียด..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>HN เหตุการณ์ 2 <span class="col-tag">AV</span></label>
+          <input type="text" id="f_AV" placeholder="HN...">
+        </div>
+      </div>
+      <!-- เหตุการณ์ 3 -->
+      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🟢 เหตุการณ์ที่ 3</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>ความเสี่ยงเหตุการณ์ 3 <span class="col-tag">AW</span></label>
+          <input type="text" id="f_AW" placeholder="ระบุ...">
+        </div>
+        <div class="form-group col-span-2">
+          <label>รายละเอียดเหตุการณ์ 3 <span class="col-tag">AX</span></label>
+          <textarea id="f_AX" placeholder="รายละเอียด..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>HN เหตุการณ์ 3 <span class="col-tag">AY</span></label>
+          <input type="text" id="f_AY" placeholder="HN...">
+        </div>
+      </div>
+    </div>
+
+    <!-- AZ เหตุการณ์เวรเพิ่มเติม -->
+    <div class="form-group" style="margin-top:1rem">
+      <label>เหตุการณ์เวร (เพิ่มเติม) <span class="col-tag">AZ</span></label>
+      <textarea id="f_AZ" placeholder="บันทึกเหตุการณ์อื่นๆ..."></textarea>
+    </div>
+
+    <!-- BA-BD ประวัติแพ้ยา -->
+    <div class="section-label">💊 ประวัติการแพ้ยา</div>
+    <div class="form-group">
+      <label>ประวัติการแพ้ยา <span class="col-tag">BA</span></label>
+      <select id="f_BA" onchange="toggleCond('f_BA','cond_allergy','มี')">
+        <option>ไม่มี</option><option>มี</option>
+      </select>
+    </div>
+    <div class="conditional-group" id="cond_allergy">
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>HN ชื่อยา <span class="col-tag">BB</span></label>
+          <input type="text" id="f_BB" placeholder="HN + ชื่อยา...">
+        </div>
+        <div class="form-group">
+          <label>ประวัติในโรงพยาบาล <span class="col-tag">BC</span></label>
+          <select id="f_BC">
+            <option>มี</option><option>ไม่มี</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>สถานะออกบัตรแพ้ยา <span class="col-tag">BD</span></label>
+          <select id="f_BD">
+            <option>มีบัตร</option>
+            <option>แจ้งเภสัชแล้วรอบัตร</option>
+            <option>รอแจ้งซ้ำ</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- BE-BI บุคลากร -->
+    <div class="section-label">👥 บุคลากร</div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>บุคลากร <span class="col-tag">BE</span></label>
+        <select id="f_BE">
+          <option>ครบ</option><option>ไม่ครบ</option>
+        </select>
+      </div>
+      <div>
+        <div class="form-group">
+          <label>การขาดลา/มาสาย <span class="col-tag">BF</span></label>
+          <select id="f_BF" onchange="toggleCond('f_BF','cond_absent','มี')">
+            <option>ไม่มี</option><option>มี</option>
+          </select>
+        </div>
+        <div class="conditional-group" id="cond_absent">
+          <div class="form-group">
+            <label>รายละเอียดการขาดลา/มาสาย <span class="col-tag">BG</span></label>
+            <textarea id="f_BG" placeholder="ระบุรายละเอียด..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="form-group">
+        <label>การผัน/Off เวร <span class="col-tag">BH</span></label>
+        <select id="f_BH" onchange="toggleCond('f_BH','cond_off','มี')">
+          <option>ไม่มี</option><option>มี</option>
+        </select>
+      </div>
+      <div class="conditional-group" id="cond_off">
+        <div class="form-group">
+          <label>รายละเอียดการผันเวร/ออฟเวร <span class="col-tag">BI</span></label>
+          <textarea id="f_BI" placeholder="ระบุรายละเอียด..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem">
+      <button type="submit" class="btn-submit">💾 บันทึกข้อมูลเวร</button>
+    </div>
+  </div><!-- end card 2 -->
+  </form>
+</div>
+</div><!-- end page-form -->
+
+<!-- ========== PAGE: DISPLAY ========== -->
+<div class="page" id="page-display">
+<div class="main">
+  <div class="page-title">
+    <div>
+      <h1>แสดงข้อมูลเวร</h1>
+      <p>ดูประวัติการบันทึกเวรประจำวัน</p>
+    </div>
+    <span class="page-title-badge">DASHBOARD</span>
+  </div>
+
+  <div class="card" style="padding:1.5rem">
+    <div class="display-controls">
+      <input type="date" id="filter_date" oninput="filterAndRender()">
+      <select id="filter_shift" onchange="filterAndRender()">
+        <option value="">— ทุกเวร —</option>
+        <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+      </select>
+      <button class="btn-refresh" onclick="loadDisplayData()">🔄 โหลดข้อมูล</button>
+    </div>
+    <div id="display_area">
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        <div>กดปุ่ม "โหลดข้อมูล" เพื่อดึงข้อมูลจาก Google Sheet</div>
+        <small style="display:block;margin-top:8px;color:#b39ddb">ต้องตั้งค่า URL ใน "⚙️ ตั้งค่า" ก่อน</small>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end page-display -->
+
+<!-- ========== PAGE: CONFIG ========== -->
+<div class="page" id="page-config">
+<div class="main">
+  <div class="page-title">
+    <div>
+      <h1>ตั้งค่าการเชื่อมต่อ</h1>
+      <p>กรอก URL ของ Google Apps Script Web App</p>
+    </div>
+    <span class="page-title-badge">SETTINGS</span>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">⚙️</div>
+      <div>
+        <div class="card-title">Google Apps Script URL</div>
+        <div class="card-sub">วาง URL จากการ Deploy Web App ใน Google Apps Script</div>
+      </div>
+    </div>
+    <div class="config-box">
+      <label>🔗 Apps Script Web App URL</label>
+      <input type="url" id="gas_url" placeholder="https://script.google.com/macros/s/AKfyc.../exec"
+             oninput="saveConfig()">
+      <div class="config-saved" id="config_saved" style="display:none">✅ บันทึกแล้ว</div>
+    </div>
+    <div style="background:rgba(237,233,254,0.4);border-radius:12px;padding:1.2rem;font-size:0.88rem;color:#5b21b6;line-height:1.8">
+      <strong>📌 วิธีตั้งค่า:</strong><br>
+      1. ไปที่ <a href="https://script.google.com" target="_blank" style="color:#7e22ce">script.google.com</a> → สร้าง Project ใหม่<br>
+      2. วางโค้ดจากไฟล์ <code>setup_sheet.gs</code> ที่ได้รับ<br>
+      3. รัน <code>createSheet()</code> เพื่อสร้าง Google Sheet<br>
+      4. Deploy → New Deployment → Web App → Execute as Me → Anyone<br>
+      5. คัดลอก URL มาวางด้านบน<br>
+      6. กดบันทึก และทดสอบ
+    </div>
+  </div>
+</div>
+</div><!-- end page-config -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== STATE =====
+var allData = [];
+var sheetData = []; // rows from sheet for prev-shift lookup
+
+// ===== NAVIGATION =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'display') loadDisplayData();
+}
+
+// ===== CONFIG =====
+function saveConfig() {
+  var url = document.getElementById('gas_url').value.trim();
+  localStorage.setItem('gas_url', url);
+  var el = document.getElementById('config_saved');
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 2000);
+}
+function getGasUrl() {
+  return localStorage.getItem('gas_url') || '';
+}
+window.addEventListener('load', () => {
+  var u = localStorage.getItem('gas_url');
+  if (u) document.getElementById('gas_url').value = u;
+  // set today's date
+  document.getElementById('f_B').value = new Date().toISOString().split('T')[0];
+  document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
+});
+
+// ===== STAFF DISPLAY =====
+function updateStaffDisplay() {
+  var name = document.getElementById('f_BJ').value;
+  var display = name ? 'คุณ' + name : '—';
+  document.getElementById('bj_display2').textContent = display;
+}
+
+// ===== CALCULATIONS =====
+function calcKong() {
+  var D = parseFloat(document.getElementById('f_D').value)||0;
+  var E = parseFloat(document.getElementById('f_E').value)||0;
+  var F = parseFloat(document.getElementById('f_F').value)||0;
+  var G = parseFloat(document.getElementById('f_G').value)||0;
+  var H = parseFloat(document.getElementById('f_H').value)||0;
+  var I = parseFloat(document.getElementById('f_I').value)||0;
+  var J = parseFloat(document.getElementById('f_J').value)||0;
+  var K = D + E + F - G - H - I - J;
+  document.getElementById('f_K').value = Math.max(0, K);
+  calcQ();
+  calcMultiple();
+  checkTypeSum();
+}
+
+function calcQ() {
+  var K = parseFloat(document.getElementById('f_K').value)||0;
+  document.getElementById('f_Q').value = (K * 100 / 30).toFixed(2);
+}
+
+function checkTypeSum() {
+  var L = parseFloat(document.getElementById('f_L').value)||0;
+  var M = parseFloat(document.getElementById('f_M').value)||0;
+  var N = parseFloat(document.getElementById('f_N').value)||0;
+  var O = parseFloat(document.getElementById('f_O').value)||0;
+  var K = parseFloat(document.getElementById('f_K').value)||0;
+  var sum = L + M + N + O;
+  var el = document.getElementById('type_check');
+  if (K > 0) {
+    if (sum === K) {
+      el.innerHTML = '<span class="badge badge-ok">✓ ยอดตรง ' + sum + '/' + K + '</span>';
+    } else {
+      el.innerHTML = '<span class="badge badge-warn">⚠ ยอดไม่ตรง ' + sum + '/' + K + '</span>';
+    }
+  }
+}
+
+function calcMultiple() {
+  var W = parseFloat(document.getElementById('f_W').value)||0;
+  var X = parseFloat(document.getElementById('f_X').value)||0;
+  var Y = parseFloat(document.getElementById('f_Y').value)||0;
+  var K = parseFloat(document.getElementById('f_K').value)||0;
+  document.getElementById('f_Z').value = (W + X + Y) - K;
+}
+
+function calcProdRuam() {
+  // Productivity รวม = ค่าเฉลี่ยของ P ทั้ง 3 เวรในวันเดียวกัน
+  // เมื่อ submit จะส่งค่า P ปัจจุบัน; ค่า R จะ recompute หลัง save ทั้ง 3 เวร
+  // สำหรับ realtime เราแสดงเฉพาะ P ปัจจุบัน
+  var P = parseFloat(document.getElementById('f_P').value)||0;
+  // ยังไม่สามารถรู้ค่าเวรอื่น → แสดง P เป็น placeholder
+  document.getElementById('f_R').value = '(คำนวณหลังครบ 3 เวร)';
+}
+
+// ===== CONDITIONAL FIELDS =====
+function toggleCond(triggerId, groupId, showVal) {
+  var val = document.getElementById(triggerId).value;
+  var group = document.getElementById(groupId);
+  if (val === showVal) {
+    group.classList.add('show');
+    group.style.display = 'block';
+  } else {
+    group.classList.remove('show');
+    group.style.display = 'none';
+  }
+}
+
+// ===== PREV SHIFT (ยอดยกมา) =====
+function loadPrevShiftData() {
+  var url = getGasUrl();
+  if (!url) return;
+  fetch(url + '?action=getLastShift')
+    .then(r => r.json())
+    .then(d => {
+      if (d.value !== undefined) {
+        document.getElementById('f_D').value = d.value;
+        calcKong();
+      }
+    }).catch(() => {});
+}
+
+// ===== GET / READ FROM LOCAL STORAGE (offline fallback) =====
+function saveLocal(row) {
+  var rows = JSON.parse(localStorage.getItem('shift_rows') || '[]');
+  rows.push(row);
+  localStorage.setItem('shift_rows', JSON.stringify(rows));
+}
+function getLocal() {
+  return JSON.parse(localStorage.getItem('shift_rows') || '[]');
+}
+
+// ===== SUBMIT =====
+function submitForm(e) {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  var bjName = document.getElementById('f_BJ').value;
+  var oxySelects = Array.from(document.getElementById('f_AC').selectedOptions).map(o=>o.value);
+
+  var rowData = [
+    Date.now().toString(36),                   // A: ID
+    document.getElementById('f_B').value,       // B: วันที่
+    document.getElementById('f_C').value,       // C: เวร
+    document.getElementById('f_D').value,       // D: ยอดยกมา
+    document.getElementById('f_E').value,       // E
+    document.getElementById('f_F').value,       // F
+    document.getElementById('f_G').value,       // G
+    document.getElementById('f_H').value,       // H
+    document.getElementById('f_I').value,       // I
+    document.getElementById('f_J').value,       // J
+    document.getElementById('f_K').value,       // K: คงพยาบาล
+    document.getElementById('f_L').value,       // L
+    document.getElementById('f_M').value,       // M
+    document.getElementById('f_N').value,       // N
+    document.getElementById('f_O').value,       // O
+    document.getElementById('f_P').value,       // P
+    document.getElementById('f_Q').value,       // Q
+    '',                                          // R: Productivity รวม (คำนวณ sheet)
+    document.getElementById('f_S').value,       // S
+    document.getElementById('f_T').value,       // T
+    document.getElementById('f_U').value,       // U
+    document.getElementById('f_V').value,       // V
+    document.getElementById('f_W').value,       // W
+    document.getElementById('f_X').value,       // X
+    document.getElementById('f_Y').value,       // Y
+    document.getElementById('f_Z').value,       // Z
+    document.getElementById('f_AA').value,      // AA
+    document.getElementById('f_AB').value,      // AB
+    oxySelects.join(', '),                       // AC
+    document.getElementById('f_AD').value,      // AD
+    document.getElementById('f_AE').value,      // AE
+    document.getElementById('f_AF').value,      // AF
+    document.getElementById('f_AG').value,      // AG
+    document.getElementById('f_AH').value,      // AH
+    document.getElementById('f_AI').value,      // AI
+    document.getElementById('f_AJ').value,      // AJ
+    document.getElementById('f_AK').value,      // AK
+    document.getElementById('f_AL').value,      // AL
+    document.getElementById('f_AM').value,      // AM
+    document.getElementById('f_AN').value,      // AN
+    document.getElementById('f_AO').value,      // AO
+    document.getElementById('f_AP').value,      // AP
+    document.getElementById('f_AQ').value,      // AQ
+    document.getElementById('f_AR').value,      // AR
+    document.getElementById('f_AS').value,      // AS
+    document.getElementById('f_AT').value,      // AT
+    document.getElementById('f_AU').value,      // AU
+    document.getElementById('f_AV').value,      // AV
+    document.getElementById('f_AW').value,      // AW
+    document.getElementById('f_AX').value,      // AX
+    document.getElementById('f_AY').value,      // AY
+    document.getElementById('f_AZ').value,      // AZ
+    document.getElementById('f_BA').value,      // BA
+    document.getElementById('f_BB').value,      // BB
+    document.getElementById('f_BC').value,      // BC
+    document.getElementById('f_BD').value,      // BD
+    document.getElementById('f_BE').value,      // BE
+    document.getElementById('f_BF').value,      // BF
+    document.getElementById('f_BG').value,      // BG
+    document.getElementById('f_BH').value,      // BH
+    document.getElementById('f_BI').value,      // BI
+    bjName,                                      // BJ
+    'อัญญารัตน์'                               // BK
+  ];
+
+  saveLocal(rowData);
+
+  var url = getGasUrl();
+  if (url) {
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ rowData }),
+      headers: { 'Content-Type': 'text/plain' }
+    })
+    .then(r => r.json())
+    .then(d => {
+      showToast('✅ บันทึกสำเร็จ! แถวที่ ' + d.row);
+      resetForm();
+    })
+    .catch(() => {
+      showToast('⚠️ บันทึก Offline แล้ว (ไม่มี Internet)');
+      resetForm();
+    });
+  } else {
+    showToast('💾 บันทึกใน Browser แล้ว (ตั้งค่า URL เพื่อบันทึก Sheet)');
+    resetForm();
+  }
+}
+
+function validateForm() {
+  var ok = true;
+  ['f_B','f_C','f_BJ'].forEach(id => {
+    var el = document.getElementById(id);
+    if (!el.value) {
+      el.classList.add('field-error');
+      ok = false;
+      setTimeout(() => el.classList.remove('field-error'), 3000);
+    }
+  });
+  if (!ok) showToast('❌ กรุณากรอกข้อมูลให้ครบถ้วน');
+  return ok;
+}
+
+function resetForm() {
+  // คงวันที่และเวร reset เฉพาะข้อมูล
+  document.getElementById('f_E').value = 0;
+  document.getElementById('f_F').value = 0;
+  document.getElementById('f_G').value = 0;
+  document.getElementById('f_H').value = 0;
+  document.getElementById('f_I').value = 0;
+  document.getElementById('f_J').value = 0;
+  ['f_L','f_M','f_N','f_O','f_P','f_S','f_T','f_U','f_V','f_W','f_X','f_Y'].forEach(id => {
+    document.getElementById(id).value = 0;
+  });
+  ['f_AD','f_AE','f_AF','f_AG','f_AH','f_AI','f_AK','f_AL','f_AN','f_AO',
+   'f_AQ','f_AR','f_AS','f_AT','f_AU','f_AV','f_AW','f_AX','f_AY','f_AZ',
+   'f_BB','f_BG','f_BI'].forEach(id => {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  // reset conditionals
+  ['cond_valuables','cond_pending','cond_risk','cond_allergy','cond_absent','cond_off'].forEach(id => {
+    document.getElementById(id).classList.remove('show');
+    document.getElementById(id).style.display = 'none';
+  });
+  calcKong();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ===== DISPLAY PAGE =====
+function loadDisplayData() {
+  var url = getGasUrl();
+  var localRows = getLocal();
+
+  if (url) {
+    document.getElementById('display_area').innerHTML = '<div class="empty-state"><div class="icon">⏳</div>กำลังโหลดข้อมูล...</div>';
+    fetch(url + '?action=getData')
+      .then(r => r.json())
+      .then(rows => {
+        allData = rows.slice(1); // skip header
+        filterAndRender();
+      })
+      .catch(() => {
+        allData = localRows;
+        filterAndRender();
+      });
+  } else {
+    allData = localRows;
+    filterAndRender();
+  }
+}
+
+function filterAndRender() {
+  var dateF = document.getElementById('filter_date').value;
+  var shiftF = document.getElementById('filter_shift').value;
+  var rows = allData.filter(r => {
+    var rowDate = (r[1] || '').toString().substring(0,10);
+    var rowShift = (r[2] || '').toString();
+    if (dateF && rowDate !== dateF) return false;
+    if (shiftF && rowShift !== shiftF) return false;
+    return true;
+  });
+  renderShifts(rows);
+}
+
+function renderShifts(rows) {
+  var area = document.getElementById('display_area');
+  if (!rows.length) {
+    area.innerHTML = '<div class="empty-state"><div class="icon">📭</div>ไม่พบข้อมูลในวันที่เลือก</div>';
+    return;
+  }
+  area.innerHTML = rows.map(r => buildShiftCard(r)).join('');
+}
+
+function v(row, i) { return (row[i] !== undefined && row[i] !== null && row[i] !== '') ? row[i] : '—'; }
+
+function buildShiftCard(r) {
+  var shift = v(r,2);
+  var date = (r[1]||'').toString().substring(0,10);
+  var bjName = r[61] ? 'คุณ' + r[61] : '—';
+  var bkName = r[62] ? 'คุณ' + r[62] : 'คุณอัญญารัตน์';
+
+  var eventsHtml = '';
+  if (r[41] === 'มี') {
+    var evts = [];
+    if (r[42]) evts.push('<b>' + r[42] + '</b>: ' + (r[43]||'') + (r[44] ? ' [HN:'+r[44]+']' : ''));
+    if (r[45]) evts.push('<b>' + r[45] + '</b>: ' + (r[46]||'') + (r[47] ? ' [HN:'+r[47]+']' : ''));
+    if (r[48]) evts.push('<b>' + r[48] + '</b>: ' + (r[49]||'') + (r[50] ? ' [HN:'+r[50]+']' : ''));
+    if (evts.length) {
+      eventsHtml = '<div class="event-box"><div class="event-title">⚠️ เหตุการณ์ความเสี่ยง</div>' + evts.join('<br>') + '</div>';
+    }
+  }
+  if (r[51]) {
+    eventsHtml += '<div class="event-box" style="border-color:#c084fc"><div class="event-title">📝 เพิ่มเติม</div>' + r[51] + '</div>';
+  }
+
+  return `
+  <div class="shift-card">
+    <div class="shift-card-header">
+      <div>
+        <div class="shift-title">${date} &nbsp;|&nbsp; ${bjName} → ${bkName}</div>
+      </div>
+      <span class="shift-badge shift-${shift}">${shift}</span>
+    </div>
+    <div class="shift-body">
+      <div class="stat-row">
+        <div class="stat-chip"><div class="sv">${v(r,10)}</div><div class="sk">คงพยาบาล</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,4)||0}</div><div class="sk">รับใหม่</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,7)||0}</div><div class="sk">กลับบ้าน</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,9)||0}</div><div class="sk">ถึงแก่กรรม</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,16)}%</div><div class="sk">ครองเตียง</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,15)}</div><div class="sk">Productivity</div></div>
+        <div class="stat-chip"><div class="sv">${v(r,18)}</div><div class="sk">RN</div></div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="dk">ประเภท 4/3/2/1</span><span class="dv">${v(r,11)} / ${v(r,12)} / ${v(r,13)} / ${v(r,14)}</span></div>
+        <div class="detail-item"><span class="dk">Trauma/Neuro/Plastic</span><span class="dv">${v(r,22)} / ${v(r,23)} / ${v(r,24)}</span></div>
+        <div class="detail-item"><span class="dk">รถ Emergency</span><span class="dv">${v(r,26)}</span></div>
+        <div class="detail-item"><span class="dk">รถ Defibrillator</span><span class="dv">${v(r,27)}</span></div>
+        <div class="detail-item"><span class="dk">ถัง Oxygen</span><span class="dv">${v(r,28)}</span></div>
+        <div class="detail-item"><span class="dk">ของมีค่า</span><span class="dv">${v(r,35)}</span></div>
+        <div class="detail-item"><span class="dk">บุคลากร</span><span class="dv">${v(r,56)}</span></div>
+        <div class="detail-item"><span class="dk">ขาด/มาสาย</span><span class="dv">${v(r,57)}</span></div>
+        <div class="detail-item"><span class="dk">ผัน/Off เวร</span><span class="dv">${v(r,59)}</span></div>
+        <div class="detail-item"><span class="dk">แพ้ยา</span><span class="dv">${v(r,52)}</span></div>
+        ${r[57] === 'มี' ? `<div class="detail-item col-span-2"><span class="dk">รายละเอียดขาด/มาสาย</span><span class="dv">${v(r,58)}</span></div>` : ''}
+        ${r[59] === 'มี' ? `<div class="detail-item col-span-2"><span class="dk">รายละเอียดผัน/Off</span><span class="dv">${v(r,60)}</span></div>` : ''}
+      </div>
+      ${eventsHtml}
+    </div>
+  </div>`;
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
