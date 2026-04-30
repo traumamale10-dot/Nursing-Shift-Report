@@ -475,20 +475,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
   <div id="search_result"><div class="empty"><div class="eico">🔍</div><div>ระบุเงื่อนไขแล้วกดค้นหา</div></div></div>
 </div></div>
 
-<!-- ═══════ PAGE: CONFIG ═══════ -->
-<div class="page" id="page-config">
-<div class="main">
-  <div class="pg-head"><div><h1>ตั้งค่า</h1><p>เชื่อมต่อ Google Sheet</p></div><span class="pg-badge">SETTINGS</span></div>
-  <div class="card"><div class="cb">
-    <div class="chdr"><div class="cico">⚙️</div><div><div class="ctitle">Google Apps Script URL</div><div class="csub">วาง URL จาก Deploy Web App</div></div></div>
-    <div class="cfg-box">
-      <label>🔗 Web App URL</label>
-      <input type="url" id="gas_url" placeholder="https://script.google.com/macros/s/..." oninput="saveCfg()">
-      <div class="cfg-saved" id="cfg_saved">✅ บันทึกแล้ว</div>
-    </div>
-    <div class="cfg-tip"><strong>📌 วิธีตั้งค่า</strong><br>1. ไปที่ <a href="https://script.google.com" target="_blank">script.google.com</a><br>2. วางโค้ด setup_sheet.gs → รัน createSheet()<br>3. Deploy → Web App → Anyone<br>4. คัดลอก URL มาวางด้านบน</div>
-  </div></div>
-</div></div>
+
 
 <!-- SIDEBAR / BOTTOM BAR -->
 <div class="sidebar" id="sidebar">
@@ -496,7 +483,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
   <button class="sb-btn active" onclick="goPage('form',this)"><span class="ico">✏️</span><span class="sb-label">บันทึก</span></button>
   <button class="sb-btn" onclick="goPage('display',this)"><span class="ico">📊</span><span class="sb-label">แสดงข้อมูล</span></button>
   <button class="sb-btn" onclick="goPage('search',this)"><span class="ico">🔍</span><span class="sb-label">ค้นหา</span></button>
-  <button class="sb-btn" onclick="goPage('config',this)"><span class="ico">⚙️</span><span class="sb-label">ตั้งค่า</span></button>
+
 </div>
 
 <!-- EDIT MODAL -->
@@ -524,8 +511,6 @@ var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcf
 })();
 
 window.addEventListener('load',()=>{
-  var u=localStorage.getItem('gas_url')||DEFAULT_URL;
-  document.getElementById('gas_url').value=u;
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('f_B').value=today;
   document.getElementById('filter_date').value=today;
@@ -533,12 +518,7 @@ window.addEventListener('load',()=>{
   fetchLastKong();
 });
 
-function getUrl(){return localStorage.getItem('gas_url')||DEFAULT_URL;}
-function saveCfg(){
-  localStorage.setItem('gas_url',document.getElementById('gas_url').value.trim());
-  var el=document.getElementById('cfg_saved');el.style.display='block';
-  setTimeout(()=>el.style.display='none',2000);
-}
+function getUrl(){return DEFAULT_URL;}
 
 // ── Navigation ──
 function goPage(name,btn){
