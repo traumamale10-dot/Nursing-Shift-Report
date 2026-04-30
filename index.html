@@ -515,7 +515,7 @@
       </div>
       <div class="form-group">
         <label>ยอดยกมา <span class="col-tag">D</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
-        <input type="number" id="f_D" class="computed" readonly placeholder="จาก คงพยาบาล เวรก่อน">
+        <input type="number" id="f_D" class="computed" placeholder="ยอดยกมา" oninput="calcKong()">
       </div>
     </div>
 
@@ -1009,6 +1009,9 @@ window.addEventListener('load', () => {
   // set today's date
   document.getElementById('f_B').value = new Date().toISOString().split('T')[0];
   document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
+  // ค่าเริ่มต้น ยอดยกมา = 19
+  document.getElementById('f_D').value = 19;
+  calcKong();
 });
 
 // ===== STAFF DISPLAY =====
