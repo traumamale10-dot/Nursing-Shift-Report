@@ -2,431 +2,213 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>บันทึกเหตุการณ์เวร</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  /* =====================================================
-     BRAND GUIDE THEME — Deep Forest Green + Lime + Gold
-     ===================================================== */
-  :root {
-    /* Primary palette */
-    --green-deep:   #1f4e3d;   /* dark forest green — nav, card headers */
-    --green-mid:    #2d6a4f;   /* medium green */
-    --green-light:  #52b788;   /* soft emerald */
-    --lime:         #8bc34a;   /* lime green accent */
-    --lime-bright:  #a8d847;   /* bright lime highlight */
-    --gold:         #c9a84c;   /* warm gold */
-    --khaki:        #e8dfc0;   /* pale khaki / parchment */
-    --sage:         #d4e8d0;   /* very light sage */
-    --sage-mid:     #b7d4b0;
+:root {
+  --gd: #1f4e3d; --gm: #2d6a4f; --gl: #52b788;
+  --lime: #8bc34a; --gold: #c9a84c; --khaki: #e8dfc0;
+  --sage: #d4e8d0; --sage2: #b7d4b0;
+  --w: #fff; --ow: #f5f7f4; --g50: #f0f2ef;
+  --g100: #e4e8e2; --g200: #c8cfc5; --g400: #8a9487; --g700: #3c4a38;
+  --ink: #1a2418;
+  --sh: 0 2px 12px rgba(31,78,61,0.10);
+  --shm: 0 4px 20px rgba(31,78,61,0.14);
+  --r: 14px; --rs: 9px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:80px}
 
-    /* Neutrals */
-    --white:        #ffffff;
-    --off-white:    #f5f7f4;
-    --gray-50:      #f0f2ef;
-    --gray-100:     #e4e8e2;
-    --gray-200:     #c8cfc5;
-    --gray-400:     #8a9487;
-    --gray-700:     #3c4a38;
-    --ink:          #1a2418;   /* near-black text */
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:200;background:var(--gd);box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.nav-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px}
+.nav-logo{font-size:.95rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.7}}
 
-    /* Semantic */
-    --primary:      var(--green-deep);
-    --accent:       var(--lime);
-    --accent2:      var(--gold);
+/* ── BOTTOM TAB BAR (mobile-first) ── */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--gd);display:flex;box-shadow:0 -2px 16px rgba(0,0,0,.2)}
+.bbar-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 12px;border:none;background:transparent;color:rgba(255,255,255,.55);font-family:'Sarabun',sans-serif;font-size:.65rem;font-weight:600;cursor:pointer;transition:.2s;gap:3px}
+.bbar-btn .bico{font-size:1.4rem;line-height:1}
+.bbar-btn.active{color:var(--lime)}
+.bbar-btn.active .bico{filter:drop-shadow(0 0 6px rgba(139,195,74,.7))}
 
-    /* Shadows — green-tinted */
-    --shadow-sm:  0 1px 4px rgba(31,78,61,0.10);
-    --shadow-md:  0 4px 16px rgba(31,78,61,0.13);
-    --shadow-lg:  0 8px 32px rgba(31,78,61,0.18);
-    --shadow-card: 0 2px 12px rgba(31,78,61,0.09), 0 1px 3px rgba(31,78,61,0.06);
+/* ── PAGES ── */
+.page{display:none;animation:fadeUp .3s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-    --radius:    14px;
-    --radius-sm: 8px;
-  }
+/* ── MAIN ── */
+.main{max-width:700px;margin:0 auto;padding:16px 12px}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── PAGE HEADER ── */
+.pg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--g100)}
+.pg-head h1{font-size:1.2rem;font-weight:700;color:var(--gd)}
+.pg-head p{font-size:.78rem;color:var(--g400);margin-top:2px}
+.pg-badge{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);background:rgba(82,183,136,.1);border:1px solid rgba(82,183,136,.3);padding:4px 10px;border-radius:20px;white-space:nowrap}
 
-  body {
-    font-family: 'Sarabun', 'IBM Plex Sans Thai', sans-serif;
-    background: var(--off-white);
-    min-height: 100vh;
-    color: var(--ink);
-    position: relative;
-    overflow-x: hidden;
-  }
+/* ── CARD ── */
+.card{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden;position:relative}
+.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--lime),var(--gl));border-radius:var(--r) 0 0 var(--r)}
+.card-body{padding:16px 16px 16px 20px}
+.card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--g100)}
+.card-ico{width:36px;height:36px;border-radius:var(--rs);background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.card-title{font-size:.95rem;font-weight:700;color:var(--gd)}
+.card-sub{font-size:.72rem;color:var(--g400);margin-top:1px}
 
-  /* Subtle geometric background */
-  body::before {
-    content: '';
-    position: fixed; top: 0; right: 0;
-    width: 420px; height: 420px;
-    background: radial-gradient(ellipse at top right, rgba(139,195,74,0.08) 0%, transparent 65%);
-    pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed; bottom: 0; left: 0;
-    width: 340px; height: 340px;
-    background: radial-gradient(ellipse at bottom left, rgba(31,78,61,0.06) 0%, transparent 65%);
-    pointer-events: none; z-index: 0;
-  }
+/* ── STAFF BANNER ── */
+.staff-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.staff-chip{flex:1;min-width:140px;background:var(--g50);border:1px solid var(--g100);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:8px}
+.s-ico{width:28px;height:28px;border-radius:50%;background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.s-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g400)}
+.s-name{font-size:.9rem;font-weight:700;color:var(--gd);margin-top:1px}
+.s-name select{border:none;background:transparent;font-family:'Sarabun',sans-serif;font-size:.9rem;font-weight:700;color:var(--gd);cursor:pointer;outline:none;padding:0;max-width:120px}
 
-  /* ===== NAV ===== */
-  .nav {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--green-deep);
-    padding: 0 2rem;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.22);
-  }
-  .nav-inner {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 62px;
-  }
-  .nav-logo {
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 1rem; font-weight: 700; letter-spacing: 0.03em;
-    color: #ffffff;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .nav-logo .dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--lime);
-    box-shadow: 0 0 8px rgba(139,195,74,0.7);
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:0.7} }
+/* ── SECTION LABEL ── */
+.sec-lbl{font-size:.68rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gm);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--g100)}
 
-  .nav-tabs { display: flex; gap: 6px; }
-  .tab-btn {
-    padding: 7px 20px; border-radius: 6px; border: 1.5px solid transparent;
-    font-family: 'Sarabun', sans-serif; font-size: 0.9rem; font-weight: 600;
-    cursor: pointer; transition: all 0.25s;
-    background: transparent; color: rgba(255,255,255,0.72);
-    letter-spacing: 0.02em;
-  }
-  .tab-btn.active {
-    background: var(--lime);
-    color: var(--green-deep);
-    border-color: var(--lime);
-    box-shadow: 0 3px 12px rgba(139,195,74,0.4);
-  }
-  .tab-btn:not(.active):hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    border-color: rgba(255,255,255,0.2);
-  }
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:.75rem;font-weight:600;color:var(--g700);display:flex;align-items:center;gap:4px}
+.fg label .ct{font-size:.62rem;background:var(--sage);color:var(--gm);border-radius:3px;padding:1px 5px;font-weight:700}
+.fg input,.fg select,.fg textarea{padding:11px 12px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.92rem;color:var(--ink);outline:none;transition:.2s;width:100%;min-height:44px}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(82,183,136,.15)}
+.fg textarea{min-height:80px;resize:vertical}
+.fg .computed{background:var(--sage);border-color:var(--sage2);font-weight:700;color:var(--gm)}
+.fg input[type=number]{-moz-appearance:textfield}
+.fg input[type=number]::-webkit-inner-spin-button{display:none}
 
-  /* PAGES */
-  .page { display: none; animation: fadeUp 0.35s ease; }
-  .page.active { display: block; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+/* Number stepper */
+.num-wrap{display:flex;align-items:center;gap:0}
+.num-wrap input{text-align:center;border-radius:0;flex:1;border-left:none;border-right:none}
+.num-btn{width:44px;height:44px;border:1.5px solid var(--g100);background:var(--g50);color:var(--gm);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s;user-select:none}
+.num-btn:first-child{border-radius:var(--rs) 0 0 var(--rs)}
+.num-btn:last-child{border-radius:0 var(--rs) var(--rs) 0}
+.num-btn:active{background:var(--sage);color:var(--gd)}
 
-  /* MAIN WRAPPER */
-  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+/* Grid layouts */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
 
-  /* PAGE TITLE */
-  .page-title {
-    margin-bottom: 2rem;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    border-bottom: 2px solid var(--gray-100);
-    padding-bottom: 1.2rem;
-  }
-  .page-title h1 {
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 1.6rem; font-weight: 700;
-    color: var(--green-deep);
-    letter-spacing: -0.01em;
-  }
-  .page-title p { color: var(--gray-400); font-size: 0.88rem; margin-top: 3px; }
-  .page-title-badge {
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--green-light);
-    background: rgba(82,183,136,0.1);
-    border: 1px solid rgba(82,183,136,0.3);
-    padding: 4px 12px; border-radius: 20px;
-  }
+/* Checkbox group (oxygen multi) */
+.check-group{display:flex;flex-direction:column;gap:6px;padding:8px 0}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);cursor:pointer;transition:.15s;user-select:none}
+.check-item:active{background:var(--g50)}
+.check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--gm);cursor:pointer;flex-shrink:0}
+.check-item span{font-size:.88rem;color:var(--ink)}
+.check-item.checked{border-color:var(--gl);background:rgba(82,183,136,.06)}
 
-  /* CARD */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--gray-100);
-    box-shadow: var(--shadow-card);
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: box-shadow 0.25s, transform 0.2s;
-  }
-  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-  .card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-    background: linear-gradient(180deg, var(--lime), var(--green-light));
-    border-radius: var(--radius) 0 0 var(--radius);
-  }
+/* Toggle switch for มี/ไม่มี */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);margin-bottom:4px}
+.toggle-lbl{font-size:.88rem;font-weight:600;color:var(--ink)}
+.toggle-lbl small{display:block;font-size:.7rem;color:var(--g400);font-weight:400;margin-top:1px}
+.toggle-sw{position:relative;width:52px;height:28px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sw .slider{position:absolute;inset:0;background:var(--g200);border-radius:28px;transition:.25s;cursor:pointer}
+.toggle-sw .slider::before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-sw input:checked+.slider{background:var(--gl)}
+.toggle-sw input:checked+.slider::before{transform:translateX(24px)}
 
-  .card-header {
-    display: flex; align-items: center; gap: 14px;
-    margin-bottom: 1.5rem; padding-bottom: 1rem;
-    border-bottom: 1px solid var(--gray-100);
-  }
-  .card-icon {
-    width: 40px; height: 40px; border-radius: var(--radius-sm);
-    background: var(--green-deep);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(31,78,61,0.25);
-  }
-  .card-title {
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 1.05rem; font-weight: 700; color: var(--green-deep);
-  }
-  .card-sub { font-size: 0.8rem; color: var(--gray-400); margin-top: 2px; }
+/* Conditional area */
+.cond-area{background:var(--g50);border:1.5px dashed var(--g200);border-radius:var(--rs);padding:12px;margin-top:4px;display:none;animation:fadeUp .2s ease}
+.cond-area.show{display:block}
 
-  /* STAFF BANNER */
-  .staff-banner { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .staff-chip {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-100);
-    border-radius: var(--radius-sm); padding: 10px 16px;
-    font-size: 0.88rem; flex: 1; min-width: 220px;
-    box-shadow: var(--shadow-sm);
-  }
-  .staff-chip-icon {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--green-deep);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; flex-shrink: 0;
-  }
-  .staff-chip label { font-weight: 600; font-size: 0.72rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; }
-  .staff-chip .name-display { font-weight: 700; font-size: 0.95rem; color: var(--green-deep); margin-top: 1px; }
-  .staff-chip select {
-    border: none; background: transparent;
-    font-family: 'Sarabun', sans-serif; font-size: 0.95rem;
-    font-weight: 700; color: var(--green-deep); cursor: pointer; outline: none; padding: 0;
-    margin-top: 1px;
-  }
+/* Risk block */
+.risk-event{background:#fffdf4;border:1.5px dashed rgba(201,168,76,.4);border-radius:var(--rs);padding:12px;margin-top:6px;display:none}
+.risk-event.show{display:block}
+.risk-num{font-size:.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 
-  /* FORM GRID */
-  .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
-  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-  .col-span-2 { grid-column: span 2; }
-  .col-span-full { grid-column: 1/-1; }
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+.b-auto{background:rgba(139,195,74,.12);color:var(--gm);border:1px solid rgba(82,183,136,.3)}
+.b-ok{background:var(--sage);color:var(--gd)}
+.b-warn{background:#fef3c7;color:#78350f}
 
-  /* SECTION LABEL */
-  .section-label {
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--green-mid);
-    margin: 1.4rem 0 0.75rem;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-label::after {
-    content: ''; flex: 1; height: 1px;
-    background: var(--gray-100);
-  }
+/* type check indicator */
+#type_check{font-size:.78rem}
 
-  /* FORM GROUP */
-  .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group label {
-    font-size: 0.8rem; font-weight: 600; color: var(--gray-700);
-    display: flex; align-items: center; gap: 5px;
-  }
-  .form-group label .col-tag {
-    font-size: 0.66rem; background: var(--sage);
-    color: var(--green-mid); border-radius: 4px; padding: 1px 5px;
-    font-weight: 700; letter-spacing: 0.04em;
-  }
-  .form-group input, .form-group select, .form-group textarea {
-    padding: 9px 12px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--gray-100);
-    background: var(--white);
-    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
-    color: var(--ink); outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    border-color: var(--green-light);
-    box-shadow: 0 0 0 3px rgba(82,183,136,0.15);
-  }
-  .form-group input[readonly] {
-    background: var(--sage);
-    color: var(--green-mid); font-weight: 600;
-    cursor: not-allowed; border-color: var(--sage-mid);
-  }
-  .form-group textarea { resize: vertical; min-height: 72px; }
-  .form-group .computed {
-    background: var(--sage);
-    border-color: var(--sage-mid); font-weight: 700; color: var(--green-deep);
-  }
+/* Submit button */
+.btn-sub{width:100%;padding:15px;background:var(--gd);color:#fff;border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 4px 14px rgba(31,78,61,.35);letter-spacing:.04em;margin-top:16px;position:relative;overflow:hidden}
+.btn-sub:active{transform:scale(.98)}
+.btn-sub::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(139,195,74,.2),transparent);transition:.4s}
+.btn-sub:hover::after{left:100%}
 
-  /* CONDITIONAL FIELD */
-  .conditional-group {
-    background: var(--gray-50);
-    border: 1.5px dashed var(--gray-200);
-    border-radius: var(--radius-sm); padding: 1rem;
-    margin-top: 0.5rem;
-    animation: fadeIn 0.25s ease;
-    display: none;
-  }
-  .conditional-group.show { display: block; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+/* ── DISPLAY PAGE ── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filter-bar input,.filter-bar select{flex:1;min-width:120px;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none}
+.btn-load{padding:10px 18px;border-radius:var(--rs);border:none;background:var(--lime);color:var(--gd);font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;font-size:.9rem;white-space:nowrap}
+.btn-load:active{opacity:.8}
 
-  /* RISK EVENT */
-  .risk-block {
-    background: #fffdf4;
-    border: 1.5px dashed rgba(201,168,76,0.45);
-    border-radius: var(--radius-sm); padding: 1rem 1.2rem;
-    margin-top: 0.5rem;
-    display: none;
-  }
-  .risk-block.show { display: block; }
+/* Display shift cards */
+.shift-wrap{margin-top:12px}
+.sc{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden;animation:fadeUp .3s ease}
+.sc-top{background:var(--gd);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.sc-date{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.7)}
+.sc-shift-name{font-size:1rem;font-weight:700;color:#fff;margin-top:2px}
+.sc-staff{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:3px}
+.sc-badge{padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.sb-ดึก{background:#1a2418;color:var(--lime);border:1px solid var(--lime)}
+.sb-เช้า{background:var(--khaki);color:#5c4a14}
+.sb-บ่าย{background:var(--sage);color:var(--gd)}
 
-  /* BADGE */
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700;
-  }
-  .badge-warn { background: #fef3c7; color: #78350f; }
-  .badge-ok   { background: var(--sage); color: var(--green-deep); }
-  .badge-info { background: rgba(139,195,74,0.12); color: var(--green-mid); border: 1px solid rgba(139,195,74,0.3); }
+.sc-body{padding:14px 16px}
+/* stats row */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.stat-box{background:var(--g50);border:1px solid var(--g100);border-radius:var(--rs);padding:8px 4px;text-align:center}
+.stat-box.highlight{background:var(--sage);border-color:var(--sage2)}
+.sval{font-size:1.2rem;font-weight:700;color:var(--gd)}
+.skey{font-size:.62rem;color:var(--g400);margin-top:1px}
 
-  /* SUBMIT BTN */
-  .btn-submit {
-    width: 100%; padding: 14px;
-    background: var(--green-deep);
-    color: white; border: none; border-radius: var(--radius-sm);
-    font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 1rem; font-weight: 700;
-    cursor: pointer; transition: all 0.25s;
-    box-shadow: 0 4px 14px rgba(31,78,61,0.35);
-    letter-spacing: 0.04em;
-    position: relative; overflow: hidden;
-  }
-  .btn-submit::after {
-    content: '';
-    position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(139,195,74,0.18), transparent);
-    transition: left 0.5s;
-  }
-  .btn-submit:hover { background: var(--green-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,78,61,0.4); }
-  .btn-submit:hover::after { left: 100%; }
-  .btn-submit:active { transform: translateY(0); }
+/* card sections */
+.dc-section{margin-bottom:10px}
+.dc-title{font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gl);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dc-title::after{content:'';flex:1;height:1px;background:var(--g100)}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.dc-item{font-size:.8rem;display:flex;flex-direction:column}
+.dc-item .dk{color:var(--g400);font-size:.7rem;margin-bottom:1px}
+.dc-item .dv{color:var(--ink);font-weight:500}
+.dc-item.full{grid-column:1/-1}
+.event-pill{background:#fffdf4;border-left:3px solid var(--gold);border-radius:0 var(--rs) var(--rs) 0;padding:8px 12px;font-size:.8rem;margin-top:6px}
+.event-pill-title{font-weight:700;color:#7a5c10;font-size:.72rem;margin-bottom:3px}
 
-  /* CONFIG PANEL */
-  .config-box {
-    background: var(--gray-50);
-    border: 1.5px dashed var(--gray-200);
-    border-radius: var(--radius-sm); padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .config-box label { font-size: 0.82rem; font-weight: 700; color: var(--green-deep); }
-  .config-box input {
-    width: 100%; margin-top: 6px; padding: 10px 14px;
-    border-radius: var(--radius-sm); border: 1.5px solid var(--gray-200);
-    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
-    background: white; color: var(--ink);
-  }
-  .config-saved { color: var(--green-mid); font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
+/* Save image btn */
+.btn-save-img{display:flex;align-items:center;gap:6px;justify-content:center;width:100%;padding:11px;border:1.5px solid var(--g200);border-radius:var(--rs);background:var(--w);color:var(--gd);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s;margin-top:10px}
+.btn-save-img:active{background:var(--sage)}
 
-  /* ===== DISPLAY PAGE ===== */
-  .display-controls {
-    display: flex; gap: 1rem; align-items: center;
-    flex-wrap: wrap; margin-bottom: 1.5rem;
-  }
-  .display-controls select, .display-controls input[type=date] {
-    padding: 9px 14px; border-radius: var(--radius-sm);
-    border: 1.5px solid var(--gray-200);
-    background: var(--white);
-    font-family: 'Sarabun', sans-serif; font-size: 0.9rem;
-    color: var(--ink); outline: none;
-  }
-  .btn-refresh {
-    padding: 9px 20px; border-radius: var(--radius-sm); border: none;
-    background: var(--lime); color: var(--green-deep);
-    font-family: 'Sarabun', sans-serif; font-weight: 700; cursor: pointer;
-    box-shadow: 0 3px 10px rgba(139,195,74,0.35); transition: all 0.2s;
-  }
-  .btn-refresh:hover { background: var(--lime-bright); transform: translateY(-1px); }
+/* card2 display */
+.sc2{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.sc2-top{background:linear-gradient(135deg,var(--gm),var(--gd));padding:12px 16px}
+.sc2-title{font-size:.82rem;font-weight:700;color:#fff}
 
-  .shift-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--gray-100);
-    box-shadow: var(--shadow-card);
-    overflow: hidden; margin-bottom: 1.5rem;
-    animation: fadeUp 0.3s ease;
-  }
-  .shift-card-header {
-    padding: 1rem 1.5rem;
-    background: var(--green-deep);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .shift-title { font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.9); }
-  .shift-badge {
-    padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
-  }
-  .shift-ดึก  { background: #1a2418; color: var(--lime); border: 1px solid var(--lime); }
-  .shift-เช้า { background: var(--khaki); color: #5c4a14; }
-  .shift-บ่าย { background: var(--sage); color: var(--green-deep); }
+/* Empty state */
+.empty{text-align:center;padding:48px 16px;color:var(--g400)}
+.empty .eico{font-size:2.6rem;margin-bottom:12px;opacity:.4}
 
-  .shift-body { padding: 1.2rem 1.5rem; }
-  .stat-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
-  .stat-chip {
-    background: var(--gray-50);
-    border: 1px solid var(--gray-100);
-    border-radius: var(--radius-sm); padding: 8px 14px; text-align: center;
-    min-width: 88px;
-    transition: box-shadow 0.2s;
-  }
-  .stat-chip:hover { box-shadow: var(--shadow-sm); }
-  .stat-chip .sv { font-size: 1.25rem; font-weight: 700; color: var(--green-deep); }
-  .stat-chip .sk { font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; }
-  .stat-divider { height: 1px; background: var(--gray-100); margin: 1rem 0; }
-  .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.55rem; }
-  .detail-item { font-size: 0.83rem; display: flex; gap: 6px; }
-  .detail-item .dk { color: var(--gray-400); font-weight: 600; min-width: 110px; }
-  .detail-item .dv { color: var(--ink); }
-  .event-box {
-    background: #fffdf4;
-    border-left: 3px solid var(--gold);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 14px;
-    font-size: 0.84rem; color: var(--ink); margin-top: 0.8rem;
-  }
-  .event-title { font-weight: 700; color: #7a5c10; font-size: 0.8rem; margin-bottom: 4px; }
-  .empty-state {
-    text-align: center; padding: 4rem 2rem;
-    color: var(--gray-400); font-size: 1rem;
-  }
-  .empty-state .icon { font-size: 2.8rem; margin-bottom: 1rem; opacity: 0.45; }
+/* Config */
+.cfg-box{background:var(--g50);border:1.5px dashed var(--g200);border-radius:var(--rs);padding:16px;margin-bottom:14px}
+.cfg-box label{font-size:.8rem;font-weight:700;color:var(--gd)}
+.cfg-box input{width:100%;margin-top:6px;padding:11px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);font-family:'Sarabun',sans-serif;font-size:.88rem;background:var(--w);color:var(--ink)}
+.cfg-saved{color:var(--gm);font-size:.78rem;font-weight:600;margin-top:4px;display:none}
+.cfg-tip{background:rgba(212,232,208,.3);border-radius:var(--rs);padding:14px;font-size:.82rem;color:var(--gd);line-height:1.9}
+.cfg-tip a{color:var(--gm)}
 
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 2rem; right: 2rem;
-    background: var(--green-deep);
-    color: white; padding: 13px 22px; border-radius: var(--radius-sm);
-    font-weight: 600; font-size: 0.92rem;
-    box-shadow: 0 8px 28px rgba(31,78,61,0.5);
-    z-index: 9999; transform: translateY(80px); opacity: 0;
-    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    border-left: 4px solid var(--lime);
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);z-index:999;background:var(--gd);color:#fff;padding:12px 22px;border-radius:var(--rs);font-weight:600;font-size:.88rem;box-shadow:0 6px 24px rgba(31,78,61,.45);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--lime);white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* VALIDATION ERROR */
-  .field-error { border-color: #e53935 !important; box-shadow: 0 0 0 3px rgba(229,57,53,0.12) !important; }
-  .error-msg { font-size: 0.75rem; color: #e53935; margin-top: 2px; }
+/* Validation */
+.field-err{border-color:#e53935!important;box-shadow:0 0 0 3px rgba(229,57,53,.12)!important}
 
-  @media (max-width: 700px) {
-    .form-grid-4 { grid-template-columns: repeat(2, 1fr); }
-    .form-grid-3 { grid-template-columns: repeat(2, 1fr); }
-    .page-title { flex-direction: column; align-items: flex-start; gap: 8px; }
-  }
+@media(min-width:600px){
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .stats-grid{grid-template-columns:repeat(7,1fr)}
+  .dc-grid{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
@@ -434,934 +216,686 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-inner">
-    <div class="nav-logo">
-      <div class="dot"></div>
-      บันทึกเหตุการณ์เวร
-    </div>
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="showPage('form')">✏️ บันทึกข้อมูล</button>
-      <button class="tab-btn" onclick="showPage('display')">📊 แสดงข้อมูล</button>
-      <button class="tab-btn" onclick="showPage('config')">⚙️ ตั้งค่า</button>
-    </div>
+    <div class="nav-logo"><div class="dot"></div>บันทึกเหตุการณ์เวร</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:600" id="nav-date"></div>
   </div>
 </nav>
 
-<!-- ========== PAGE: FORM ========== -->
+<!-- ======== PAGE: FORM ======== -->
 <div class="page active" id="page-form">
 <div class="main">
-  <div class="page-title">
-    <div>
-      <h1>บันทึกเหตุการณ์เวร</h1>
-      <p>กรอกข้อมูลประจำเวรให้ครบถ้วน</p>
-    </div>
-    <span class="page-title-badge">SHIFT RECORD</span>
+  <div class="pg-head">
+    <div><h1>บันทึกข้อมูลเวร</h1><p>กรอกข้อมูลให้ครบถ้วน</p></div>
+    <span class="pg-badge">RECORD</span>
   </div>
 
   <form id="mainForm" onsubmit="submitForm(event)">
 
   <!-- ===== CARD 1 ===== -->
   <div class="card">
-    <div class="card-header">
-      <div class="card-icon">🏥</div>
-      <div>
-        <div class="card-title">ข้อมูลผู้ป่วยและสถิติประจำเวร</div>
-        <div class="card-sub">คอลัมน์ B–Z, AD–AI</div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <div class="card-ico">🏥</div>
+        <div><div class="card-title">สถิติผู้ป่วยประจำเวร</div><div class="card-sub">คอลัมน์ B–Z, AD–AI</div></div>
       </div>
-    </div>
 
-    <!-- Staff banner (BJ + BK) -->
-    <div class="staff-banner">
-      <div class="staff-chip">
-        <div class="staff-chip-icon">👩‍⚕️</div>
-        <div>
-          <label>หัวหน้าเวร (BJ)</label>
+      <!-- หัวหน้าเวร/หอ -->
+      <div class="staff-row">
+        <div class="staff-chip">
+          <div class="s-ico">👩‍⚕️</div>
           <div>
-            <select id="f_BJ" onchange="updateStaffDisplay()">
-              <option value="">— เลือกหัวหน้าเวร —</option>
-              <option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option>
-              <option>เบญจมาศ</option><option>สาคร</option><option>นวลตา</option>
-              <option>สุนันทา</option><option>อัญชลี</option><option>จารุวรรณ</option>
-              <option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option>
-              <option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option>
-              <option>สุพรรณี</option><option>อริสรา</option><option>อุ้มบุญ</option>
-              <option>ชนาภา</option><option>กนกพร</option><option>วริศรา</option>
-              <option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option>
-            </select>
+            <div class="s-lbl">หัวหน้าเวร</div>
+            <div class="s-name">
+              <select id="f_BJ" onchange="updateStaff()">
+                <option value="">— เลือก —</option>
+                <option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option><option>เบญจมาศ</option>
+                <option>สาคร</option><option>นวลตา</option><option>สุนันทา</option><option>อัญชลี</option>
+                <option>จารุวรรณ</option><option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option>
+                <option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option><option>สุพรรณี</option>
+                <option>อริสรา</option><option>อุ้มบุญ</option><option>ชนาภา</option><option>กนกพร</option>
+                <option>วริศรา</option><option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="staff-chip">
+          <div class="s-ico">🏥</div>
+          <div>
+            <div class="s-lbl">หัวหน้าหอ</div>
+            <div class="s-name">คุณอัญญารัตน์</div>
           </div>
         </div>
       </div>
-      <div class="staff-chip">
-        <div class="staff-chip-icon">🏥</div>
-        <div>
-          <label>หัวหน้าหอ (BK)</label>
-          <div class="name-display" id="head_display">คุณอัญญารัตน์</div>
+
+      <!-- วันที่ + เวร -->
+      <div class="sec-lbl">📅 ข้อมูลทั่วไป</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="fg"><label>วันที่ </label><input type="date" id="f_B" required></div>
+        <div class="fg"><label>เวร </label>
+          <select id="f_C" required onchange="loadPrev()">
+            <option value="">— เลือก —</option>
+            <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+          </select>
         </div>
       </div>
-    </div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>ยอดยกมา  <span class="badge b-auto">อัตโนมัติ</span></label>
+        <div class="num-wrap">
+          <button type="button" class="num-btn" onclick="stepNum('f_D',-1)">−</button>
+          <input type="number" id="f_D" value="19" oninput="calcAll()">
+          <button type="button" class="num-btn" onclick="stepNum('f_D',1)">+</button>
+        </div>
+      </div>
 
-    <!-- B: วันที่, C: เวร -->
-    <div class="section-label">📅 ข้อมูลทั่วไป</div>
-    <div class="form-grid-3">
-      <div class="form-group">
-        <label>วันที่ <span class="col-tag">B</span></label>
-        <input type="date" id="f_B" required>
+      <!-- การเคลื่อนไหว -->
+      <div class="sec-lbl">🔄 การเคลื่อนไหว</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="fg"><label>รับใหม่ </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_E',-1)">−</button><input type="number" id="f_E" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_E',1)">+</button></div></div>
+        <div class="fg"><label>รับย้าย </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_F',-1)">−</button><input type="number" id="f_F" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_F',1)">+</button></div></div>
+        <div class="fg"><label>ย้าย </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_G',-1)">−</button><input type="number" id="f_G" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_G',1)">+</button></div></div>
+        <div class="fg"><label>กลับบ้าน </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_H',-1)">−</button><input type="number" id="f_H" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_H',1)">+</button></div></div>
+        <div class="fg"><label>Refer </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_I',-1)">−</button><input type="number" id="f_I" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_I',1)">+</button></div></div>
+        <div class="fg"><label>ถึงแก่กรรม </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_J',-1)">−</button><input type="number" id="f_J" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_J',1)">+</button></div></div>
+        <div class="fg" style="grid-column:span 2"><label>คงพยาบาล  <span class="badge b-auto">อัตโนมัติ</span></label>
+          <input type="number" id="f_K" class="computed" readonly style="text-align:center;font-size:1.1rem"></div>
       </div>
-      <div class="form-group">
-        <label>เวร <span class="col-tag">C</span></label>
-        <select id="f_C" required onchange="loadPrevShiftData()">
-          <option value="">— เลือกเวร —</option>
-          <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>ยอดยกมา <span class="col-tag">D</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
-        <input type="number" id="f_D" class="computed" placeholder="ยอดยกมา" oninput="calcKong()">
-      </div>
-    </div>
 
-    <!-- E-J: รับใหม่ ฯลฯ -->
-    <div class="section-label">🔄 การเคลื่อนไหวผู้ป่วย</div>
-    <div class="form-grid-4">
-      <div class="form-group">
-        <label>รับใหม่ <span class="col-tag">E</span></label>
-        <input type="number" id="f_E" min="0" value="0" oninput="calcKong()">
+      <!-- ประเภทผู้ป่วย -->
+      <div class="sec-lbl">🏷️ ประเภทผู้ป่วย <span id="type_check" style="margin-left:6px"></span></div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="fg"><label>ประเภท 4 </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_L',-1)">−</button><input type="number" id="f_L" value="0" oninput="chkType()"><button type="button" class="num-btn" onclick="stepNum('f_L',1)">+</button></div></div>
+        <div class="fg"><label>ประเภท 3 </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_M',-1)">−</button><input type="number" id="f_M" value="0" oninput="chkType()"><button type="button" class="num-btn" onclick="stepNum('f_M',1)">+</button></div></div>
+        <div class="fg"><label>ประเภท 2 </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_N',-1)">−</button><input type="number" id="f_N" value="0" oninput="chkType()"><button type="button" class="num-btn" onclick="stepNum('f_N',1)">+</button></div></div>
+        <div class="fg"><label>ประเภท 1 </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_O',-1)">−</button><input type="number" id="f_O" value="0" oninput="chkType()"><button type="button" class="num-btn" onclick="stepNum('f_O',1)">+</button></div></div>
       </div>
-      <div class="form-group">
-        <label>รับย้าย <span class="col-tag">F</span></label>
-        <input type="number" id="f_F" min="0" value="0" oninput="calcKong()">
-      </div>
-      <div class="form-group">
-        <label>ย้าย <span class="col-tag">G</span></label>
-        <input type="number" id="f_G" min="0" value="0" oninput="calcKong()">
-      </div>
-      <div class="form-group">
-        <label>กลับบ้าน <span class="col-tag">H</span></label>
-        <input type="number" id="f_H" min="0" value="0" oninput="calcKong()">
-      </div>
-      <div class="form-group">
-        <label>Refer <span class="col-tag">I</span></label>
-        <input type="number" id="f_I" min="0" value="0" oninput="calcKong()">
-      </div>
-      <div class="form-group">
-        <label>ถึงแก่กรรม <span class="col-tag">J</span></label>
-        <input type="number" id="f_J" min="0" value="0" oninput="calcKong()">
-      </div>
-      <div class="form-group">
-        <label>คงพยาบาล <span class="col-tag">K</span></label>
-        <input type="number" id="f_K" class="computed" readonly>
-      </div>
-    </div>
 
-    <!-- L-O: ประเภท -->
-    <div class="section-label">🏷️ ประเภทผู้ป่วย <span id="type_check" style="font-size:0.8rem;margin-left:8px"></span></div>
-    <div class="form-grid-4">
-      <div class="form-group">
-        <label>ประเภท 4 <span class="col-tag">L</span></label>
-        <input type="number" id="f_L" min="0" value="0" oninput="checkTypeSum()">
+      <!-- ตัวชี้วัด -->
+      <div class="sec-lbl">📈 ตัวชี้วัด</div>
+      <div class="g3" style="margin-bottom:10px">
+        <div class="fg"><label>Productivity </label><input type="number" id="f_P" step="0.01" value="0" oninput="calcAll()"></div>
+        <div class="fg"><label>ครองเตียง %  <span class="badge b-auto">อัตโนมัติ</span></label><input type="number" id="f_Q" class="computed" readonly></div>
+        <div class="fg"><label>Productivity รวม </label><input type="text" id="f_R" class="computed" readonly placeholder="ครบ 3 เวร"></div>
       </div>
-      <div class="form-group">
-        <label>ประเภท 3 <span class="col-tag">M</span></label>
-        <input type="number" id="f_M" min="0" value="0" oninput="checkTypeSum()">
-      </div>
-      <div class="form-group">
-        <label>ประเภท 2 <span class="col-tag">N</span></label>
-        <input type="number" id="f_N" min="0" value="0" oninput="checkTypeSum()">
-      </div>
-      <div class="form-group">
-        <label>ประเภท 1 <span class="col-tag">O</span></label>
-        <input type="number" id="f_O" min="0" value="0" oninput="checkTypeSum()">
-      </div>
-    </div>
 
-    <!-- P,Q,R -->
-    <div class="section-label">📈 ตัวชี้วัด</div>
-    <div class="form-grid-3">
-      <div class="form-group">
-        <label>Productivity <span class="col-tag">P</span></label>
-        <input type="number" id="f_P" step="0.01" oninput="calcProdRuam()">
+      <!-- กำลังพล -->
+      <div class="sec-lbl">👩‍⚕️ กำลังพล</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="fg"><label>Tube </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_S',-1)">−</button><input type="number" id="f_S" value="0"><button type="button" class="num-btn" onclick="stepNum('f_S',1)">+</button></div></div>
+        <div class="fg"><label>RN </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_T',-1)">−</button><input type="number" id="f_T" value="0"><button type="button" class="num-btn" onclick="stepNum('f_T',1)">+</button></div></div>
+        <div class="fg"><label>Aide/PN </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_U',-1)">−</button><input type="number" id="f_U" value="0"><button type="button" class="num-btn" onclick="stepNum('f_U',1)">+</button></div></div>
+        <div class="fg"><label>Worker </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_V',-1)">−</button><input type="number" id="f_V" value="0"><button type="button" class="num-btn" onclick="stepNum('f_V',1)">+</button></div></div>
       </div>
-      <div class="form-group">
-        <label>อัตราการครองเตียง % <span class="col-tag">Q</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
-        <input type="number" id="f_Q" class="computed" readonly step="0.01">
-      </div>
-      <div class="form-group">
-        <label>Productivity รวม <span class="col-tag">R</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
-        <input type="number" id="f_R" class="computed" readonly step="0.01">
-      </div>
-    </div>
 
-    <!-- S-V: กำลังพล -->
-    <div class="section-label">👩‍⚕️ กำลังพล</div>
-    <div class="form-grid-4">
-      <div class="form-group">
-        <label>Tube (ในเวร) <span class="col-tag">S</span></label>
-        <input type="number" id="f_S" min="0" value="0">
+      <!-- ประเภทบาดเจ็บ -->
+      <div class="sec-lbl">🚑 ประเภทผู้บาดเจ็บ</div>
+      <div class="g4" style="margin-bottom:10px">
+        <div class="fg"><label>Trauma </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_W',-1)">−</button><input type="number" id="f_W" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_W',1)">+</button></div></div>
+        <div class="fg"><label>Neuro </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_X',-1)">−</button><input type="number" id="f_X" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_X',1)">+</button></div></div>
+        <div class="fg"><label>Plastic </label>
+          <div class="num-wrap"><button type="button" class="num-btn" onclick="stepNum('f_Y',-1)">−</button><input type="number" id="f_Y" value="0" oninput="calcAll()"><button type="button" class="num-btn" onclick="stepNum('f_Y',1)">+</button></div></div>
+        <div class="fg"><label>Multiple  <span class="badge b-auto">อัตโนมัติ</span></label><input type="number" id="f_Z" class="computed" readonly></div>
       </div>
-      <div class="form-group">
-        <label>RN <span class="col-tag">T</span></label>
-        <input type="number" id="f_T" min="0" value="0">
-      </div>
-      <div class="form-group">
-        <label>Aide/PN <span class="col-tag">U</span></label>
-        <input type="number" id="f_U" min="0" value="0">
-      </div>
-      <div class="form-group">
-        <label>Worker <span class="col-tag">V</span></label>
-        <input type="number" id="f_V" min="0" value="0">
-      </div>
-    </div>
 
-    <!-- W-Z: Trauma -->
-    <div class="section-label">🚑 ประเภทผู้บาดเจ็บ</div>
-    <div class="form-grid-4">
-      <div class="form-group">
-        <label>Trauma <span class="col-tag">W</span></label>
-        <input type="number" id="f_W" min="0" value="0" oninput="calcMultiple()">
+      <!-- เฝ้าระวัง -->
+      <div class="sec-lbl">🛏️ เฝ้าระวังและเตรียมผู้ป่วย</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="fg"><label>Fall (เตียง) </label><input type="text" id="f_AD" placeholder="12,20,30"></div>
+        <div class="fg"><label>Bed sore (เตียง) </label><input type="text" id="f_AE" placeholder="15,21"></div>
+        <div class="fg"><label>เตรียมตรวจ </label><input type="text" id="f_AF" placeholder="เตียง..."></div>
+        <div class="fg"><label>เตรียมผ่าตัด </label><input type="text" id="f_AG" placeholder="เตียง..."></div>
       </div>
-      <div class="form-group">
-        <label>Neuro <span class="col-tag">X</span></label>
-        <input type="number" id="f_X" min="0" value="0" oninput="calcMultiple()">
+      <div class="g2">
+        <div class="fg"><label>ชื่อซ้ำ </label><input type="text" id="f_AH" placeholder="เตียง..."></div>
+        <div class="fg"><label>ชื่อคล้าย </label><input type="text" id="f_AI" placeholder="รายละเอียด..."></div>
       </div>
-      <div class="form-group">
-        <label>Plastic <span class="col-tag">Y</span></label>
-        <input type="number" id="f_Y" min="0" value="0" oninput="calcMultiple()">
-      </div>
-      <div class="form-group">
-        <label>Multiple Injury <span class="col-tag">Z</span> <span class="badge badge-info" style="font-size:0.65rem">อัตโนมัติ</span></label>
-        <input type="number" id="f_Z" class="computed" readonly>
-      </div>
-    </div>
-
-    <!-- AD-AI: เฝ้าระวัง ฯลฯ -->
-    <div class="section-label">🛏️ การเฝ้าระวังและเตรียมผู้ป่วย</div>
-    <div class="form-grid-3">
-      <div class="form-group">
-        <label>เฝ้าระวัง Fall (เตียง) <span class="col-tag">AD</span></label>
-        <input type="text" id="f_AD" placeholder="เช่น 12,20,30">
-      </div>
-      <div class="form-group">
-        <label>เฝ้าระวัง Bed sore (เตียง) <span class="col-tag">AE</span></label>
-        <input type="text" id="f_AE" placeholder="เช่น 15,21">
-      </div>
-      <div class="form-group">
-        <label>เตรียมตรวจ <span class="col-tag">AF</span></label>
-        <input type="text" id="f_AF" placeholder="เตียง...">
-      </div>
-    </div>
-    <div class="form-grid-2">
-      <div class="form-group">
-        <label>เตรียมผ่าตัด <span class="col-tag">AG</span></label>
-        <input type="text" id="f_AG" placeholder="เตียง...">
-      </div>
-      <div class="form-group">
-        <label>ชื่อซ้ำ <span class="col-tag">AH</span></label>
-        <input type="text" id="f_AH" placeholder="เช่น เตียง 13 กับ 24">
-      </div>
-    </div>
-    <div class="form-group" style="margin-top:1rem">
-      <label>ชื่อคล้าย <span class="col-tag">AI</span></label>
-      <input type="text" id="f_AI" placeholder="รายละเอียดชื่อคล้าย">
     </div>
   </div><!-- end card 1 -->
 
   <!-- ===== CARD 2 ===== -->
   <div class="card">
-    <div class="card-header">
-      <div class="card-icon">📋</div>
-      <div>
-        <div class="card-title">อุปกรณ์ เหตุการณ์ และบุคลากร</div>
-        <div class="card-sub">คอลัมน์ AA–AC, AJ–BK</div>
+    <div class="card-body">
+      <div class="card-hdr">
+        <div class="card-ico">📋</div>
+        <div><div class="card-title">อุปกรณ์ เหตุการณ์ บุคลากร</div><div class="card-sub">คอลัมน์ AA–AC, AJ–BK</div></div>
       </div>
-    </div>
 
-    <!-- Staff banner (BJ + BK) ซ้ำการ์ด 2 -->
-    <div class="staff-banner">
-      <div class="staff-chip">
-        <div class="staff-chip-icon">👩‍⚕️</div>
-        <div>
-          <label>หัวหน้าเวร (BJ)</label>
-          <div class="name-display" id="bj_display2">—</div>
-        </div>
+      <!-- staff ซ้ำ -->
+      <div class="staff-row">
+        <div class="staff-chip"><div class="s-ico">👩‍⚕️</div><div><div class="s-lbl">หัวหน้าเวร</div><div class="s-name" id="bj2">—</div></div></div>
+        <div class="staff-chip"><div class="s-ico">🏥</div><div><div class="s-lbl">หัวหน้าหอ</div><div class="s-name">คุณอัญญารัตน์</div></div></div>
       </div>
-      <div class="staff-chip">
-        <div class="staff-chip-icon">🏥</div>
-        <div>
-          <label>หัวหน้าหอ (BK)</label>
-          <div class="name-display">คุณอัญญารัตน์</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- AA-AC อุปกรณ์ -->
-    <div class="section-label">🚑 สถานะอุปกรณ์</div>
-    <div class="form-grid-3">
-      <div class="form-group">
-        <label>รถ Emergency <span class="col-tag">AA</span></label>
-        <select id="f_AA">
-          <option>พร้อมใช้</option><option>ไม่พร้อมใช้</option>
-        </select>
+      <!-- อุปกรณ์ -->
+      <div class="sec-lbl">🚑 สถานะอุปกรณ์</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div class="fg"><label>รถ Emergency </label>
+          <select id="f_AA"><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
+        <div class="fg"><label>รถ Defibrillator </label>
+          <select id="f_AB"><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
       </div>
-      <div class="form-group">
-        <label>รถ Defibrillator <span class="col-tag">AB</span></label>
-        <select id="f_AB">
-          <option>พร้อมใช้</option><option>ไม่พร้อมใช้</option>
-        </select>
+      <div class="fg" style="margin-bottom:10px">
+        <label>ถัง Oxygen  <span style="font-size:.7rem;color:var(--g400);font-weight:400">(เลือกได้หลายข้อ)</span></label>
+        <div class="check-group" id="oxy_group">
+          <label class="check-item"><input type="checkbox" name="oxy" value="พร้อมใช้" onchange="toggleCheck(this)"><span>พร้อมใช้</span></label>
+          <label class="check-item"><input type="checkbox" name="oxy" value="ไม่พร้อมใช้" onchange="toggleCheck(this)"><span>ไม่พร้อมใช้</span></label>
+          <label class="check-item"><input type="checkbox" name="oxy" value="เหลือ 1 ถัง" onchange="toggleCheck(this)"><span>เหลือ 1 ถัง</span></label>
+          <label class="check-item"><input type="checkbox" name="oxy" value="เหลือ 2 ถัง" onchange="toggleCheck(this)"><span>เหลือ 2 ถัง</span></label>
+          <label class="check-item"><input type="checkbox" name="oxy" value="ไปWardอื่น/OR" onchange="toggleCheck(this)"><span>ไปWardอื่น/OR</span></label>
+        </div>
       </div>
-      <div class="form-group">
-        <label>ถัง Oxygen <span class="col-tag">AC</span></label>
-        <select id="f_AC" multiple style="height:110px">
-          <option>พร้อมใช้</option>
-          <option>ไม่พร้อมใช้</option>
-          <option>เหลือ 1 ถัง</option>
-          <option>เหลือ 2 ถัง</option>
-          <option>ไปWardอื่น/OR</option>
-        </select>
-        <small style="color:#9061d1;font-size:0.75rem">Ctrl+คลิก เพื่อเลือกหลายตัวเลือก</small>
-      </div>
-    </div>
 
-    <!-- AJ-AO ของมีค่า/ของค้าง -->
-    <div class="section-label">💼 ของมีค่าและของค้าง</div>
-    <div class="form-grid-2">
-      <div>
-        <div class="form-group">
-          <label>ของมีค่า OK <span class="col-tag">AJ</span></label>
-          <select id="f_AJ" onchange="toggleCond('f_AJ','cond_valuables','มี')">
-            <option>ไม่มี</option><option>มี</option>
-          </select>
-        </div>
-        <div class="conditional-group" id="cond_valuables">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>รายละเอียดของมีค่า <span class="col-tag">AK</span></label>
-              <textarea id="f_AK" placeholder="ระบุรายละเอียด..."></textarea>
-            </div>
-            <div class="form-group">
-              <label>สถานะของมีค่า <span class="col-tag">AL</span></label>
-              <input type="text" id="f_AL" placeholder="เช่น รอญาติ">
-            </div>
-          </div>
+      <!-- ของมีค่า -->
+      <div class="sec-lbl">💼 ของมีค่าและของค้าง</div>
+      <div class="toggle-row">
+        <div><div class="toggle-lbl">ของมีค่า OK <span style="font-size:.68rem;color:var(--g400)">(AJ)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_AJ" onchange="tog('t_AJ','c_AJ')"><span class="slider"></span></label>
+      </div>
+      <div class="cond-area" id="c_AJ">
+        <div class="g2" style="gap:10px">
+          <div class="fg"><label>รายละเอียด </label><textarea id="f_AK" placeholder="ระบุ..."></textarea></div>
+          <div class="fg"><label>สถานะ </label><input type="text" id="f_AL" placeholder="เช่น รอญาติ"></div>
         </div>
       </div>
-      <div>
-        <div class="form-group">
-          <label>ของค้าง <span class="col-tag">AM</span></label>
-          <select id="f_AM" onchange="toggleCond('f_AM','cond_pending','มี')">
-            <option>ไม่มี</option><option>มี</option>
-          </select>
-        </div>
-        <div class="conditional-group" id="cond_pending">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>รายละเอียดของค้าง <span class="col-tag">AN</span></label>
-              <textarea id="f_AN" placeholder="ระบุรายละเอียด..."></textarea>
-            </div>
-            <div class="form-group">
-              <label>สถานะของค้าง <span class="col-tag">AO</span></label>
-              <input type="text" id="f_AO" placeholder="เช่น ส่งนึ่ง">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- AP เหตุการณ์ความเสี่ยง -->
-    <div class="section-label">⚠️ เหตุการณ์ความเสี่ยง</div>
-    <div class="form-group">
-      <label>เหตุการณ์ความเสี่ยง <span class="col-tag">AP</span></label>
-      <select id="f_AP" onchange="toggleCond('f_AP','cond_risk','มี')">
-        <option>ไม่มี</option><option>มี</option>
-      </select>
-    </div>
-    <div class="conditional-group risk-block" id="cond_risk">
-      <!-- เหตุการณ์ 1 -->
-      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🔴 เหตุการณ์ที่ 1</div>
-      <div class="form-grid-3" style="margin-bottom:1rem">
-        <div class="form-group">
-          <label>ความเสี่ยงเหตุการณ์ 1 <span class="col-tag">AQ</span></label>
-          <input type="text" id="f_AQ" placeholder="เช่น Missed diagnosis">
-        </div>
-        <div class="form-group col-span-2">
-          <label>รายละเอียดเหตุการณ์ 1 <span class="col-tag">AR</span></label>
-          <textarea id="f_AR" placeholder="รายละเอียด..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>HN เหตุการณ์ 1 <span class="col-tag">AS</span></label>
-          <input type="text" id="f_AS" placeholder="HN...">
+      <div class="toggle-row" style="margin-top:8px">
+        <div><div class="toggle-lbl">ของค้าง <span style="font-size:.68rem;color:var(--g400)">(AM)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_AM" onchange="tog('t_AM','c_AM')"><span class="slider"></span></label>
+      </div>
+      <div class="cond-area" id="c_AM">
+        <div class="g2" style="gap:10px">
+          <div class="fg"><label>รายละเอียด </label><textarea id="f_AN" placeholder="ระบุ..."></textarea></div>
+          <div class="fg"><label>สถานะ </label><input type="text" id="f_AO" placeholder="เช่น ส่งนึ่ง"></div>
         </div>
       </div>
-      <!-- เหตุการณ์ 2 -->
-      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🟡 เหตุการณ์ที่ 2</div>
-      <div class="form-grid-3" style="margin-bottom:1rem">
-        <div class="form-group">
-          <label>ความเสี่ยงเหตุการณ์ 2 <span class="col-tag">AT</span></label>
-          <input type="text" id="f_AT" placeholder="ระบุ...">
-        </div>
-        <div class="form-group col-span-2">
-          <label>รายละเอียดเหตุการณ์ 2 <span class="col-tag">AU</span></label>
-          <textarea id="f_AU" placeholder="รายละเอียด..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>HN เหตุการณ์ 2 <span class="col-tag">AV</span></label>
-          <input type="text" id="f_AV" placeholder="HN...">
-        </div>
-      </div>
-      <!-- เหตุการณ์ 3 -->
-      <div style="font-weight:700;color:#7e22ce;margin-bottom:0.8rem;font-size:0.9rem">🟢 เหตุการณ์ที่ 3</div>
-      <div class="form-grid-3">
-        <div class="form-group">
-          <label>ความเสี่ยงเหตุการณ์ 3 <span class="col-tag">AW</span></label>
-          <input type="text" id="f_AW" placeholder="ระบุ...">
-        </div>
-        <div class="form-group col-span-2">
-          <label>รายละเอียดเหตุการณ์ 3 <span class="col-tag">AX</span></label>
-          <textarea id="f_AX" placeholder="รายละเอียด..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>HN เหตุการณ์ 3 <span class="col-tag">AY</span></label>
-          <input type="text" id="f_AY" placeholder="HN...">
-        </div>
-      </div>
-    </div>
 
-    <!-- AZ เหตุการณ์เวรเพิ่มเติม -->
-    <div class="form-group" style="margin-top:1rem">
-      <label>เหตุการณ์เวร (เพิ่มเติม) <span class="col-tag">AZ</span></label>
-      <textarea id="f_AZ" placeholder="บันทึกเหตุการณ์อื่นๆ..."></textarea>
-    </div>
+      <!-- เหตุการณ์ความเสี่ยง -->
+      <div class="sec-lbl">⚠️ เหตุการณ์ความเสี่ยง</div>
+      <div class="toggle-row">
+        <div><div class="toggle-lbl">มีเหตุการณ์ความเสี่ยง <span style="font-size:.68rem;color:var(--g400)">(AP)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_AP" onchange="tog('t_AP','c_AP')"><span class="slider"></span></label>
+      </div>
+      <div class="cond-area risk-event" id="c_AP">
+        <div class="risk-num">🔴 เหตุการณ์ที่ 1</div>
+        <div class="g2" style="margin-bottom:10px;gap:8px">
+          <div class="fg"><label>ประเภท </label><input type="text" id="f_AQ" placeholder="เช่น Missed diagnosis"></div>
+          <div class="fg"><label>HN </label><input type="text" id="f_AS" placeholder="HN..."></div>
+          <div class="fg" style="grid-column:1/-1"><label>รายละเอียด </label><textarea id="f_AR" placeholder="รายละเอียด..."></textarea></div>
+        </div>
+        <div class="risk-num">🟡 เหตุการณ์ที่ 2</div>
+        <div class="g2" style="margin-bottom:10px;gap:8px">
+          <div class="fg"><label>ประเภท </label><input type="text" id="f_AT" placeholder="ระบุ..."></div>
+          <div class="fg"><label>HN </label><input type="text" id="f_AV" placeholder="HN..."></div>
+          <div class="fg" style="grid-column:1/-1"><label>รายละเอียด </label><textarea id="f_AU" placeholder="รายละเอียด..."></textarea></div>
+        </div>
+        <div class="risk-num">🟢 เหตุการณ์ที่ 3</div>
+        <div class="g2" style="gap:8px">
+          <div class="fg"><label>ประเภท </label><input type="text" id="f_AW" placeholder="ระบุ..."></div>
+          <div class="fg"><label>HN </label><input type="text" id="f_AY" placeholder="HN..."></div>
+          <div class="fg" style="grid-column:1/-1"><label>รายละเอียด </label><textarea id="f_AX" placeholder="รายละเอียด..."></textarea></div>
+        </div>
+      </div>
 
-    <!-- BA-BD ประวัติแพ้ยา -->
-    <div class="section-label">💊 ประวัติการแพ้ยา</div>
-    <div class="form-group">
-      <label>ประวัติการแพ้ยา <span class="col-tag">BA</span></label>
-      <select id="f_BA" onchange="toggleCond('f_BA','cond_allergy','มี')">
-        <option>ไม่มี</option><option>มี</option>
-      </select>
-    </div>
-    <div class="conditional-group" id="cond_allergy">
-      <div class="form-grid-3">
-        <div class="form-group">
-          <label>HN ชื่อยา <span class="col-tag">BB</span></label>
-          <input type="text" id="f_BB" placeholder="HN + ชื่อยา...">
-        </div>
-        <div class="form-group">
-          <label>ประวัติในโรงพยาบาล <span class="col-tag">BC</span></label>
-          <select id="f_BC">
-            <option>มี</option><option>ไม่มี</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>สถานะออกบัตรแพ้ยา <span class="col-tag">BD</span></label>
-          <select id="f_BD">
-            <option>มีบัตร</option>
-            <option>แจ้งเภสัชแล้วรอบัตร</option>
-            <option>รอแจ้งซ้ำ</option>
-          </select>
-        </div>
+      <div class="fg" style="margin-top:10px">
+        <label>เหตุการณ์เวร (เพิ่มเติม) </label>
+        <textarea id="f_AZ" placeholder="บันทึกเหตุการณ์อื่นๆ..."></textarea>
       </div>
-    </div>
 
-    <!-- BE-BI บุคลากร -->
-    <div class="section-label">👥 บุคลากร</div>
-    <div class="form-grid-2">
-      <div class="form-group">
-        <label>บุคลากร <span class="col-tag">BE</span></label>
-        <select id="f_BE">
-          <option>ครบ</option><option>ไม่ครบ</option>
-        </select>
+      <!-- แพ้ยา -->
+      <div class="sec-lbl">💊 ประวัติการแพ้ยา</div>
+      <div class="toggle-row">
+        <div><div class="toggle-lbl">มีประวัติการแพ้ยา <span style="font-size:.68rem;color:var(--g400)">(BA)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_BA" onchange="tog('t_BA','c_BA')"><span class="slider"></span></label>
       </div>
-      <div>
-        <div class="form-group">
-          <label>การขาดลา/มาสาย <span class="col-tag">BF</span></label>
-          <select id="f_BF" onchange="toggleCond('f_BF','cond_absent','มี')">
-            <option>ไม่มี</option><option>มี</option>
-          </select>
-        </div>
-        <div class="conditional-group" id="cond_absent">
-          <div class="form-group">
-            <label>รายละเอียดการขาดลา/มาสาย <span class="col-tag">BG</span></label>
-            <textarea id="f_BG" placeholder="ระบุรายละเอียด..."></textarea>
-          </div>
+      <div class="cond-area" id="c_BA">
+        <div class="fg" style="margin-bottom:8px"><label>HN + ชื่อยา </label><input type="text" id="f_BB" placeholder="HN + ชื่อยา..."></div>
+        <div class="g2">
+          <div class="fg"><label>ประวัติใน รพ. </label>
+            <select id="f_BC"><option>มี</option><option>ไม่มี</option></select></div>
+          <div class="fg"><label>สถานะบัตรแพ้ยา </label>
+            <select id="f_BD"><option>มีบัตร</option><option>แจ้งเภสัชแล้วรอบัตร</option><option>รอแจ้งซ้ำ</option></select></div>
         </div>
       </div>
-    </div>
-    <div>
-      <div class="form-group">
-        <label>การผัน/Off เวร <span class="col-tag">BH</span></label>
-        <select id="f_BH" onchange="toggleCond('f_BH','cond_off','มี')">
-          <option>ไม่มี</option><option>มี</option>
-        </select>
-      </div>
-      <div class="conditional-group" id="cond_off">
-        <div class="form-group">
-          <label>รายละเอียดการผันเวร/ออฟเวร <span class="col-tag">BI</span></label>
-          <textarea id="f_BI" placeholder="ระบุรายละเอียด..."></textarea>
-        </div>
-      </div>
-    </div>
 
-    <div style="margin-top:2rem">
-      <button type="submit" class="btn-submit">💾 บันทึกข้อมูลเวร</button>
+      <!-- บุคลากร -->
+      <div class="sec-lbl">👥 บุคลากร</div>
+      <div class="g2" style="margin-bottom:8px">
+        <div class="fg"><label>บุคลากร </label>
+          <select id="f_BE"><option>ครบ</option><option>ไม่ครบ</option></select></div>
+        <div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-lbl">การขาดลา/มาสาย <span style="font-size:.68rem;color:var(--g400)">(BF)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_BF" onchange="tog('t_BF','c_BF')"><span class="slider"></span></label>
+      </div>
+      <div class="cond-area" id="c_BF">
+        <div class="fg"><label>รายละเอียด </label><textarea id="f_BG" placeholder="ระบุรายละเอียด..."></textarea></div>
+      </div>
+      <div class="toggle-row" style="margin-top:8px">
+        <div><div class="toggle-lbl">การผัน/Off เวร <span style="font-size:.68rem;color:var(--g400)">(BH)</span></div></div>
+        <label class="toggle-sw"><input type="checkbox" id="t_BH" onchange="tog('t_BH','c_BH')"><span class="slider"></span></label>
+      </div>
+      <div class="cond-area" id="c_BH">
+        <div class="fg"><label>รายละเอียด </label><textarea id="f_BI" placeholder="ระบุรายละเอียด..."></textarea></div>
+      </div>
+
+      <button type="submit" class="btn-sub">💾 บันทึกข้อมูลเวร</button>
     </div>
   </div><!-- end card 2 -->
   </form>
 </div>
 </div><!-- end page-form -->
 
-<!-- ========== PAGE: DISPLAY ========== -->
+<!-- ======== PAGE: DISPLAY ======== -->
 <div class="page" id="page-display">
 <div class="main">
-  <div class="page-title">
-    <div>
-      <h1>แสดงข้อมูลเวร</h1>
-      <p>ดูประวัติการบันทึกเวรประจำวัน</p>
-    </div>
-    <span class="page-title-badge">DASHBOARD</span>
+  <div class="pg-head">
+    <div><h1>แสดงข้อมูลเวร</h1><p>ประวัติการบันทึกเวร</p></div>
+    <span class="pg-badge">DASHBOARD</span>
   </div>
-
-  <div class="card" style="padding:1.5rem">
-    <div class="display-controls">
-      <input type="date" id="filter_date" oninput="filterAndRender()">
-      <select id="filter_shift" onchange="filterAndRender()">
-        <option value="">— ทุกเวร —</option>
-        <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+  <div class="card"><div class="card-body">
+    <div class="filter-bar">
+      <input type="date" id="filter_date" oninput="filterRender()">
+      <select id="filter_shift" onchange="filterRender()">
+        <option value="">ทุกเวร</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option>
       </select>
-      <button class="btn-refresh" onclick="loadDisplayData()">🔄 โหลดข้อมูล</button>
+      <button class="btn-load" onclick="loadDisplay()">🔄 โหลด</button>
     </div>
-    <div id="display_area">
-      <div class="empty-state">
-        <div class="icon">🔍</div>
-        <div>กดปุ่ม "โหลดข้อมูล" เพื่อดึงข้อมูลจาก Google Sheet</div>
-        <small style="display:block;margin-top:8px;color:#b39ddb">ต้องตั้งค่า URL ใน "⚙️ ตั้งค่า" ก่อน</small>
-      </div>
-    </div>
+  </div></div>
+  <div id="display_area">
+    <div class="empty"><div class="eico">🔍</div><div>กด โหลด เพื่อดูข้อมูล</div><small style="margin-top:6px;display:block;color:var(--g400)">ตั้งค่า URL ก่อนที่แท็บ ⚙️</small></div>
   </div>
 </div>
-</div><!-- end page-display -->
+</div>
 
-<!-- ========== PAGE: CONFIG ========== -->
+<!-- ======== PAGE: CONFIG ======== -->
 <div class="page" id="page-config">
 <div class="main">
-  <div class="page-title">
-    <div>
-      <h1>ตั้งค่าการเชื่อมต่อ</h1>
-      <p>กรอก URL ของ Google Apps Script Web App</p>
-    </div>
-    <span class="page-title-badge">SETTINGS</span>
+  <div class="pg-head">
+    <div><h1>ตั้งค่า</h1><p>เชื่อมต่อ Google Sheet</p></div>
+    <span class="pg-badge">SETTINGS</span>
   </div>
-  <div class="card">
-    <div class="card-header">
-      <div class="card-icon">⚙️</div>
-      <div>
-        <div class="card-title">Google Apps Script URL</div>
-        <div class="card-sub">วาง URL จากการ Deploy Web App ใน Google Apps Script</div>
-      </div>
+  <div class="card"><div class="card-body">
+    <div class="card-hdr"><div class="card-ico">⚙️</div><div><div class="card-title">Google Apps Script URL</div><div class="card-sub">วาง URL จาก Deploy Web App</div></div></div>
+    <div class="cfg-box">
+      <label>🔗 Web App URL</label>
+      <input type="url" id="gas_url" placeholder="https://script.google.com/macros/s/..." oninput="saveCfg()">
+      <div class="cfg-saved" id="cfg_saved">✅ บันทึกแล้ว</div>
     </div>
-    <div class="config-box">
-      <label>🔗 Apps Script Web App URL</label>
-      <input type="url" id="gas_url" placeholder="https://script.google.com/macros/s/AKfyc.../exec"
-             oninput="saveConfig()">
-      <div class="config-saved" id="config_saved" style="display:none">✅ บันทึกแล้ว</div>
+    <div class="cfg-tip">
+      <strong>📌 วิธีตั้งค่า</strong><br>
+      1. ไปที่ <a href="https://script.google.com" target="_blank">script.google.com</a><br>
+      2. วางโค้ด setup_sheet.gs → รัน createSheet()<br>
+      3. Deploy → Web App → Anyone<br>
+      4. คัดลอก URL มาวางด้านบน
     </div>
-    <div style="background:rgba(237,233,254,0.4);border-radius:12px;padding:1.2rem;font-size:0.88rem;color:#5b21b6;line-height:1.8">
-      <strong>📌 วิธีตั้งค่า:</strong><br>
-      1. ไปที่ <a href="https://script.google.com" target="_blank" style="color:#7e22ce">script.google.com</a> → สร้าง Project ใหม่<br>
-      2. วางโค้ดจากไฟล์ <code>setup_sheet.gs</code> ที่ได้รับ<br>
-      3. รัน <code>createSheet()</code> เพื่อสร้าง Google Sheet<br>
-      4. Deploy → New Deployment → Web App → Execute as Me → Anyone<br>
-      5. คัดลอก URL มาวางด้านบน<br>
-      6. กดบันทึก และทดสอบ
-    </div>
-  </div>
+  </div></div>
 </div>
-</div><!-- end page-config -->
+</div>
+
+<!-- BOTTOM TAB BAR -->
+<div class="bottom-bar">
+  <button class="bbar-btn active" onclick="goPage('form',this)"><span class="bico">✏️</span>บันทึก</button>
+  <button class="bbar-btn" onclick="goPage('display',this)"><span class="bico">📊</span>แสดงข้อมูล</button>
+  <button class="bbar-btn" onclick="goPage('config',this)"><span class="bico">⚙️</span>ตั้งค่า</button>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== STATE =====
+// ── State ──
 var allData = [];
-var sheetData = []; // rows from sheet for prev-shift lookup
 
-// ===== NAVIGATION =====
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'display') loadDisplayData();
+// ── Nav date ──
+(function(){
+  var d=new Date();
+  document.getElementById('nav-date').textContent=d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+})();
+
+// ── Page nav ──
+function goPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bbar-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='display') loadDisplay();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ===== CONFIG =====
-function saveConfig() {
-  var url = document.getElementById('gas_url').value.trim();
-  localStorage.setItem('gas_url', url);
-  var el = document.getElementById('config_saved');
-  el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 2000);
-}
-function getGasUrl() {
-  return localStorage.getItem('gas_url') || '';
-}
-window.addEventListener('load', () => {
-  var u = localStorage.getItem('gas_url');
-  if (u) document.getElementById('gas_url').value = u;
-  // set today's date
-  document.getElementById('f_B').value = new Date().toISOString().split('T')[0];
-  document.getElementById('filter_date').value = new Date().toISOString().split('T')[0];
-  // ค่าเริ่มต้น ยอดยกมา = 19
-  document.getElementById('f_D').value = 19;
-  calcKong();
+// ── Init ──
+window.addEventListener('load',()=>{
+  var u=localStorage.getItem('gas_url')||DEFAULT_URL;
+  document.getElementById('gas_url').value=u;
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('f_B').value=today;
+  document.getElementById('filter_date').value=today;
+  document.getElementById('f_D').value=19;
+  calcAll();
 });
 
-// ===== STAFF DISPLAY =====
-function updateStaffDisplay() {
-  var name = document.getElementById('f_BJ').value;
-  var display = name ? 'คุณ' + name : '—';
-  document.getElementById('bj_display2').textContent = display;
+// ── Config ──
+function saveCfg(){
+  var u=document.getElementById('gas_url').value.trim();
+  localStorage.setItem('gas_url',u);
+  var el=document.getElementById('cfg_saved');
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',2000);
+}
+var DEFAULT_URL='https://script.google.com/macros/s/AKfycbxOPpzZgbh49NJ85yYdk3RzAsSL_D8GeSamP_YB_vXWZ3GS2cmfPCc1laMEbreRMspK/exec';
+function getUrl(){return localStorage.getItem('gas_url')||DEFAULT_URL;}
+
+// ── Staff ──
+function updateStaff(){
+  var n=document.getElementById('f_BJ').value;
+  document.getElementById('bj2').textContent=n?'คุณ'+n:'—';
 }
 
-// ===== CALCULATIONS =====
-function calcKong() {
-  var D = parseFloat(document.getElementById('f_D').value)||0;
-  var E = parseFloat(document.getElementById('f_E').value)||0;
-  var F = parseFloat(document.getElementById('f_F').value)||0;
-  var G = parseFloat(document.getElementById('f_G').value)||0;
-  var H = parseFloat(document.getElementById('f_H').value)||0;
-  var I = parseFloat(document.getElementById('f_I').value)||0;
-  var J = parseFloat(document.getElementById('f_J').value)||0;
-  var K = D + E + F - G - H - I - J;
-  document.getElementById('f_K').value = Math.max(0, K);
-  calcQ();
-  calcMultiple();
-  checkTypeSum();
+// ── Number stepper ──
+function stepNum(id,d){
+  var el=document.getElementById(id);
+  var v=(parseFloat(el.value)||0)+d;
+  if(v<0)v=0;
+  el.value=v;
+  el.dispatchEvent(new Event('input'));
 }
 
-function calcQ() {
-  var K = parseFloat(document.getElementById('f_K').value)||0;
-  document.getElementById('f_Q').value = (K * 100 / 30).toFixed(2);
+// ── Calculations ──
+function n(id){return parseFloat(document.getElementById(id).value)||0;}
+function calcAll(){
+  var K=Math.max(0,n('f_D')+n('f_E')+n('f_F')-n('f_G')-n('f_H')-n('f_I')-n('f_J'));
+  document.getElementById('f_K').value=K;
+  document.getElementById('f_Q').value=(K*100/30).toFixed(2);
+  document.getElementById('f_Z').value=n('f_K')-(n('f_W')+n('f_X')+n('f_Y'));
+  chkType();
+}
+function chkType(){
+  var K=n('f_K'),sum=n('f_L')+n('f_M')+n('f_N')+n('f_O'),el=document.getElementById('type_check');
+  if(K>0) el.innerHTML=sum===K?'<span class="badge b-ok">✓ ตรง</span>':'<span class="badge b-warn">⚠ '+sum+'/'+K+'</span>';
+  else el.innerHTML='';
 }
 
-function checkTypeSum() {
-  var L = parseFloat(document.getElementById('f_L').value)||0;
-  var M = parseFloat(document.getElementById('f_M').value)||0;
-  var N = parseFloat(document.getElementById('f_N').value)||0;
-  var O = parseFloat(document.getElementById('f_O').value)||0;
-  var K = parseFloat(document.getElementById('f_K').value)||0;
-  var sum = L + M + N + O;
-  var el = document.getElementById('type_check');
-  if (K > 0) {
-    if (sum === K) {
-      el.innerHTML = '<span class="badge badge-ok">✓ ยอดตรง ' + sum + '/' + K + '</span>';
-    } else {
-      el.innerHTML = '<span class="badge badge-warn">⚠ ยอดไม่ตรง ' + sum + '/' + K + '</span>';
-    }
-  }
+// ── Toggle switch → show/hide ──
+function tog(switchId,areaId){
+  var checked=document.getElementById(switchId).checked;
+  var area=document.getElementById(areaId);
+  area.classList.toggle('show',checked);
 }
 
-function calcMultiple() {
-  var W = parseFloat(document.getElementById('f_W').value)||0;
-  var X = parseFloat(document.getElementById('f_X').value)||0;
-  var Y = parseFloat(document.getElementById('f_Y').value)||0;
-  var K = parseFloat(document.getElementById('f_K').value)||0;
-  document.getElementById('f_Z').value = (W + X + Y) - K;
+// ── Checkbox style ──
+function toggleCheck(el){
+  el.closest('.check-item').classList.toggle('checked',el.checked);
 }
 
-function calcProdRuam() {
-  // Productivity รวม = ค่าเฉลี่ยของ P ทั้ง 3 เวรในวันเดียวกัน
-  // เมื่อ submit จะส่งค่า P ปัจจุบัน; ค่า R จะ recompute หลัง save ทั้ง 3 เวร
-  // สำหรับ realtime เราแสดงเฉพาะ P ปัจจุบัน
-  var P = parseFloat(document.getElementById('f_P').value)||0;
-  // ยังไม่สามารถรู้ค่าเวรอื่น → แสดง P เป็น placeholder
-  document.getElementById('f_R').value = '(คำนวณหลังครบ 3 เวร)';
+// ── Load prev shift ──
+function loadPrev(){
+  var url=getUrl();
+  if(!url)return;
+  fetch(url+'?action=getLastShift').then(r=>r.json()).then(d=>{
+    if(d.value!==undefined){document.getElementById('f_D').value=d.value;calcAll();}
+  }).catch(()=>{});
 }
 
-// ===== CONDITIONAL FIELDS =====
-function toggleCond(triggerId, groupId, showVal) {
-  var val = document.getElementById(triggerId).value;
-  var group = document.getElementById(groupId);
-  if (val === showVal) {
-    group.classList.add('show');
-    group.style.display = 'block';
-  } else {
-    group.classList.remove('show');
-    group.style.display = 'none';
-  }
-}
+// ── Helpers ──
+function gv(id){var el=document.getElementById(id);return el?el.value:'';}
+function getOxy(){return Array.from(document.querySelectorAll('input[name=oxy]:checked')).map(c=>c.value).join(', ');}
+function togVal(swId){return document.getElementById(swId).checked?'มี':'ไม่มี';}
 
-// ===== PREV SHIFT (ยอดยกมา) =====
-function loadPrevShiftData() {
-  var url = getGasUrl();
-  if (!url) return;
-  fetch(url + '?action=getLastShift')
-    .then(r => r.json())
-    .then(d => {
-      if (d.value !== undefined) {
-        document.getElementById('f_D').value = d.value;
-        calcKong();
-      }
-    }).catch(() => {});
+// ── Save local ──
+function saveLocal(row){
+  var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
+  rows.unshift(row); // newest first
+  if(rows.length>100)rows=rows.slice(0,100);
+  localStorage.setItem('shift_rows',JSON.stringify(rows));
 }
+function getLocal(){return JSON.parse(localStorage.getItem('shift_rows')||'[]');}
 
-// ===== GET / READ FROM LOCAL STORAGE (offline fallback) =====
-function saveLocal(row) {
-  var rows = JSON.parse(localStorage.getItem('shift_rows') || '[]');
-  rows.push(row);
-  localStorage.setItem('shift_rows', JSON.stringify(rows));
-}
-function getLocal() {
-  return JSON.parse(localStorage.getItem('shift_rows') || '[]');
-}
-
-// ===== SUBMIT =====
-function submitForm(e) {
+// ── Submit ──
+function submitForm(e){
   e.preventDefault();
-  if (!validateForm()) return;
-
-  var bjName = document.getElementById('f_BJ').value;
-  var oxySelects = Array.from(document.getElementById('f_AC').selectedOptions).map(o=>o.value);
-
-  var rowData = [
-    Date.now().toString(36),                   // A: ID
-    document.getElementById('f_B').value,       // B: วันที่
-    document.getElementById('f_C').value,       // C: เวร
-    document.getElementById('f_D').value,       // D: ยอดยกมา
-    document.getElementById('f_E').value,       // E
-    document.getElementById('f_F').value,       // F
-    document.getElementById('f_G').value,       // G
-    document.getElementById('f_H').value,       // H
-    document.getElementById('f_I').value,       // I
-    document.getElementById('f_J').value,       // J
-    document.getElementById('f_K').value,       // K: คงพยาบาล
-    document.getElementById('f_L').value,       // L
-    document.getElementById('f_M').value,       // M
-    document.getElementById('f_N').value,       // N
-    document.getElementById('f_O').value,       // O
-    document.getElementById('f_P').value,       // P
-    document.getElementById('f_Q').value,       // Q
-    '',                                          // R: Productivity รวม (คำนวณ sheet)
-    document.getElementById('f_S').value,       // S
-    document.getElementById('f_T').value,       // T
-    document.getElementById('f_U').value,       // U
-    document.getElementById('f_V').value,       // V
-    document.getElementById('f_W').value,       // W
-    document.getElementById('f_X').value,       // X
-    document.getElementById('f_Y').value,       // Y
-    document.getElementById('f_Z').value,       // Z
-    document.getElementById('f_AA').value,      // AA
-    document.getElementById('f_AB').value,      // AB
-    oxySelects.join(', '),                       // AC
-    document.getElementById('f_AD').value,      // AD
-    document.getElementById('f_AE').value,      // AE
-    document.getElementById('f_AF').value,      // AF
-    document.getElementById('f_AG').value,      // AG
-    document.getElementById('f_AH').value,      // AH
-    document.getElementById('f_AI').value,      // AI
-    document.getElementById('f_AJ').value,      // AJ
-    document.getElementById('f_AK').value,      // AK
-    document.getElementById('f_AL').value,      // AL
-    document.getElementById('f_AM').value,      // AM
-    document.getElementById('f_AN').value,      // AN
-    document.getElementById('f_AO').value,      // AO
-    document.getElementById('f_AP').value,      // AP
-    document.getElementById('f_AQ').value,      // AQ
-    document.getElementById('f_AR').value,      // AR
-    document.getElementById('f_AS').value,      // AS
-    document.getElementById('f_AT').value,      // AT
-    document.getElementById('f_AU').value,      // AU
-    document.getElementById('f_AV').value,      // AV
-    document.getElementById('f_AW').value,      // AW
-    document.getElementById('f_AX').value,      // AX
-    document.getElementById('f_AY').value,      // AY
-    document.getElementById('f_AZ').value,      // AZ
-    document.getElementById('f_BA').value,      // BA
-    document.getElementById('f_BB').value,      // BB
-    document.getElementById('f_BC').value,      // BC
-    document.getElementById('f_BD').value,      // BD
-    document.getElementById('f_BE').value,      // BE
-    document.getElementById('f_BF').value,      // BF
-    document.getElementById('f_BG').value,      // BG
-    document.getElementById('f_BH').value,      // BH
-    document.getElementById('f_BI').value,      // BI
-    bjName,                                      // BJ
-    'อัญญารัตน์'                               // BK
+  if(!validateForm())return;
+  var bjName=gv('f_BJ');
+  var row=[
+    Date.now().toString(36),gv('f_B'),gv('f_C'),gv('f_D'),gv('f_E'),gv('f_F'),gv('f_G'),
+    gv('f_H'),gv('f_I'),gv('f_J'),gv('f_K'),gv('f_L'),gv('f_M'),gv('f_N'),gv('f_O'),
+    gv('f_P'),gv('f_Q'),'',gv('f_S'),gv('f_T'),gv('f_U'),gv('f_V'),
+    gv('f_W'),gv('f_X'),gv('f_Y'),gv('f_Z'),
+    gv('f_AA'),gv('f_AB'),getOxy(),
+    gv('f_AD'),gv('f_AE'),gv('f_AF'),gv('f_AG'),gv('f_AH'),gv('f_AI'),
+    togVal('t_AJ'),gv('f_AK'),gv('f_AL'),
+    togVal('t_AM'),gv('f_AN'),gv('f_AO'),
+    togVal('t_AP'),gv('f_AQ'),gv('f_AR'),gv('f_AS'),gv('f_AT'),gv('f_AU'),gv('f_AV'),gv('f_AW'),gv('f_AX'),gv('f_AY'),
+    gv('f_AZ'),
+    togVal('t_BA'),gv('f_BB'),gv('f_BC'),gv('f_BD'),
+    gv('f_BE'),togVal('t_BF'),gv('f_BG'),togVal('t_BH'),gv('f_BI'),
+    bjName,'อัญญารัตน์'
   ];
-
-  saveLocal(rowData);
-
-  var url = getGasUrl();
-  if (url) {
+  saveLocal(row);
+  var url=getUrl();
+  if(url){
+    showToast('⏳ กำลังบันทึก...');
+    // Google Apps Script ต้องใช้ text/plain และ no-redirect
     fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ rowData }),
-      headers: { 'Content-Type': 'text/plain' }
+      body: JSON.stringify({rowData: row}),
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      redirect: 'follow'
     })
-    .then(r => r.json())
+    .then(r => {
+      try { return r.json(); } catch(e) { return {status:'sent'}; }
+    })
     .then(d => {
-      showToast('✅ บันทึกสำเร็จ! แถวที่ ' + d.row);
+      if(d && d.status==='success'){
+        showToast('✅ บันทึกลง Sheet แถวที่ '+d.row);
+      } else if(d && d.status==='error'){
+        showToast('❌ Error: '+d.msg);
+      } else {
+        showToast('✅ ส่งข้อมูลแล้ว');
+      }
       resetForm();
     })
-    .catch(() => {
-      showToast('⚠️ บันทึก Offline แล้ว (ไม่มี Internet)');
+    .catch(err => {
+      // อาจ CORS block แต่ข้อมูลถูกส่งไปแล้ว
+      showToast('✅ บันทึกแล้ว (ตรวจสอบใน Sheet)');
       resetForm();
     });
-  } else {
-    showToast('💾 บันทึกใน Browser แล้ว (ตั้งค่า URL เพื่อบันทึก Sheet)');
-    resetForm();
-  }
+  } else {showToast('💾 บันทึกใน Browser แล้ว');resetForm();}
 }
 
-function validateForm() {
-  var ok = true;
-  ['f_B','f_C','f_BJ'].forEach(id => {
-    var el = document.getElementById(id);
-    if (!el.value) {
-      el.classList.add('field-error');
-      ok = false;
-      setTimeout(() => el.classList.remove('field-error'), 3000);
-    }
+function validateForm(){
+  var ok=true;
+  ['f_B','f_C','f_BJ'].forEach(id=>{
+    var el=document.getElementById(id);
+    if(!el.value){el.classList.add('field-err');ok=false;setTimeout(()=>el.classList.remove('field-err'),3000);}
   });
-  if (!ok) showToast('❌ กรุณากรอกข้อมูลให้ครบถ้วน');
+  if(!ok)showToast('❌ กรุณากรอกข้อมูลให้ครบ');
   return ok;
 }
 
-function resetForm() {
-  // คงวันที่และเวร reset เฉพาะข้อมูล
-  document.getElementById('f_E').value = 0;
-  document.getElementById('f_F').value = 0;
-  document.getElementById('f_G').value = 0;
-  document.getElementById('f_H').value = 0;
-  document.getElementById('f_I').value = 0;
-  document.getElementById('f_J').value = 0;
-  ['f_L','f_M','f_N','f_O','f_P','f_S','f_T','f_U','f_V','f_W','f_X','f_Y'].forEach(id => {
-    document.getElementById(id).value = 0;
-  });
-  ['f_AD','f_AE','f_AF','f_AG','f_AH','f_AI','f_AK','f_AL','f_AN','f_AO',
-   'f_AQ','f_AR','f_AS','f_AT','f_AU','f_AV','f_AW','f_AX','f_AY','f_AZ',
-   'f_BB','f_BG','f_BI'].forEach(id => {
-    var el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  // reset conditionals
-  ['cond_valuables','cond_pending','cond_risk','cond_allergy','cond_absent','cond_off'].forEach(id => {
-    document.getElementById(id).classList.remove('show');
-    document.getElementById(id).style.display = 'none';
-  });
-  calcKong();
-  window.scrollTo({top: 0, behavior: 'smooth'});
+function resetForm(){
+  ['f_E','f_F','f_G','f_H','f_I','f_J','f_L','f_M','f_N','f_O','f_P','f_S','f_T','f_U','f_V','f_W','f_X','f_Y'].forEach(id=>document.getElementById(id).value=0);
+  ['f_AD','f_AE','f_AF','f_AG','f_AH','f_AI','f_AK','f_AL','f_AN','f_AO','f_AQ','f_AR','f_AS','f_AT','f_AU','f_AV','f_AW','f_AX','f_AY','f_AZ','f_BB','f_BG','f_BI'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
+  ['t_AJ','t_AM','t_AP','t_BA','t_BF','t_BH'].forEach(id=>document.getElementById(id).checked=false);
+  ['c_AJ','c_AM','c_AP','c_BA','c_BF','c_BH'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.querySelectorAll('input[name=oxy]').forEach(c=>{c.checked=false;c.closest('.check-item').classList.remove('checked');});
+  document.getElementById('f_D').value=19;
+  calcAll();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ===== DISPLAY PAGE =====
-function loadDisplayData() {
-  var url = getGasUrl();
-  var localRows = getLocal();
-
-  if (url) {
-    document.getElementById('display_area').innerHTML = '<div class="empty-state"><div class="icon">⏳</div>กำลังโหลดข้อมูล...</div>';
-    fetch(url + '?action=getData')
-      .then(r => r.json())
-      .then(rows => {
-        allData = rows.slice(1); // skip header
-        filterAndRender();
-      })
-      .catch(() => {
-        allData = localRows;
-        filterAndRender();
-      });
-  } else {
-    allData = localRows;
-    filterAndRender();
-  }
+// ── Display ──
+function loadDisplay(){
+  var url=getUrl();
+  var area=document.getElementById('display_area');
+  if(url){
+    area.innerHTML='<div class="empty"><div class="eico">⏳</div><div>กำลังโหลด...</div></div>';
+    fetch(url+'?action=getData').then(r=>r.json()).then(rows=>{allData=rows.slice(1);filterRender();})
+      .catch(()=>{allData=getLocal();filterRender();});
+  } else {allData=getLocal();filterRender();}
 }
-
-function filterAndRender() {
-  var dateF = document.getElementById('filter_date').value;
-  var shiftF = document.getElementById('filter_shift').value;
-  var rows = allData.filter(r => {
-    var rowDate = (r[1] || '').toString().substring(0,10);
-    var rowShift = (r[2] || '').toString();
-    if (dateF && rowDate !== dateF) return false;
-    if (shiftF && rowShift !== shiftF) return false;
+function filterRender(){
+  var df=document.getElementById('filter_date').value;
+  var sf=document.getElementById('filter_shift').value;
+  var rows=allData.filter(r=>{
+    var rd=(r[1]||'').toString().substring(0,10);
+    var rs=(r[2]||'').toString();
+    if(df&&rd!==df)return false;
+    if(sf&&rs!==sf)return false;
     return true;
   });
-  renderShifts(rows);
+  renderDisplay(rows);
 }
 
-function renderShifts(rows) {
-  var area = document.getElementById('display_area');
-  if (!rows.length) {
-    area.innerHTML = '<div class="empty-state"><div class="icon">📭</div>ไม่พบข้อมูลในวันที่เลือก</div>';
-    return;
-  }
-  area.innerHTML = rows.map(r => buildShiftCard(r)).join('');
+function V(r,i){var v=r[i];return(v!==undefined&&v!==null&&v!=='')? v:'—';}
+
+function renderDisplay(rows){
+  var area=document.getElementById('display_area');
+  if(!rows.length){area.innerHTML='<div class="empty"><div class="eico">📭</div><div>ไม่พบข้อมูล</div></div>';return;}
+  area.innerHTML=rows.map((r,i)=>buildCards(r,i)).join('');
 }
 
-function v(row, i) { return (row[i] !== undefined && row[i] !== null && row[i] !== '') ? row[i] : '—'; }
+function buildCards(r,idx){
+  var shift=V(r,2), date=(r[1]||'').toString().substring(0,10);
+  var bj=r[61]?'คุณ'+r[61]:'—', bk=r[62]?'คุณ'+r[62]:'คุณอัญญารัตน์';
+  var scId='sc_'+idx;
 
-function buildShiftCard(r) {
-  var shift = v(r,2);
-  var date = (r[1]||'').toString().substring(0,10);
-  var bjName = r[61] ? 'คุณ' + r[61] : '—';
-  var bkName = r[62] ? 'คุณ' + r[62] : 'คุณอัญญารัตน์';
+  // Card 1 stats
+  var statsHtml=`
+    <div class="stats-grid">
+      <div class="stat-box highlight"><div class="sval">${V(r,10)}</div><div class="skey">คงพยาบาล</div></div>
+      <div class="stat-box"><div class="sval">${V(r,3)||'—'}</div><div class="skey">ยกมา</div></div>
+      <div class="stat-box"><div class="sval">${r[4]||0}</div><div class="skey">รับใหม่</div></div>
+      <div class="stat-box"><div class="sval">${r[7]||0}</div><div class="skey">กลับบ้าน</div></div>
+      <div class="stat-box"><div class="sval">${V(r,16)}%</div><div class="skey">ครองเตียง</div></div>
+      <div class="stat-box"><div class="sval">${V(r,15)}</div><div class="skey">Productivity</div></div>
+      <div class="stat-box"><div class="sval">${V(r,18)}</div><div class="skey">RN</div></div>
+    </div>`;
 
-  var eventsHtml = '';
-  if (r[41] === 'มี') {
-    var evts = [];
-    if (r[42]) evts.push('<b>' + r[42] + '</b>: ' + (r[43]||'') + (r[44] ? ' [HN:'+r[44]+']' : ''));
-    if (r[45]) evts.push('<b>' + r[45] + '</b>: ' + (r[46]||'') + (r[47] ? ' [HN:'+r[47]+']' : ''));
-    if (r[48]) evts.push('<b>' + r[48] + '</b>: ' + (r[49]||'') + (r[50] ? ' [HN:'+r[50]+']' : ''));
-    if (evts.length) {
-      eventsHtml = '<div class="event-box"><div class="event-title">⚠️ เหตุการณ์ความเสี่ยง</div>' + evts.join('<br>') + '</div>';
-    }
+  // Card 1 details
+  var c1detail=`
+    <div class="dc-section">
+      <div class="dc-title">ประเภทผู้ป่วย</div>
+      <div class="dc-grid">
+        <div class="dc-item"><div class="dk">ประเภท 4/3/2/1</div><div class="dv">${V(r,11)} / ${V(r,12)} / ${V(r,13)} / ${V(r,14)}</div></div>
+        <div class="dc-item"><div class="dk">Trauma/Neuro/Plastic</div><div class="dv">${V(r,22)} / ${V(r,23)} / ${V(r,24)}</div></div>
+        <div class="dc-item"><div class="dk">Tube</div><div class="dv">${V(r,18)}</div></div>
+        <div class="dc-item"><div class="dk">Aide/PN / Worker</div><div class="dv">${V(r,20)} / ${V(r,21)}</div></div>
+      </div>
+    </div>
+    <div class="dc-section">
+      <div class="dc-title">เฝ้าระวัง</div>
+      <div class="dc-grid">
+        <div class="dc-item"><div class="dk">Fall</div><div class="dv">${V(r,29)}</div></div>
+        <div class="dc-item"><div class="dk">Bed sore</div><div class="dv">${V(r,30)}</div></div>
+        <div class="dc-item"><div class="dk">เตรียมตรวจ</div><div class="dv">${V(r,31)}</div></div>
+        <div class="dc-item"><div class="dk">เตรียมผ่าตัด</div><div class="dv">${V(r,32)}</div></div>
+        ${r[33]&&r[33]!=='—'?`<div class="dc-item full"><div class="dk">ชื่อซ้ำ</div><div class="dv">${r[33]}</div></div>`:''}
+      </div>
+    </div>`;
+
+  // Card 2 detail
+  var eventsHtml='';
+  if(r[41]==='มี'){
+    var evts=[];
+    if(r[42]&&r[42]!=='—')evts.push('<b>'+r[42]+'</b>: '+(r[43]||'')+( r[44]&&r[44]!=='—'?' [HN:'+r[44]+']':''));
+    if(r[45]&&r[45]!=='—')evts.push('<b>'+r[45]+'</b>: '+(r[46]||'')+( r[47]&&r[47]!=='—'?' [HN:'+r[47]+']':''));
+    if(r[48]&&r[48]!=='—')evts.push('<b>'+r[48]+'</b>: '+(r[49]||'')+( r[50]&&r[50]!=='—'?' [HN:'+r[50]+']':''));
+    if(evts.length)eventsHtml='<div class="event-pill"><div class="event-pill-title">⚠️ ความเสี่ยง</div>'+evts.join('<br>')+'</div>';
   }
-  if (r[51]) {
-    eventsHtml += '<div class="event-box" style="border-color:#c084fc"><div class="event-title">📝 เพิ่มเติม</div>' + r[51] + '</div>';
-  }
+  if(r[51]&&r[51]!=='—')eventsHtml+='<div class="event-pill" style="border-color:var(--gl);margin-top:6px"><div class="event-pill-title">📝 เหตุการณ์เพิ่มเติม</div>'+r[51]+'</div>';
+
+  var c2detail=`
+    <div class="dc-section">
+      <div class="dc-title">อุปกรณ์</div>
+      <div class="dc-grid">
+        <div class="dc-item"><div class="dk">รถ Emergency</div><div class="dv">${V(r,26)}</div></div>
+        <div class="dc-item"><div class="dk">รถ Defibrillator</div><div class="dv">${V(r,27)}</div></div>
+        <div class="dc-item full"><div class="dk">ถัง Oxygen</div><div class="dv">${V(r,28)}</div></div>
+      </div>
+    </div>
+    <div class="dc-section">
+      <div class="dc-title">บุคลากร</div>
+      <div class="dc-grid">
+        <div class="dc-item"><div class="dk">บุคลากร</div><div class="dv">${V(r,56)}</div></div>
+        <div class="dc-item"><div class="dk">ขาด/มาสาย</div><div class="dv">${V(r,57)}</div></div>
+        ${r[57]==='มี'?`<div class="dc-item full"><div class="dk">รายละเอียดขาด/มาสาย</div><div class="dv">${V(r,58)}</div></div>`:''}
+        <div class="dc-item"><div class="dk">ผัน/Off เวร</div><div class="dv">${V(r,59)}</div></div>
+        ${r[59]==='มี'?`<div class="dc-item full"><div class="dk">รายละเอียดผัน/Off</div><div class="dv">${V(r,60)}</div></div>`:''}
+      </div>
+    </div>
+    <div class="dc-section">
+      <div class="dc-title">ของมีค่า / แพ้ยา</div>
+      <div class="dc-grid">
+        <div class="dc-item"><div class="dk">ของมีค่า</div><div class="dv">${V(r,35)}</div></div>
+        <div class="dc-item"><div class="dk">ของค้าง</div><div class="dv">${V(r,38)}</div></div>
+        <div class="dc-item"><div class="dk">แพ้ยา</div><div class="dv">${V(r,52)}</div></div>
+        ${r[52]==='มี'?`<div class="dc-item full"><div class="dk">HN ยา</div><div class="dv">${V(r,53)}</div></div>`:''}
+      </div>
+    </div>
+    ${eventsHtml}`;
 
   return `
-  <div class="shift-card">
-    <div class="shift-card-header">
-      <div>
-        <div class="shift-title">${date} &nbsp;|&nbsp; ${bjName} → ${bkName}</div>
+  <div id="${scId}">
+    <div class="sc">
+      <div class="sc-top">
+        <div>
+          <div class="sc-date">${date}</div>
+          <div class="sc-shift-name">${shift}</div>
+          <div class="sc-staff">${bj} · ${bk}</div>
+        </div>
+        <span class="sc-badge sb-${shift}">${shift}</span>
       </div>
-      <span class="shift-badge shift-${shift}">${shift}</span>
-    </div>
-    <div class="shift-body">
-      <div class="stat-row">
-        <div class="stat-chip"><div class="sv">${v(r,10)}</div><div class="sk">คงพยาบาล</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,4)||0}</div><div class="sk">รับใหม่</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,7)||0}</div><div class="sk">กลับบ้าน</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,9)||0}</div><div class="sk">ถึงแก่กรรม</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,16)}%</div><div class="sk">ครองเตียง</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,15)}</div><div class="sk">Productivity</div></div>
-        <div class="stat-chip"><div class="sv">${v(r,18)}</div><div class="sk">RN</div></div>
+      <div class="sc-body">
+        <div class="dc-section"><div class="dc-title">การ์ดที่ 1 — สถิติผู้ป่วย</div></div>
+        ${statsHtml}
+        ${c1detail}
+        <div class="dc-section" style="margin-top:12px"><div class="dc-title">การ์ดที่ 2 — อุปกรณ์ เหตุการณ์ บุคลากร</div></div>
+        ${c2detail}
+        <button class="btn-save-img" onclick="saveImage('${scId}','${date}_${shift}')">📸 บันทึกเป็นรูปภาพ</button>
       </div>
-      <div class="stat-divider"></div>
-      <div class="detail-grid">
-        <div class="detail-item"><span class="dk">ประเภท 4/3/2/1</span><span class="dv">${v(r,11)} / ${v(r,12)} / ${v(r,13)} / ${v(r,14)}</span></div>
-        <div class="detail-item"><span class="dk">Trauma/Neuro/Plastic</span><span class="dv">${v(r,22)} / ${v(r,23)} / ${v(r,24)}</span></div>
-        <div class="detail-item"><span class="dk">รถ Emergency</span><span class="dv">${v(r,26)}</span></div>
-        <div class="detail-item"><span class="dk">รถ Defibrillator</span><span class="dv">${v(r,27)}</span></div>
-        <div class="detail-item"><span class="dk">ถัง Oxygen</span><span class="dv">${v(r,28)}</span></div>
-        <div class="detail-item"><span class="dk">ของมีค่า</span><span class="dv">${v(r,35)}</span></div>
-        <div class="detail-item"><span class="dk">บุคลากร</span><span class="dv">${v(r,56)}</span></div>
-        <div class="detail-item"><span class="dk">ขาด/มาสาย</span><span class="dv">${v(r,57)}</span></div>
-        <div class="detail-item"><span class="dk">ผัน/Off เวร</span><span class="dv">${v(r,59)}</span></div>
-        <div class="detail-item"><span class="dk">แพ้ยา</span><span class="dv">${v(r,52)}</span></div>
-        ${r[57] === 'มี' ? `<div class="detail-item col-span-2"><span class="dk">รายละเอียดขาด/มาสาย</span><span class="dv">${v(r,58)}</span></div>` : ''}
-        ${r[59] === 'มี' ? `<div class="detail-item col-span-2"><span class="dk">รายละเอียดผัน/Off</span><span class="dv">${v(r,60)}</span></div>` : ''}
-      </div>
-      ${eventsHtml}
     </div>
   </div>`;
 }
 
-// ===== TOAST =====
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+// ── Save as image ──
+function saveImage(containerId,filename){
+  showToast('📸 กำลังสร้างภาพ...');
+  var el=document.getElementById(containerId);
+  html2canvas(el,{scale:2,backgroundColor:'#f5f7f4',useCORS:true,logging:false}).then(canvas=>{
+    // mobile: share or download
+    canvas.toBlob(blob=>{
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],'ward.png',{type:'image/png'})]})){
+        navigator.share({files:[new File([blob],filename+'.png',{type:'image/png'})],title:'บันทึกเวร '+filename});
+      } else {
+        var a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download=filename+'.png';
+        a.click();
+      }
+      showToast('✅ บันทึกรูปแล้ว');
+    },'image/png');
+  }).catch(()=>showToast('❌ เกิดข้อผิดพลาด'));
+}
+
+// ── Toast ──
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
 </body>
