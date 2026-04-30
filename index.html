@@ -149,17 +149,36 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 .dc-htitle{font-size:1.1rem;font-weight:700;margin-top:2px;letter-spacing:.01em}
 .dc-hstaff{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:4px;display:flex;align-items:center;gap:6px}
 .dc-badge{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;position:relative;z-index:1}
-.sh-ดึก{background:#1a2418;color:var(--lime);border:1px solid var(--lime)}
-.sh-เช้า{background:var(--khaki);color:#5c4a14}
-.sh-บ่าย{background:var(--sage);color:var(--gd)}
+.sh-ดึก{background:linear-gradient(135deg,#0d1b0f,#1a2f1c);color:#a8e063;border:2px solid #8bc34a;text-shadow:0 0 8px rgba(139,195,74,.5)}
+.sh-เช้า{background:linear-gradient(135deg,#fff3cd,#ffd966);color:#7a4f00;border:2px solid #e6a817;font-weight:800}
+.sh-บ่าย{background:linear-gradient(135deg,#e8f5fe,#b3d9f7);color:#0d4c7a;border:2px solid #3a9ad9;font-weight:800}
 
 /* SUMMARY ROW */
-.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--g100);border-bottom:2px solid var(--g100)}
+.sum-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--g100);border-bottom:2px solid var(--g100)}
 .sum-box{background:var(--w);padding:12px 6px;text-align:center;transition:.2s}
 .sum-box:hover{background:var(--g50)}
-.sum-box.hi{background:linear-gradient(135deg,#edf7f0,#d4e8d0);border-bottom:2px solid var(--gl)}
+.sum-box.hi{background:linear-gradient(135deg,#1a4332,#2d6a4f);border-bottom:3px solid var(--lime)}
+.sum-box.hi .sv{font-size:1.5rem;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)}
+.sum-box.hi .sk{color:rgba(255,255,255,.75)}
+.sum-box.sum-yk{background:linear-gradient(135deg,#e8f4fd,#cfe2f3);border-bottom:2px solid #4a90d9}
+.sum-box.sum-yk .sv{color:#1a5276}
+.sum-box.sum-yk .sk{color:#2471a3}
+.sum-box.sum-in{background:linear-gradient(135deg,#eafaf1,#d5f5e3);border-bottom:2px solid #27ae60}
+.sum-box.sum-in .sv{color:#1e8449}
+.sum-box.sum-in .sk{color:#1a7a40}
+.sum-box.sum-mv{background:linear-gradient(135deg,#fef9e7,#fdebd0);border-bottom:2px solid #f39c12}
+.sum-box.sum-mv .sv{color:#9a7d0a}
+.sum-box.sum-mv .sk{color:#b7770d}
+.sum-box.sum-out{background:linear-gradient(135deg,#f0f4f8,#e2eaf4);border-bottom:2px solid #7f8c8d}
+.sum-box.sum-out .sv{color:#2c3e50}
+.sum-box.sum-out .sk{color:#566573}
+.sum-box.sum-ref{background:linear-gradient(135deg,#fdf2f8,#f9ebf9);border-bottom:2px solid #8e44ad}
+.sum-box.sum-ref .sv{color:#6c3483}
+.sum-box.sum-ref .sk{color:#7d3c98}
+.sum-box.sum-dead{background:linear-gradient(135deg,#fdedec,#fce4e4);border-bottom:2px solid #c0392b}
+.sum-box.sum-dead .sv{color:#922b21}
+.sum-box.sum-dead .sk{color:#a93226}
 .sv{font-size:1.2rem;font-weight:700;color:var(--gd);line-height:1}
-.sum-box.hi .sv{font-size:1.5rem;color:var(--gm)}
 .sk{font-size:.58rem;color:var(--g400);margin-top:4px;letter-spacing:.03em;text-transform:uppercase}
 
 /* METRICS ROW */
@@ -177,7 +196,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 /* PANEL */
 .panel{border:1px solid var(--g100);border-radius:var(--rs);overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(31,78,61,.06)}
-.panel-head{background:linear-gradient(90deg,var(--sage),#eef5ec);padding:7px 12px;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gm);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--g100)}
+.panel-head{background:linear-gradient(90deg,#d4ede8,#e6f4f1);padding:8px 12px;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#1a4332;display:flex;align-items:center;gap:6px;border-bottom:2px solid #b2d8d0}
 .panel-body{padding:10px 12px;background:var(--w)}
 .pi{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:4px 0;border-bottom:1px solid var(--g50)}
 .pi:last-child{border:none}
@@ -496,7 +515,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 <script>
 var allData=[], searchCat='all', editRow=null, editIdx=-1;
-var DEFAULT_URL='https://script.google.com/macros/s/AKfycbxOPpzZgbh49NJ85yYdk3RzAsSL_D8GeSamP_YB_vXWZ3GS2cmfPCc1laMEbreRMspK/exec';
+var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcfC0cbwnb4-iVGHj9HASHijTbPlByvRzKMmxnVNj8X9eFcBw/exec';
 
 // ── Init ──
 (function(){
@@ -540,10 +559,22 @@ function togVal(swId){return document.getElementById(swId).checked?'มี':'ไ
 function nv(id){return parseFloat(document.getElementById(id).value)||0;}
 function nd(val){
   if(!val)return'';
-  if(val instanceof Date)return val.toISOString().split('T')[0];
   var s=val.toString();
+  // ถ้าเป็น YYYY-MM-DD อยู่แล้ว → คืนตรงๆ ไม่ต้อง parse (ป้องกัน timezone shift)
   if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);
-  try{var d=new Date(s);if(!isNaN(d))return d.toISOString().split('T')[0];}catch(e){}
+  // Date object → ใช้ local time
+  if(val instanceof Date){
+    var y=val.getFullYear(),m=String(val.getMonth()+1).padStart(2,'0'),d=String(val.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+d;
+  }
+  // string อื่นๆ → parse แล้วใช้ local time
+  try{
+    var d=new Date(s);
+    if(!isNaN(d)){
+      var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
+      return y+'-'+m+'-'+dy;
+    }
+  }catch(e){}
   return s.substring(0,10);
 }
 function V(r,i){var v=r[i];return(v!==undefined&&v!==null&&v!=='')? String(v):'—';}
@@ -587,7 +618,12 @@ function loadPrev(){fetchLastKong();}
 // ── Local storage ──
 function saveLocal(row){
   var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
-  rows.unshift(row);if(rows.length>200)rows=rows.slice(0,200);
+  // upsert: ถ้ามีวันที่+เวรเดิมอยู่แล้ว ให้ทับ ไม่สร้างซ้ำ
+  var key=nd(row[1])+'|'+(row[2]||'');
+  var found=false;
+  rows=rows.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return row;}return r;});
+  if(!found)rows.unshift(row);
+  if(rows.length>200)rows=rows.slice(0,200);
   localStorage.setItem('shift_rows',JSON.stringify(rows));
 }
 function updateLocal(idx,row){
@@ -700,24 +736,24 @@ function buildDC(r,idx){
   var K=parseFloat(r[10])||0,Q=parseFloat(r[16])||0,P=parseFloat(r[15])||0;
   var id='dc_'+idx;
 
-  // Summary boxes
+  // Summary boxes (ยกมาก่อน คงพยาบาลทีหลัง)
   var sum=`<div class="sum-row">
-    <div class="sum-box hi"><div class="sv">${V(r,10)}</div><div class="sk">คงพยาบาล</div></div>
-    <div class="sum-box"><div class="sv">${V(r,3)}</div><div class="sk">ยกมา</div></div>
-    <div class="sum-box"><div class="sv">${has(r,4)?r[4]:0}</div><div class="sk">รับใหม่</div></div>
-    <div class="sum-box"><div class="sv">${has(r,5)?r[5]:0}</div><div class="sk">รับย้าย</div></div>
-    <div class="sum-box"><div class="sv">${has(r,7)?r[7]:0}</div><div class="sk">กลับบ้าน</div></div>
-    <div class="sum-box"><div class="sv">${has(r,8)?r[8]:0}</div><div class="sk">Refer</div></div>
-    <div class="sum-box"><div class="sv">${has(r,9)?r[9]:0}</div><div class="sk">เสียชีวิต</div></div>
+    <div class="sum-box sum-yk"><div class="sv">${V(r,3)}</div><div class="sk">📋 ยกมา</div></div>
+    <div class="sum-box sum-in"><div class="sv">${has(r,4)?r[4]:0}</div><div class="sk">🆕 รับใหม่</div></div>
+    <div class="sum-box sum-mv"><div class="sv">${has(r,5)?r[5]:0}</div><div class="sk">🔄 รับย้าย</div></div>
+    <div class="sum-box sum-out"><div class="sv">${has(r,7)?r[7]:0}</div><div class="sk">🏠 กลับบ้าน</div></div>
+    <div class="sum-box sum-ref"><div class="sv">${has(r,8)?r[8]:0}</div><div class="sk">🚑 Refer</div></div>
+    <div class="sum-box sum-dead"><div class="sv">${has(r,9)?r[9]:0}</div><div class="sk">🕊️ เสียชีวิต</div></div>
+    <div class="sum-box hi"><div class="sv">${V(r,10)}</div><div class="sk">🏥 คงพยาบาล</div></div>
   </div>`;
 
   // Metrics
   var bar1=Math.min(Q,100),bar2=Math.min(P/200*100,100)||0;
   var met=`<div class="met-row">
-    <div class="met-item"><div class="mk">Bed Occupancy</div><div class="mv">${Q.toFixed(2)}%</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar1}%"></div></div></div>
-    <div class="met-item"><div class="mk">Productivity</div><div class="mv">${P||'—'}</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar2}%;background:var(--gold)"></div></div></div>
-    <div class="met-item"><div class="mk">Tube</div><div class="mv">${V(r,18)}</div></div>
-    <div class="met-item"><div class="mk">RN</div><div class="mv">${V(r,19)}</div></div>
+    <div class="met-item"><div class="mk">🛏️ Bed Occupancy</div><div class="mv">${Q.toFixed(2)}%</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar1}%"></div></div></div>
+    <div class="met-item"><div class="mk">⚡ Productivity</div><div class="mv">${P||'—'}</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar2}%;background:var(--gold)"></div></div></div>
+    <div class="met-item"><div class="mk">🩺 Tube</div><div class="mv">${V(r,18)}</div></div>
+    <div class="met-item"><div class="mk">👩‍⚕️ RN</div><div class="mv">${V(r,19)}</div></div>
   </div>`;
 
   // Type table (only if data)
