@@ -142,52 +142,55 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 /* DISPLAY CARD — styled like reference image */
 .dc{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden;animation:fadeUp .3s ease}
-.dc-header{background:var(--gd);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
-.dc-hinfo{color:#fff}
-.dc-hdate{font-size:.72rem;color:rgba(255,255,255,.65)}
-.dc-htitle{font-size:1rem;font-weight:700;margin-top:1px}
-.dc-hstaff{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:3px}
-.dc-badge{padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
+.dc-header{background:linear-gradient(135deg,#1a4332 0%,var(--gd) 60%,#2d6a4f 100%);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.dc-header::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%}
+.dc-hinfo{color:#fff;position:relative;z-index:1}
+.dc-hdate{font-size:.7rem;color:rgba(255,255,255,.6);letter-spacing:.04em}
+.dc-htitle{font-size:1.1rem;font-weight:700;margin-top:2px;letter-spacing:.01em}
+.dc-hstaff{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:4px;display:flex;align-items:center;gap:6px}
+.dc-badge{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;position:relative;z-index:1}
 .sh-ดึก{background:#1a2418;color:var(--lime);border:1px solid var(--lime)}
 .sh-เช้า{background:var(--khaki);color:#5c4a14}
 .sh-บ่าย{background:var(--sage);color:var(--gd)}
 
 /* SUMMARY ROW */
-.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--g100);border-bottom:1px solid var(--g100)}
-.sum-box{background:var(--w);padding:10px 6px;text-align:center}
-.sum-box.hi{background:#edf7f0}
-.sv{font-size:1.15rem;font-weight:700;color:var(--gd);line-height:1}
-.sk{font-size:.6rem;color:var(--g400);margin-top:3px}
+.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--g100);border-bottom:2px solid var(--g100)}
+.sum-box{background:var(--w);padding:12px 6px;text-align:center;transition:.2s}
+.sum-box:hover{background:var(--g50)}
+.sum-box.hi{background:linear-gradient(135deg,#edf7f0,#d4e8d0);border-bottom:2px solid var(--gl)}
+.sv{font-size:1.2rem;font-weight:700;color:var(--gd);line-height:1}
+.sum-box.hi .sv{font-size:1.5rem;color:var(--gm)}
+.sk{font-size:.58rem;color:var(--g400);margin-top:4px;letter-spacing:.03em;text-transform:uppercase}
 
 /* METRICS ROW */
-.met-row{display:flex;gap:0;background:var(--g50);border-bottom:1px solid var(--g100)}
-.met-item{flex:1;padding:8px 10px;border-right:1px solid var(--g100);text-align:center}
+.met-row{display:flex;gap:0;background:linear-gradient(to right,var(--g50),#f8faf7);border-bottom:1px solid var(--g100)}
+.met-item{flex:1;padding:10px 10px;border-right:1px solid var(--g100);text-align:center}
 .met-item:last-child{border-right:none}
-.met-bar-wrap{height:5px;background:var(--g200);border-radius:3px;margin-top:4px;overflow:hidden}
-.met-bar{height:100%;background:var(--gl);border-radius:3px;transition:.5s}
-.mv{font-size:.9rem;font-weight:700;color:var(--gm)}
-.mk{font-size:.62rem;color:var(--g400)}
+.met-bar-wrap{height:6px;background:var(--g200);border-radius:3px;margin-top:5px;overflow:hidden}
+.met-bar{height:100%;background:linear-gradient(90deg,var(--gl),var(--lime));border-radius:3px;transition:.8s}
+.mv{font-size:.95rem;font-weight:700;color:var(--gm)}
+.mk{font-size:.6rem;color:var(--g400);text-transform:uppercase;letter-spacing:.04em}
 
 /* CARD BODY */
-.dc-body{padding:12px 14px}
+.dc-body{padding:14px 16px}
 .dc-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* PANEL */
-.panel{border:1px solid var(--g100);border-radius:var(--rs);overflow:hidden;margin-bottom:10px}
-.panel-head{background:var(--g50);padding:6px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gm);display:flex;align-items:center;gap:6px}
-.panel-body{padding:10px 12px}
-.pi{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:3px 0;border-bottom:1px solid var(--g50)}
+.panel{border:1px solid var(--g100);border-radius:var(--rs);overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(31,78,61,.06)}
+.panel-head{background:linear-gradient(90deg,var(--sage),#eef5ec);padding:7px 12px;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gm);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--g100)}
+.panel-body{padding:10px 12px;background:var(--w)}
+.pi{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:4px 0;border-bottom:1px solid var(--g50)}
 .pi:last-child{border:none}
-.pi .pk{color:var(--g400);font-size:.75rem}
+.pi .pk{color:var(--g400);font-size:.74rem}
 .pi .pv{font-weight:600;color:var(--ink)}
 .pi.full{flex-direction:column;align-items:flex-start;gap:2px}
-.pi.full .pv{font-size:.82rem;font-weight:400;color:var(--ink)}
+.pi.full .pv{font-size:.82rem;font-weight:400;color:var(--ink);line-height:1.5}
 
 /* TYPE TABLE */
-.type-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.type-table td,.type-table th{padding:4px 8px;border:1px solid var(--g100)}
-.type-table th{background:var(--g50);color:var(--g700);font-weight:700;text-align:center;font-size:.72rem}
-.type-table td{text-align:center;color:var(--ink)}
+.type-table{width:100%;border-collapse:collapse;font-size:.82rem;border-radius:var(--rs);overflow:hidden;box-shadow:0 1px 4px rgba(31,78,61,.06)}
+.type-table td,.type-table th{padding:6px 8px;border:1px solid var(--g100)}
+.type-table th{background:linear-gradient(90deg,var(--sage),#eef5ec);color:var(--gm);font-weight:700;text-align:center;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase}
+.type-table td{text-align:center;color:var(--ink);font-weight:600;font-size:.88rem}
 .type-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px}
 
 /* EVENT PILL */
@@ -212,6 +215,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 .btn-edit{display:flex;align-items:center;gap:6px;justify-content:center;flex:1;padding:10px;border:1.5px solid var(--lime);border-radius:var(--rs);background:var(--w);color:var(--gm);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;margin-top:10px}
 .btn-edit:active{background:var(--sage)}
 .btn-row{display:flex;gap:8px}
+.dc-footer{text-align:center;font-size:.65rem;color:var(--g400);padding:6px 0 2px;letter-spacing:.04em}
 
 /* SEARCH PAGE */
 .search-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
@@ -652,8 +656,18 @@ function loadDisplay(){
     .then(rows=>{
       var sr=Array.isArray(rows)?rows.filter((_,i)=>i>0&&rows[i][0]!==''&&rows[i][0]!==null):[];
       var ids=new Set(sr.map(r=>String(r[0])));
-      allData=sr.concat(local.filter(r=>!ids.has(String(r[0]))));
-      allData.sort((a,b)=>nd(b[1]).localeCompare(nd(a[1])));
+      // dedup local: keep only entries not already in sheet
+      var localOnly=local.filter(r=>r[0]&&!ids.has(String(r[0])));
+      // also dedup within sheet by ID (keep last occurrence)
+      var seen=new Set(); var deduped=[];
+      sr.forEach(r=>{var k=String(r[0]);if(!seen.has(k)){seen.add(k);deduped.push(r);}});
+      allData=deduped.concat(localOnly);
+      allData.sort((a,b)=>{
+        var da=nd(a[1]),db=nd(b[1]);
+        if(db!==da)return db.localeCompare(da);
+        var so=['ดึก','เช้า','บ่าย'];
+        return so.indexOf(b[2])-so.indexOf(a[2]);
+      });
       filterRender();
     })
     .catch(()=>{allData=local;filterRender();});
@@ -795,9 +809,9 @@ function buildDC(r,idx){
   <div class="dc">
     <div class="dc-header">
       <div class="dc-hinfo">
-        <div class="dc-hdate">${date}</div>
-        <div class="dc-htitle">เวร${shift}</div>
-        <div class="dc-hstaff">${bj} · ${bk}</div>
+        <div class="dc-hdate">📅 ${date}</div>
+        <div class="dc-htitle">รายงานเวร${shift}</div>
+        <div class="dc-hstaff"><span>👩‍⚕️ ${bj}</span><span style="opacity:.4">·</span><span>🏥 ${bk}</span></div>
       </div>
       <span class="dc-badge sh-${shift}">${shift}</span>
     </div>
@@ -809,6 +823,7 @@ function buildDC(r,idx){
         <div>${eqHtml}${valHtml}${staffHtml}${allergyHtml}</div>
       </div>
       ${riskHtml}
+      <div class="dc-footer">ศอช ชั้น 10 · บันทึกเหตุการณ์เวร</div>
       <div class="btn-row">
         <button class="btn-edit" onclick="openEdit(${idx})">✏️ แก้ไขข้อมูล</button>
         <button class="btn-img" onclick="saveImg('${id}','${date}_${shift}')">📸 บันทึกรูป</button>
@@ -940,14 +955,19 @@ function saveEdit(){
 // ── Save image ──
 function saveImg(id,filename){
   showToast('📸 กำลังสร้างภาพ...');
-  html2canvas(document.getElementById(id),{scale:2,backgroundColor:'#f5f7f4',useCORS:true,logging:false}).then(canvas=>{
-    canvas.toBlob(blob=>{
-      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[new File([blob],filename+'.png',{type:'image/png'})]})){
-        navigator.share({files:[new File([blob],filename+'.png',{type:'image/png'})],title:'บันทึกเวร '+filename});
-      }else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.png';a.click();}
-      showToast('✅ บันทึกรูปแล้ว');
-    },'image/png');
-  }).catch(()=>showToast('❌ เกิดข้อผิดพลาด'));
+  var el=document.getElementById(id);
+  html2canvas(el,{scale:2.5,backgroundColor:'#ffffff',useCORS:true,logging:false,
+    onclone:function(doc){
+      // ซ่อนปุ่มในรูป
+      doc.querySelectorAll('.btn-row,.btn-img,.btn-edit').forEach(e=>e.style.display='none');
+    }
+  }).then(canvas=>{
+    var a=document.createElement('a');
+    a.href=canvas.toDataURL('image/png');
+    a.download=filename+'.png';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    showToast('✅ ดาวน์โหลดรูปแล้ว');
+  }).catch(e=>{console.error(e);showToast('❌ เกิดข้อผิดพลาด');});
 }
 
 // ── Toast ──
