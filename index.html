@@ -269,6 +269,40 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 .cfg-tip{background:rgba(212,232,208,.3);border-radius:var(--rs);padding:14px;font-size:.82rem;color:var(--gd);line-height:1.9}
 .cfg-tip a{color:var(--gm)}
 
+/* DATE RANGE */
+.date-range-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.dr-item{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
+.dr-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g400)}
+.dr-item input[type=date]{padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none;width:100%}
+.dr-item input[type=date]:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(82,183,136,.15)}
+.dr-sep{font-size:1.1rem;color:var(--g400);font-weight:700;flex-shrink:0;margin-top:16px}
+.dr-shift{padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none;cursor:pointer;flex-shrink:0;margin-top:16px}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:flex-start;gap:4px}
+.cal-nav-btn{flex-shrink:0;width:32px;height:32px;margin-top:28px;border:1.5px solid var(--g200);background:var(--w);border-radius:var(--rs);font-size:1.1rem;cursor:pointer;color:var(--gm);display:flex;align-items:center;justify-content:center;transition:.15s}
+.cal-nav-btn:active{background:var(--sage)}
+.cal-months-wrap{display:flex;flex:1;gap:12px;overflow:hidden}
+.cal-month{flex:1;min-width:0}
+.cal-month-title{text-align:center;font-size:.82rem;font-weight:700;color:var(--gd);margin-bottom:8px;padding:4px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:.58rem;font-weight:700;color:var(--g400);padding:2px 0;text-transform:uppercase}
+.cal-dow:first-child{color:#e53935}
+.cal-dow:last-child{color:#1565c0}
+.cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;transition:.15s;font-size:.78rem;font-weight:600;color:var(--ink);border:1.5px solid transparent;user-select:none}
+.cal-day:hover{background:var(--sage);border-color:var(--sage2)}
+.cal-day.empty{cursor:default;pointer-events:none}
+.cal-day.today{border-color:var(--gl);background:rgba(82,183,136,.06);color:var(--gm)}
+.cal-day.in-range{background:rgba(82,183,136,.1);border-color:transparent}
+.cal-day.range-start,.cal-day.range-end{background:var(--gd);color:#fff;border-color:var(--gd)}
+.cal-day.range-start.range-end{background:var(--gm)}
+.cal-day.has-data::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--lime)}
+.cal-day.range-start.has-data::after,.cal-day.range-end.has-data::after{background:rgba(139,195,74,.8)}
+.cal-day.sun{color:#e53935}
+.cal-day.sat{color:#1565c0}
+.cal-day.range-start,.cal-day.range-end{color:#fff!important}
+.cal-day.other-month{opacity:.3}
+
 /* FETCH MODAL */
 .fetch-modal{max-width:420px;padding:24px 20px 20px}
 .fetch-status-wrap{display:flex;flex-direction:column;align-items:center;padding:16px 0 8px;gap:12px}
@@ -299,7 +333,14 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 .field-err{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(229,57,53,.12)!important}
 
-/* ─── DESKTOP ≥960px ─── */
+@media(max-width:599px){
+  .cal-months-wrap{gap:0}
+  .cal-months-wrap .cal-month:last-child{display:none}
+  .dr-sep{display:none}
+  .date-range-row{flex-direction:column}
+  .dr-shift{margin-top:0;width:100%}
+}
+
 @media(min-width:960px){
   body{padding-bottom:0;padding-left:var(--sidebar)}
   .sidebar{top:56px;bottom:0;left:0;right:auto;width:var(--sidebar);flex-direction:column;justify-content:flex-start;padding:20px 0 16px;box-shadow:2px 0 16px rgba(0,0,0,.12)}
@@ -466,16 +507,39 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 <div class="page" id="page-display">
 <div class="main">
   <div class="pg-head"><div><h1>แสดงข้อมูลเวร</h1><p>ประวัติการบันทึก</p></div><span class="pg-badge">DASHBOARD</span></div>
+
+  <!-- Fetch + Date Range -->
   <div class="card"><div class="cb">
     <button class="btn-fetch-open" onclick="openFetchModal()">📡 ดึงข้อมูลจาก Google Sheet</button>
-    <div class="filter-bar">
-      <input type="date" id="filter_date" oninput="filterRender()">
-      <select id="filter_month" onchange="filterRender()"><option value="">— เดือน —</option><option value="01">ม.ค.</option><option value="02">ก.พ.</option><option value="03">มี.ค.</option><option value="04">เม.ย.</option><option value="05">พ.ค.</option><option value="06">มิ.ย.</option><option value="07">ก.ค.</option><option value="08">ส.ค.</option><option value="09">ก.ย.</option><option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option></select>
-      <select id="filter_shift" onchange="filterRender()"><option value="">ทุกเวร</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option></select>
-      <button class="btn-load" onclick="loadDisplay()">🔄 โหลด</button>
+    <div class="date-range-row">
+      <div class="dr-item">
+        <div class="dr-label">วันเริ่มต้น</div>
+        <input type="date" id="filter_date_from" onchange="onRangeChange()">
+      </div>
+      <div class="dr-sep">→</div>
+      <div class="dr-item">
+        <div class="dr-label">วันสิ้นสุด</div>
+        <input type="date" id="filter_date_to" onchange="onRangeChange()">
+      </div>
+      <select id="filter_shift" onchange="onRangeChange()" class="dr-shift">
+        <option value="">ทุกเวร</option>
+        <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+      </select>
     </div>
   </div></div>
-  <div id="display_area"><div class="empty"><div class="eico">🔍</div><div>กด โหลด เพื่อดูข้อมูล</div></div></div>
+
+  <!-- Calendar -->
+  <div class="card" id="cal-card"><div class="cb" style="padding:12px 10px">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+      <div class="cal-months-wrap" id="cal-months-wrap">
+        <!-- two months rendered by JS -->
+      </div>
+      <button class="cal-nav-btn" onclick="calNext()">›</button>
+    </div>
+  </div></div>
+
+  <div id="display_area"><div class="empty"><div class="eico">📡</div><div>กด "ดึงข้อมูลจาก Google Sheet" เพื่อโหลด</div></div></div>
 </div></div>
 
 <!-- ═══════ PAGE: SEARCH ═══════ -->
@@ -562,8 +626,10 @@ var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcf
 window.addEventListener('load',()=>{
   var today=localDateStr(new Date());
   document.getElementById('f_B').value=today;
-  document.getElementById('filter_date').value=today;
+  document.getElementById('filter_date_from').value=today;
+  document.getElementById('filter_date_to').value=today;
   document.getElementById('s_date').value=today;
+  renderCalendar();
   fetchLastKong();
 });
 
@@ -772,6 +838,7 @@ function openFetchModal(){
       document.getElementById('fetch-close-btn').style.display='flex';
       document.getElementById('fetch-done-btn').style.display='block';
       fetchingData=false;
+      renderCalendar();
       filterRender();
     })
     .catch(err=>{
@@ -797,20 +864,112 @@ function closeFetchModal(){
 }
 
 function loadDisplay(){
+  renderCalendar();
+  filterRender();
+}
+
+// ── Calendar State ──
+var calBase=new Date(); // first month to show
+calBase.setDate(1);
+
+function calPrev(){
+  calBase.setMonth(calBase.getMonth()-1);
+  renderCalendar();
+}
+function calNext(){
+  calBase.setMonth(calBase.getMonth()+1);
+  renderCalendar();
+}
+
+function getDataDates(){
+  var s=new Set();
+  allData.forEach(r=>{var d=nd(r[1]);if(d)s.add(d);});
+  return s;
+}
+
+function renderCalendar(){
+  var wrap=document.getElementById('cal-months-wrap');
+  var dataDates=getDataDates();
+  var fromVal=document.getElementById('filter_date_from').value;
+  var toVal=document.getElementById('filter_date_to').value;
+  var thDays=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  var thMonths=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  var todayStr=localDateStr(new Date());
+
+  function buildMonth(year,month){
+    var title=thMonths[month]+' '+(year+543);
+    var firstDay=new Date(year,month,1).getDay(); // 0=Sun
+    var daysInMonth=new Date(year,month+1,0).getDate();
+    var cells='';
+    // DOW headers
+    var dow=thDays.map((d,i)=>`<div class="cal-dow">${d}</div>`).join('');
+    // Empty cells
+    for(var e=0;e<firstDay;e++) cells+=`<div class="cal-day empty"></div>`;
+    // Day cells
+    for(var d=1;d<=daysInMonth;d++){
+      var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      var cls='cal-day';
+      var dow2=new Date(year,month,d).getDay();
+      if(dow2===0)cls+=' sun';
+      else if(dow2===6)cls+=' sat';
+      if(ds===todayStr)cls+=' today';
+      if(dataDates.has(ds))cls+=' has-data';
+      // range highlight
+      if(fromVal&&toVal){
+        if(ds===fromVal&&ds===toVal)cls+=' range-start range-end';
+        else if(ds===fromVal)cls+=' range-start';
+        else if(ds===toVal)cls+=' range-end';
+        else if(ds>fromVal&&ds<toVal)cls+=' in-range';
+      } else if(fromVal&&ds===fromVal){cls+=' range-start range-end';}
+      else if(toVal&&ds===toVal){cls+=' range-start range-end';}
+      cells+=`<div class="${cls}" onclick="calDayClick('${ds}')">${d}</div>`;
+    }
+    return `<div class="cal-month">
+      <div class="cal-month-title">${title}</div>
+      <div class="cal-grid">${dow}${cells}</div>
+    </div>`;
+  }
+
+  var m1=buildMonth(calBase.getFullYear(),calBase.getMonth());
+  var next=new Date(calBase.getFullYear(),calBase.getMonth()+1,1);
+  var m2=buildMonth(next.getFullYear(),next.getMonth());
+  wrap.innerHTML=m1+m2;
+}
+
+function calDayClick(ds){
+  var fromEl=document.getElementById('filter_date_from');
+  var toEl=document.getElementById('filter_date_to');
+  var from=fromEl.value, to=toEl.value;
+  // ถ้ายังไม่มี from หรือ มี both แล้ว → reset เป็น from ใหม่
+  if(!from||(from&&to)){
+    fromEl.value=ds; toEl.value='';
+  } else {
+    // มี from อยู่แล้ว → set to (swap ถ้า to < from)
+    if(ds<from){toEl.value=from;fromEl.value=ds;}
+    else{toEl.value=ds;}
+  }
+  renderCalendar();
+  filterRender();
+}
+
+function onRangeChange(){
+  renderCalendar();
   filterRender();
 }
 
 function filterRender(){
-  var df=document.getElementById('filter_date').value;
-  var dm=document.getElementById('filter_month').value;
+  var df=document.getElementById('filter_date_from').value;
+  var dt=document.getElementById('filter_date_to').value;
   var sf=document.getElementById('filter_shift').value;
   var rows=allData.filter(r=>{
     var rd=nd(r[1]),rs=(r[2]||'').toString().trim();
-    if(df&&rd!==df)return false;
-    if(dm&&!rd.startsWith(new Date().getFullYear()+'-'+dm)&&rd.substring(5,7)!==dm)return false;
+    if(df&&dt){if(rd<df||rd>dt)return false;}
+    else if(df){if(rd!==df)return false;}
+    else if(dt){if(rd!==dt)return false;}
     if(sf&&rs!==sf)return false;
     return true;
   });
+
   renderDisplay(rows);
 }
 
