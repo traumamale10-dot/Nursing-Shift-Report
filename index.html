@@ -755,32 +755,20 @@ function openFetchModal(){
       // dedup sheet rows by date|shift (keep last)
       var sheetMap=new Map();
       sr.forEach(r=>{ var k=nd(r[1])+'|'+(r[2]||''); sheetMap.set(k,r); });
-      var dedupedSheet=Array.from(sheetMap.values());
-      // merge with local: sheet wins over local for same date|shift
-      var local=getLocal();
-      var sheetKeys=new Set(dedupedSheet.map(r=>nd(r[1])+'|'+(r[2]||'')));
-      var localOnly=local.filter(r=>!sheetKeys.has(nd(r[1])+'|'+(r[2]||'')));
-      allData=dedupedSheet.concat(localOnly);
+      allData=Array.from(sheetMap.values());
       allData.sort((a,b)=>{
         var da=nd(a[1]),db=nd(b[1]);
         if(db!==da)return db.localeCompare(da);
         var so=['ดึก','เช้า','บ่าย'];
         return so.indexOf(b[2])-so.indexOf(a[2]);
       });
-      // show result
-      var sheetCount=dedupedSheet.length;
-      var localCount=localOnly.length;
       document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle done';
       document.getElementById('fetch-icon').textContent='✅';
       document.getElementById('fetch-msg').textContent='ดึงข้อมูลสำเร็จ!';
       document.getElementById('fetch-sub').textContent='';
       var rb=document.getElementById('fetch-result-box');
       rb.style.display='block';
-      rb.innerHTML=`
-        <div class="fr-row"><span class="fr-key">📊 ข้อมูลจาก Sheet</span><span class="fr-val hi">${sheetCount} รายการ</span></div>
-        <div class="fr-row"><span class="fr-key">📱 ข้อมูลในเครื่อง (เพิ่มเติม)</span><span class="fr-val">${localCount} รายการ</span></div>
-        <div class="fr-row"><span class="fr-key">📋 รวมทั้งหมด</span><span class="fr-val">${allData.length} รายการ</span></div>
-      `;
+      rb.innerHTML=`<div class="fr-row"><span class="fr-key">📊 ข้อมูลจาก Google Sheet</span><span class="fr-val hi">${allData.length} รายการ</span></div>`;
       document.getElementById('fetch-close-btn').style.display='flex';
       document.getElementById('fetch-done-btn').style.display='block';
       fetchingData=false;
@@ -793,16 +781,13 @@ function openFetchModal(){
       document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle err';
       document.getElementById('fetch-icon').textContent='❌';
       document.getElementById('fetch-msg').textContent='เชื่อมต่อไม่สำเร็จ';
-      document.getElementById('fetch-sub').textContent='ใช้ข้อมูลในเครื่องแทน';
-      var local=getLocal();
-      allData=local;
+      document.getElementById('fetch-sub').textContent='กรุณาลองใหม่อีกครั้ง';
       var rb=document.getElementById('fetch-result-box');
       rb.style.display='block';
-      rb.innerHTML=`<div class="fr-row"><span class="fr-key">📱 ข้อมูลในเครื่อง</span><span class="fr-val">${local.length} รายการ</span></div>`;
+      rb.innerHTML=`<div class="fr-row"><span class="fr-key">❌ ไม่สามารถดึงข้อมูลได้</span><span class="fr-val" style="color:var(--red)">Error</span></div>`;
       document.getElementById('fetch-close-btn').style.display='flex';
       document.getElementById('fetch-done-btn').style.display='block';
       fetchingData=false;
-      filterRender();
     });
 }
 
@@ -812,16 +797,6 @@ function closeFetchModal(){
 }
 
 function loadDisplay(){
-  // ถ้ายังไม่มีข้อมูลให้โหลดจาก local ก่อน
-  if(!allData.length){
-    allData=getLocal();
-    allData.sort((a,b)=>{
-      var da=nd(a[1]),db=nd(b[1]);
-      if(db!==da)return db.localeCompare(da);
-      var so=['ดึก','เช้า','บ่าย'];
-      return so.indexOf(b[2])-so.indexOf(a[2]);
-    });
-  }
   filterRender();
 }
 
@@ -996,13 +971,10 @@ function setCat(cat,btn){
 function doSearch(){
   var df=document.getElementById('s_date').value;
   var dm=document.getElementById('s_month').value;
-  var local=getLocal();
-  var pool=allData.length?allData:local;
-  var rows=pool.filter(r=>{
+  var rows=allData.filter(r=>{
     var rd=nd(r[1]);
     if(df&&rd!==df)return false;
     if(dm&&rd.substring(5,7)!==dm)return false;
-    // category filter
     if(searchCat==='absent')return r[57]==='มี';
     if(searchCat==='risk')return r[41]==='มี';
     if(searchCat==='allergy')return r[52]==='มี';
