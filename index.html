@@ -607,7 +607,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 <script>
 var allData=[], searchCat='absent', editRow=null, editIdx=-1;
-var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcfC0cbwnb4-iVGHj9HASHijTbPlByvRzKMmxnVNj8X9eFcBw/exec';
+var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzoiJzWWPDqE3p_lM_NnwYjKsAtZJ57BFy9GG0vR4cA2cjmSgSme38_q4Hxcoeu2zFC8Q/exec';
 
 // ── Init ──
 (function(){
@@ -806,13 +806,17 @@ function openFetchModal(){
   var barEl=document.getElementById('fetch-bar');
   var progInt=setInterval(()=>{prog=Math.min(prog+Math.random()*12,88);barEl.style.width=prog+'%';},300);
 
-  fetch(getUrl()+'?action=getData')
-    .then(r=>r.json())
-    .then(rows=>{
+  fetch(getUrl()+'?action=getData', {redirect:'follow'})
+    .then(r=>{
+      if(!r.ok&&r.type!=='opaqueredirect')throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(text=>{
+      var rows;
+      try{rows=JSON.parse(text);}catch(e){throw new Error('parse error');}
       clearInterval(progInt);
       barEl.style.width='100%';
       var sr=Array.isArray(rows)?rows.filter((_,i)=>i>0&&rows[i][0]!==''&&rows[i][0]!==null):[];
-      // dedup sheet rows by date|shift (keep last)
       var sheetMap=new Map();
       sr.forEach(r=>{ var k=nd(r[1])+'|'+(r[2]||''); sheetMap.set(k,r); });
       allData=Array.from(sheetMap.values());
@@ -842,12 +846,14 @@ function openFetchModal(){
       document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle err';
       document.getElementById('fetch-icon').textContent='❌';
       document.getElementById('fetch-msg').textContent='เชื่อมต่อไม่สำเร็จ';
-      document.getElementById('fetch-sub').textContent='กรุณาลองใหม่อีกครั้ง';
+      document.getElementById('fetch-sub').textContent=err&&err.message?err.message:'Network error';
       var rb=document.getElementById('fetch-result-box');
       rb.style.display='block';
-      rb.innerHTML=`<div class="fr-row"><span class="fr-key">❌ ไม่สามารถดึงข้อมูลได้</span><span class="fr-val" style="color:var(--red)">Error</span></div>`;
+      rb.innerHTML=`<div class="fr-row"><span class="fr-key">💡 วิธีแก้ไข</span><span class="fr-val" style="color:var(--gm);font-size:.78rem">ตรวจสอบ GAS URL และ Deploy settings</span></div>`;
       document.getElementById('fetch-close-btn').style.display='flex';
       document.getElementById('fetch-done-btn').style.display='block';
+      document.getElementById('fetch-done-btn').textContent='🔄 ลองใหม่';
+      document.getElementById('fetch-done-btn').onclick=function(){openFetchModal();};
       fetchingData=false;
     });
 }
