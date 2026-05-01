@@ -507,8 +507,6 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 <div class="page" id="page-display">
 <div class="main">
   <div class="pg-head"><div><h1>แสดงข้อมูลเวร</h1><p>ประวัติการบันทึก</p></div><span class="pg-badge">DASHBOARD</span></div>
-
-  <!-- Fetch + Date Range -->
   <div class="card"><div class="cb">
     <button class="btn-fetch-open" onclick="openFetchModal()">📡 ดึงข้อมูลจาก Google Sheet</button>
     <div class="date-range-row">
@@ -527,8 +525,6 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
       </select>
     </div>
   </div></div>
-
-
   <div id="display_area"><div class="empty"><div class="eico">📡</div><div>กด "ดึงข้อมูลจาก Google Sheet" เพื่อโหลด</div></div></div>
 </div></div>
 
@@ -537,10 +533,16 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 <div class="main">
   <div class="pg-head"><div><h1>ค้นหาข้อมูล</h1><p>ค้นตามหมวดหมู่</p></div><span class="pg-badge">SEARCH</span></div>
   <div class="card"><div class="cb">
-    <div class="filter-bar" style="margin-bottom:12px">
-      <input type="date" id="s_date" placeholder="วันที่">
-      <select id="s_month"><option value="">— เดือน —</option><option value="01">ม.ค.</option><option value="02">ก.พ.</option><option value="03">มี.ค.</option><option value="04">เม.ย.</option><option value="05">พ.ค.</option><option value="06">มิ.ย.</option><option value="07">ก.ค.</option><option value="08">ส.ค.</option><option value="09">ก.ย.</option><option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option></select>
-      <button class="btn-load" onclick="doSearch()">🔍 ค้นหา</button>
+    <div class="date-range-row" style="margin-bottom:12px">
+      <div class="dr-item">
+        <div class="dr-label">วันเริ่มต้น</div>
+        <input type="date" id="s_date_from" onchange="doSearch()">
+      </div>
+      <div class="dr-sep">→</div>
+      <div class="dr-item">
+        <div class="dr-label">วันสิ้นสุด</div>
+        <input type="date" id="s_date_to" onchange="doSearch()">
+      </div>
     </div>
     <div class="search-cats">
       <button class="cat-btn active" onclick="setCat('absent',this)">ขาดลา/มาสาย</button>
@@ -550,7 +552,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
       <button class="cat-btn" onclick="setCat('off',this)">ผัน/ออฟเวร</button>
     </div>
   </div></div>
-  <div id="search_result"><div class="empty"><div class="eico">🔍</div><div>ระบุเงื่อนไขแล้วกดค้นหา</div></div></div>
+  <div id="search_result"><div class="empty"><div class="eico">🔍</div><div>เลือกช่วงวันที่และหมวดหมู่</div></div></div>
 </div></div>
 
 
@@ -618,7 +620,8 @@ window.addEventListener('load',()=>{
   document.getElementById('f_B').value=today;
   document.getElementById('filter_date_from').value=today;
   document.getElementById('filter_date_to').value=today;
-  document.getElementById('s_date').value=today;
+  document.getElementById('s_date_from').value=today;
+  document.getElementById('s_date_to').value=today;
   renderCalendar();
   fetchLastKong();
 });
@@ -1118,12 +1121,13 @@ function setCat(cat,btn){
 }
 
 function doSearch(){
-  var df=document.getElementById('s_date').value;
-  var dm=document.getElementById('s_month').value;
+  var df=document.getElementById('s_date_from').value;
+  var dt=document.getElementById('s_date_to').value;
   var rows=allData.filter(r=>{
     var rd=nd(r[1]);
-    if(df&&rd!==df)return false;
-    if(dm&&rd.substring(5,7)!==dm)return false;
+    if(df&&dt){if(rd<df||rd>dt)return false;}
+    else if(df){if(rd<df)return false;}
+    else if(dt){if(rd>dt)return false;}
     if(searchCat==='absent')return r[57]==='มี';
     if(searchCat==='risk')return r[41]==='มี';
     if(searchCat==='allergy')return r[52]==='มี';
