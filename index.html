@@ -269,7 +269,31 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 .cfg-tip{background:rgba(212,232,208,.3);border-radius:var(--rs);padding:14px;font-size:.82rem;color:var(--gd);line-height:1.9}
 .cfg-tip a{color:var(--gm)}
 
-/* TOAST */
+/* FETCH MODAL */
+.fetch-modal{max-width:420px;padding:24px 20px 20px}
+.fetch-status-wrap{display:flex;flex-direction:column;align-items:center;padding:16px 0 8px;gap:12px}
+.fetch-anim{position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.fetch-circle{position:absolute;inset:0;border-radius:50%;border:3px solid var(--g100);border-top-color:var(--gl);animation:spin 1s linear infinite}
+.fetch-circle.done{border-color:var(--gl);animation:none}
+.fetch-circle.err{border-color:var(--red);animation:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fetch-icon{font-size:2rem;z-index:1}
+.fetch-msg{font-size:1rem;font-weight:700;color:var(--gd);text-align:center}
+.fetch-sub{font-size:.8rem;color:var(--g400);text-align:center;min-height:18px}
+.fetch-bar-wrap{width:100%;background:var(--g100);border-radius:8px;height:8px;overflow:hidden;margin-top:4px}
+.fetch-bar{height:100%;background:linear-gradient(90deg,var(--gl),var(--lime));border-radius:8px;width:0%;transition:width .4s ease}
+.fetch-result-box{width:100%;background:var(--g50);border-radius:var(--rs);padding:14px 16px;border:1px solid var(--g100)}
+.fr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--g100);font-size:.88rem}
+.fr-row:last-child{border:none;padding-bottom:0}
+.fr-key{color:var(--g400);font-size:.8rem}
+.fr-val{font-weight:700;color:var(--gd)}
+.fr-val.hi{color:var(--lime);font-size:1.1rem}
+.btn-fetch-done{width:100%;padding:13px;background:var(--gm);color:#fff;border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:14px;transition:.2s}
+.btn-fetch-done:active{transform:scale(.98)}
+.btn-fetch-open{display:flex;align-items:center;gap:8px;justify-content:center;padding:11px 20px;border:1.5px solid var(--gl);border-radius:var(--rs);background:var(--w);color:var(--gm);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;width:100%;margin-bottom:12px}
+.btn-fetch-open:active{background:var(--sage)}
+
+
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:999;background:var(--gd);color:#fff;padding:11px 20px;border-radius:var(--rs);font-weight:600;font-size:.85rem;box-shadow:0 6px 24px rgba(31,78,61,.45);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--lime);white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -443,6 +467,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 <div class="main">
   <div class="pg-head"><div><h1>แสดงข้อมูลเวร</h1><p>ประวัติการบันทึก</p></div><span class="pg-badge">DASHBOARD</span></div>
   <div class="card"><div class="cb">
+    <button class="btn-fetch-open" onclick="openFetchModal()">📡 ดึงข้อมูลจาก Google Sheet</button>
     <div class="filter-bar">
       <input type="date" id="filter_date" oninput="filterRender()">
       <select id="filter_month" onchange="filterRender()"><option value="">— เดือน —</option><option value="01">ม.ค.</option><option value="02">ก.พ.</option><option value="03">มี.ค.</option><option value="04">เม.ย.</option><option value="05">พ.ค.</option><option value="06">มิ.ย.</option><option value="07">ก.ค.</option><option value="08">ส.ค.</option><option value="09">ก.ย.</option><option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option></select>
@@ -464,8 +489,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
       <button class="btn-load" onclick="doSearch()">🔍 ค้นหา</button>
     </div>
     <div class="search-cats">
-      <button class="cat-btn active" onclick="setCat('all',this)">ทั้งหมด</button>
-      <button class="cat-btn" onclick="setCat('absent',this)">ขาดลา/มาสาย</button>
+      <button class="cat-btn active" onclick="setCat('absent',this)">ขาดลา/มาสาย</button>
       <button class="cat-btn" onclick="setCat('risk',this)">ความเสี่ยง</button>
       <button class="cat-btn" onclick="setCat('allergy',this)">แพ้ยา</button>
       <button class="cat-btn" onclick="setCat('event',this)">เหตุการณ์เวร</button>
@@ -486,7 +510,32 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 
 </div>
 
-<!-- EDIT MODAL -->
+<!-- FETCH MODAL -->
+<div class="modal-overlay" id="fetchModal" onclick="if(event.target===this&&!fetchingData)closeFetchModal()">
+  <div class="modal fetch-modal">
+    <div class="modal-head">
+      <div class="modal-title" id="fetch-title">📡 ดึงข้อมูลจาก Google Sheet</div>
+      <button class="modal-close" id="fetch-close-btn" onclick="closeFetchModal()">✕</button>
+    </div>
+    <div id="fetch-body">
+      <div class="fetch-status-wrap">
+        <div class="fetch-anim" id="fetch-anim">
+          <div class="fetch-circle"></div>
+          <div class="fetch-icon" id="fetch-icon">📡</div>
+        </div>
+        <div class="fetch-msg" id="fetch-msg">กำลังเชื่อมต่อ Google Sheet...</div>
+        <div class="fetch-sub" id="fetch-sub">โปรดรอสักครู่</div>
+        <div class="fetch-bar-wrap" id="fetch-bar-wrap">
+          <div class="fetch-bar" id="fetch-bar"></div>
+        </div>
+        <div class="fetch-result-box" id="fetch-result-box" style="display:none"></div>
+      </div>
+    </div>
+    <button class="btn-fetch-done" id="fetch-done-btn" onclick="closeFetchModal()" style="display:none">✅ ปิด</button>
+  </div>
+</div>
+
+
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-head">
@@ -501,7 +550,7 @@ body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);
 <div class="toast" id="toast"></div>
 
 <script>
-var allData=[], searchCat='all', editRow=null, editIdx=-1;
+var allData=[], searchCat='absent', editRow=null, editIdx=-1;
 var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcfC0cbwnb4-iVGHj9HASHijTbPlByvRzKMmxnVNj8X9eFcBw/exec';
 
 // ── Init ──
@@ -511,7 +560,7 @@ var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzZpfVUZqwjA6AR9KThjWcf
 })();
 
 window.addEventListener('load',()=>{
-  var today=new Date().toISOString().split('T')[0];
+  var today=localDateStr(new Date());
   document.getElementById('f_B').value=today;
   document.getElementById('filter_date').value=today;
   document.getElementById('s_date').value=today;
@@ -537,22 +586,33 @@ function sv(id,v){var el=document.getElementById(id);if(el)el.value=v;}
 function getOxy(){return Array.from(document.querySelectorAll('input[name=oxy]:checked')).map(c=>c.value).join(', ');}
 function togVal(swId){return document.getElementById(swId).checked?'มี':'ไม่มี';}
 function nv(id){return parseFloat(document.getElementById(id).value)||0;}
+
+// ── แปลง Date เป็น YYYY-MM-DD โดยใช้ local timezone ──
+function localDateStr(d){
+  var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+
 function nd(val){
   if(!val)return'';
-  var s=val.toString();
-  // ถ้าเป็น YYYY-MM-DD อยู่แล้ว → คืนตรงๆ ไม่ต้อง parse (ป้องกัน timezone shift)
+  var s=val.toString().trim();
+  // YYYY-MM-DD → คืนตรงๆ (ปลอดภัยที่สุด)
   if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);
-  // Date object → ใช้ local time
-  if(val instanceof Date){
-    var y=val.getFullYear(),m=String(val.getMonth()+1).padStart(2,'0'),d=String(val.getDate()).padStart(2,'0');
-    return y+'-'+m+'-'+d;
-  }
-  // string อื่นๆ → parse แล้วใช้ local time
+  // Date object
+  if(val instanceof Date)return localDateStr(val);
+  // รูปแบบ DD/MM/YYYY หรือ D/M/YYYY
+  var dmyMatch=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(dmyMatch)return dmyMatch[3]+'-'+dmyMatch[2].padStart(2,'0')+'-'+dmyMatch[1].padStart(2,'0');
+  // รูปแบบอื่น: แทนที่ "/" ด้วย "-" แล้วลองใช้ YYYY-MM-DD อีกที
+  var norm=s.replace(/\//g,'-');
+  if(/^\d{4}-\d{2}-\d{2}/.test(norm))return norm.substring(0,10);
+  // fallback: parse แล้วใช้ local โดยชดเชย timezone
   try{
-    var d=new Date(s);
-    if(!isNaN(d)){
-      var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');
-      return y+'-'+m+'-'+dy;
+    var raw=new Date(s);
+    if(!isNaN(raw)){
+      // ชดเชย timezone offset เพื่อให้ได้ local date
+      var local=new Date(raw.getTime()+raw.getTimezoneOffset()*-60000);
+      return localDateStr(local);
     }
   }catch(e){}
   return s.substring(0,10);
@@ -636,6 +696,11 @@ function submitForm(e){
   if(!validateForm())return;
   var row=buildRow();
   saveLocal(row);
+  // upsert allData by date|shift
+  var key=nd(row[1])+'|'+(row[2]||'');
+  var found=false;
+  allData=allData.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return row;}return r;});
+  if(!found)allData.unshift(row);
   showToast('⏳ กำลังบันทึก...');
   fetch(getUrl(),{method:'POST',body:JSON.stringify({rowData:row}),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow'})
     .then(r=>{try{return r.json();}catch(e){return{status:'sent'};}})
@@ -662,31 +727,102 @@ function resetForm(){
   fetchLastKong();window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── Load Display ──
-function loadDisplay(){
-  var area=document.getElementById('display_area');
-  area.innerHTML='<div class="empty"><div class="eico">⏳</div><div>กำลังโหลด...</div></div>';
-  var local=getLocal();
+// ── Load Display (no popup — direct) ──
+var fetchingData=false;
+
+function openFetchModal(){
+  document.getElementById('fetchModal').classList.add('on');
+  document.getElementById('fetch-close-btn').style.display='none';
+  document.getElementById('fetch-done-btn').style.display='none';
+  document.getElementById('fetch-result-box').style.display='none';
+  document.getElementById('fetch-bar').style.width='0%';
+  document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle';
+  document.getElementById('fetch-icon').textContent='📡';
+  document.getElementById('fetch-msg').textContent='กำลังเชื่อมต่อ Google Sheet...';
+  document.getElementById('fetch-sub').textContent='โปรดรอสักครู่';
+  fetchingData=true;
+  // animate progress bar
+  var prog=0;
+  var barEl=document.getElementById('fetch-bar');
+  var progInt=setInterval(()=>{prog=Math.min(prog+Math.random()*12,88);barEl.style.width=prog+'%';},300);
+
   fetch(getUrl()+'?action=getData')
     .then(r=>r.json())
     .then(rows=>{
+      clearInterval(progInt);
+      barEl.style.width='100%';
       var sr=Array.isArray(rows)?rows.filter((_,i)=>i>0&&rows[i][0]!==''&&rows[i][0]!==null):[];
-      var ids=new Set(sr.map(r=>String(r[0])));
-      // dedup local: keep only entries not already in sheet
-      var localOnly=local.filter(r=>r[0]&&!ids.has(String(r[0])));
-      // also dedup within sheet by ID (keep last occurrence)
-      var seen=new Set(); var deduped=[];
-      sr.forEach(r=>{var k=String(r[0]);if(!seen.has(k)){seen.add(k);deduped.push(r);}});
-      allData=deduped.concat(localOnly);
+      // dedup sheet rows by date|shift (keep last)
+      var sheetMap=new Map();
+      sr.forEach(r=>{ var k=nd(r[1])+'|'+(r[2]||''); sheetMap.set(k,r); });
+      var dedupedSheet=Array.from(sheetMap.values());
+      // merge with local: sheet wins over local for same date|shift
+      var local=getLocal();
+      var sheetKeys=new Set(dedupedSheet.map(r=>nd(r[1])+'|'+(r[2]||'')));
+      var localOnly=local.filter(r=>!sheetKeys.has(nd(r[1])+'|'+(r[2]||'')));
+      allData=dedupedSheet.concat(localOnly);
       allData.sort((a,b)=>{
         var da=nd(a[1]),db=nd(b[1]);
         if(db!==da)return db.localeCompare(da);
         var so=['ดึก','เช้า','บ่าย'];
         return so.indexOf(b[2])-so.indexOf(a[2]);
       });
+      // show result
+      var sheetCount=dedupedSheet.length;
+      var localCount=localOnly.length;
+      document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle done';
+      document.getElementById('fetch-icon').textContent='✅';
+      document.getElementById('fetch-msg').textContent='ดึงข้อมูลสำเร็จ!';
+      document.getElementById('fetch-sub').textContent='';
+      var rb=document.getElementById('fetch-result-box');
+      rb.style.display='block';
+      rb.innerHTML=`
+        <div class="fr-row"><span class="fr-key">📊 ข้อมูลจาก Sheet</span><span class="fr-val hi">${sheetCount} รายการ</span></div>
+        <div class="fr-row"><span class="fr-key">📱 ข้อมูลในเครื่อง (เพิ่มเติม)</span><span class="fr-val">${localCount} รายการ</span></div>
+        <div class="fr-row"><span class="fr-key">📋 รวมทั้งหมด</span><span class="fr-val">${allData.length} รายการ</span></div>
+      `;
+      document.getElementById('fetch-close-btn').style.display='flex';
+      document.getElementById('fetch-done-btn').style.display='block';
+      fetchingData=false;
       filterRender();
     })
-    .catch(()=>{allData=local;filterRender();});
+    .catch(err=>{
+      clearInterval(progInt);
+      barEl.style.width='100%';
+      barEl.style.background='var(--red)';
+      document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle err';
+      document.getElementById('fetch-icon').textContent='❌';
+      document.getElementById('fetch-msg').textContent='เชื่อมต่อไม่สำเร็จ';
+      document.getElementById('fetch-sub').textContent='ใช้ข้อมูลในเครื่องแทน';
+      var local=getLocal();
+      allData=local;
+      var rb=document.getElementById('fetch-result-box');
+      rb.style.display='block';
+      rb.innerHTML=`<div class="fr-row"><span class="fr-key">📱 ข้อมูลในเครื่อง</span><span class="fr-val">${local.length} รายการ</span></div>`;
+      document.getElementById('fetch-close-btn').style.display='flex';
+      document.getElementById('fetch-done-btn').style.display='block';
+      fetchingData=false;
+      filterRender();
+    });
+}
+
+function closeFetchModal(){
+  if(fetchingData)return;
+  document.getElementById('fetchModal').classList.remove('on');
+}
+
+function loadDisplay(){
+  // ถ้ายังไม่มีข้อมูลให้โหลดจาก local ก่อน
+  if(!allData.length){
+    allData=getLocal();
+    allData.sort((a,b)=>{
+      var da=nd(a[1]),db=nd(b[1]);
+      if(db!==da)return db.localeCompare(da);
+      var so=['ดึก','เช้า','บ่าย'];
+      return so.indexOf(b[2])-so.indexOf(a[2]);
+    });
+  }
+  filterRender();
 }
 
 function filterRender(){
@@ -958,9 +1094,20 @@ function saveEdit(){
   var K=Math.max(0,(+editRow[3])+(+editRow[4])+(+editRow[5])-(+editRow[6])-(+editRow[7])-(+editRow[8])-(+editRow[9]));
   editRow[10]=K;editRow[16]=(K*100/30).toFixed(2);
   editRow[25]=K-((+editRow[22])+(+editRow[23])+(+editRow[24]));
-  // update allData
-  if(allData.length&&editIdx>=0)allData[editIdx]=editRow;
-  updateLocal(editIdx,editRow);
+  // upsert allData by date|shift
+  var key=nd(editRow[1])+'|'+(editRow[2]||'');
+  var found=false;
+  allData=allData.map(r=>{
+    if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return editRow;}
+    return r;
+  });
+  if(!found&&editIdx>=0)allData[editIdx]=editRow;
+  // upsert localStorage by date|shift
+  var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
+  var lFound=false;
+  rows=rows.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){lFound=true;return editRow;}return r;});
+  if(!lFound)rows.unshift(editRow);
+  localStorage.setItem('shift_rows',JSON.stringify(rows));
   // send to sheet
   fetch(getUrl(),{method:'POST',body:JSON.stringify({rowData:editRow,updateId:editRow[0]}),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow'})
     .then(r=>r.json()).then(()=>{}).catch(()=>{});
