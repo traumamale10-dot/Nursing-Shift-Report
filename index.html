@@ -1396,31 +1396,6 @@ async function calcProdT(){
 // ─── gasGet: google.script.run ใน GAS context, fetch นอก GAS ───
 function gasGet(params){
   return new Promise((resolve, reject)=>{
-    // google.script.run (ใน GAS context ที่มี index.html)
-    if(typeof google !== 'undefined' && google.script && google.script.run){
-      const isData = params.startsWith('action=getData');
-      google.script.run
-        .withSuccessHandler(d => resolve(d))
-        .withFailureHandler(e => reject(new Error(String(e.message||e))))
-        [isData ? 'getDataForWeb' : 'getLastShiftForWeb']();
-      return;
-    }
-    // fetch ปกติ (GitHub Pages, https)
-    const sep = GAS_URL.includes('?') ? '&' : '?';
-    fetch(GAS_URL + sep + params, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'omit',
-      cache: 'no-cache'
-    })
-    .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(d => resolve(d))
-    .catch(e => reject(e));
-  });
-}
-
-function gasGet(params){
-  return new Promise((resolve, reject)=>{
     // ถ้าอยู่ใน GAS context ใช้ google.script.run
     if(typeof google !== 'undefined' && google.script && google.script.run){
       const isData = params.startsWith('action=getData');
@@ -1432,12 +1407,10 @@ function gasGet(params){
     }
     const sep = GAS_URL.includes('?') ? '&' : '?';
     const url = GAS_URL + sep + params;
-    // Strategy 1: direct fetch (works from https:// origins like GitHub Pages)
     fetch(url, { method:'GET', mode:'cors', credentials:'omit', cache:'no-cache' })
       .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
       .then(d => resolve(d))
       .catch(() => {
-        // Strategy 2: proxy via allorigins (fallback for CORS issues)
         const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
         fetch(proxy)
           .then(r => r.json())
