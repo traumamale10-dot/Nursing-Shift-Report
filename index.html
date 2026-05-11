@@ -2085,6 +2085,55 @@ async function loadDash(){
   }
 }
 
+function renderDash(data){
+  const rows=data.slice(1).filter(r=>r[0]!=='');
+  if(!rows.length){document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';return;}
+  const last=rows[rows.length-1];
+  document.getElementById('dashSub').textContent=`ล่าสุด: ${fmt(last[1])} เวร${last[2]||'—'} | ${rows.length} รายการ`;
+  document.getElementById('lastBanner').style.display='block';
+  document.getElementById('lastBannerText').textContent=`${fmt(last[1])} เวร ${last[2]||'—'}`;
+  document.getElementById('lastBannerNurse').textContent=`หน.เวร: ${last[61]||'—'}`;
+  document.getElementById('ds-total').textContent=last[10]||0;
+  document.getElementById('ds-new').textContent=last[4]||0;
+  document.getElementById('ds-dc').textContent=last[7]||0;
+  document.getElementById('ds-ref').textContent=(parseInt(last[8]||0)+parseInt(last[9]||0));
+  const prod=parseFloat(last[15])||0, occ=parseFloat(last[16])||0;
+  document.getElementById('ds-prod').textContent=prod?prod.toFixed(1)+'%':'—';
+  document.getElementById('ds-occ').textContent=occ?occ.toFixed(1)+'%':'—';
+  document.getElementById('ds-prod-bar').style.width=Math.min(prod,100)+'%';
+  document.getElementById('ds-occ-bar').style.width=Math.min(occ,100)+'%';
+  document.getElementById('ds-type').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+      ${[['T4',last[11],'bad'],['T3',last[12],'warn'],['T2',last[13],''],['T1',last[14],'good']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+      ${[['RN',last[19],'purple'],['Aide',last[20],''],['Worker',last[21],''],['รวม',last[56]||0,'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+    </div>`;
+  document.getElementById('ds-devices').innerHTML='<div class="dev-row">'+
+    [['🚑','Emergency',last[26]],['⚡','Defib',last[27]],['🫁','Oxygen',last[28]]].map(([ic,l,v])=>{
+      const ok=v==='พร้อมใช้';
+      return`<div class="dev-box ${ok?'dev-ok':'dev-ng'}">${ic} ${l}<br>${ok?'✓ พร้อม':'✗ ไม่พร้อม'}</div>`;
+    }).join('')+'</div>';
+  const riskRows=rows.filter(r=>r[41]==='มี'||r[42]||r[45]||r[48]).slice(-3).reverse();
+  if(riskRows.length){
+    document.getElementById('ds-risk').innerHTML=riskRows.map(r=>{
+      const risks=[[r[42],r[43],r[44]],[r[45],r[46],r[47]],[r[48],r[49],r[50]]].filter(x=>x[0]);
+      return risks.map(([t,d,h])=>`<div class="risk-item"><div class="ri-type">⚠️ ${t}</div><div class="ri-det">${d||'—'}</div>${h?`<div class="ri-hn">HN: ${h}</div>`:''}</div>`).join('');
+    }).join('');
+  }
+  const last7=rows.slice(-7);
+  const mx=Math.max(...last7.map(r=>parseInt(r[10])||0),1);
+  document.getElementById('ds-chart').innerHTML=`
+    <div style="display:flex;align-items:flex-end;gap:5px;height:70px;margin-bottom:6px;">
+      ${last7.map(r=>{
+        const v=parseInt(r[10])||0,h=Math.round(v/mx*62);
+        const c=r[2]==='ดึก'?'var(--purple)':r[2]==='เช้า'?'#c08020':'var(--orange)';
+        return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:9px;color:var(--text3);">${v}</div><div style="width:100%;height:${h}px;background:${c};border-radius:3px 3px 0 0;min-height:3px;"></div></div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:5px;">${last7.map(r=>`<div style="flex:1;font-size:9px;color:var(--text3);text-align:center;">${shortD(r[1])}</div>`).join('')}</div>`;
+}
+
 // ─── HISTORY ───
 let histTab='all';
 function setHistTab(tab){
