@@ -1252,7 +1252,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxggSsEe5W1-A_QJ8xiAMn1rt60X20kZluPg2m5cipEws67L6Y9xltH4PKEgCCqyLPvOA/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyfFPTTTT7wKw7PGMxfXtCSF-nutj8o37GoY9Mj80M-8jYg77blnkfVIYEjtVJdsDeEXw/exec';
 // Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
 const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
   window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
@@ -1525,14 +1525,15 @@ function gasPost(payload){
         .saveRowFromClient(payload);
       return;
     }
-    fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {'Content-Type':'application/json'}
-    })
-    .then(r => r.json())
-    .then(d => resolve(d))
-    .catch(e => reject(e));
+    // GAS POST มีปัญหา CORS — ใช้ GET + encoded payload แทน
+    // โดย GAS doGet จะรับ action=save และ data=<encoded>
+    const sep = GAS_URL.includes('?') ? '&' : '?';
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    const url = GAS_URL + sep + 'action=save&data=' + encoded;
+    fetch(url, { method:'GET', mode:'cors', credentials:'omit', cache:'no-cache' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(d => resolve(d))
+      .catch(e => reject(e));
   });
 }
 
