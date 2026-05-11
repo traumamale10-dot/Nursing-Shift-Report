@@ -301,9 +301,6 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <div class="main">
-<!-- ─── LOCAL FILE WARNING BANNER ─── -->
-<div id="localBanner" style="display:none;background:linear-gradient(135deg,#e07820,#d06a10);color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:14px;text-align:center;">
-  <div style="font-size:14px;font-weight:700;margin-bottom:6px;">⚠️ กรุณาเปิดแอปจาก URL</div>
   <div style="font-size:12px;opacity:.9;margin-bottom:10px;">การเปิดจากไฟล์โดยตรง (about:blank) ทำให้ไม่สามารถโหลดข้อมูลได้</div>
   <a id="gasOpenLink" href="#" target="_blank" style="background:#fff;color:#d06a10;padding:8px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;display:inline-block;">🔗 เปิดแอปจาก GAS URL</a>
 </div>
@@ -1255,7 +1252,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyIvdZtyTEEVnnQZpqUZD4fN2XNDS7A3Rv6PYkg4hQ6kiIYyYH5SuQvxBvbah_NAJfRyQ/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbxggSsEe5W1-A_QJ8xiAMn1rt60X20kZluPg2m5cipEws67L6Y9xltH4PKEgCCqyLPvOA/exec';
 // Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
 const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
   window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
@@ -1283,14 +1280,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   fetchLastShift();
   // load dashboard data
   loadDash();
-  // Show warning banner if opened from about:blank or file://
-  const isLocal = window.location.protocol === 'about:' || window.location.origin === 'null' || window.location.protocol === 'file:';
-  if(isLocal){
-    const banner = document.getElementById('localBanner');
-    const link   = document.getElementById('gasOpenLink');
-    if(banner) banner.style.display = 'block';
-    if(link)   link.href = GAS_URL;
-  }
 });
 
 // ─── TABS ───
@@ -1410,7 +1399,7 @@ async function calcProdT(){
 // ─── gasGet: google.script.run ใน GAS context, fetch นอก GAS ───
 function gasGet(params){
   return new Promise((resolve, reject)=>{
-    // Strategy 1: google.script.run (ใน GAS context)
+    // google.script.run (ใน GAS context ที่มี index.html)
     if(typeof google !== 'undefined' && google.script && google.script.run){
       const isData = params.startsWith('action=getData');
       google.script.run
@@ -1419,33 +1408,17 @@ function gasGet(params){
         [isData ? 'getDataForWeb' : 'getLastShiftForWeb']();
       return;
     }
-    // ถ้าเปิดจาก about:blank หรือ file:// — fetch จะไม่ได้
-    const origin = window.location.origin;
-    const isLocalFile = origin === 'null' || origin === '' || window.location.protocol === 'about:';
-    if(isLocalFile){
-      // แสดงข้อความแนะนำให้เปิดจาก URL แทน
-      reject(new Error('กรุณาเปิดแอปผ่าน GAS URL แทนการเปิดไฟล์โดยตรง'));
-      return;
-    }
+    // fetch ปกติ (GitHub Pages, https)
     const sep = GAS_URL.includes('?') ? '&' : '?';
-    const url = GAS_URL + sep + params;
-    // Strategy 2: direct fetch (GitHub Pages / https)
-    fetch(url, { method:'GET', mode:'cors', credentials:'omit', cache:'no-cache' })
-      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-      .then(d => resolve(d))
-      .catch(() => {
-        // Strategy 3: allorigins proxy
-        const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-        fetch(proxy)
-          .then(r => r.json())
-          .then(d => {
-            const contents = d.contents;
-            if(!contents) throw new Error('No contents from proxy');
-            return JSON.parse(contents);
-          })
-          .then(d => resolve(d))
-          .catch(e => reject(e));
-      });
+    fetch(GAS_URL + sep + params, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      cache: 'no-cache'
+    })
+    .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(d => resolve(d))
+    .catch(e => reject(e));
   });
 }
 
@@ -1497,11 +1470,7 @@ async function fetchLastShift(){
     await loadAllDataSilent();
     calcT();
   } catch(e){
-    const isLocalF = window.location.protocol === 'about:' || window.location.origin === 'null';
-    if(spinner){ 
-      spinner.textContent = isLocalF ? '⚠ เปิดจาก GAS URL' : '⚠ ไม่ได้';
-      spinner.style.color='var(--orange)'; 
-    }
+    if(spinner){ spinner.textContent='⚠ ไม่ได้'; spinner.style.color='var(--orange)'; }
     // fallback: allow manual edit
     document.getElementById('f-prev').readOnly = false;
     document.getElementById('f-prev').style.background = '';
@@ -1566,6 +1535,7 @@ function gasPost(payload){
     .catch(e => reject(e));
   });
 }
+
 
 // ─── EDIT FROM PREVIEW ───
 // กดแก้ไขจากหน้าตัวอย่าง → fill ฟอร์มด้วยข้อมูลเดิมแล้วสลับไปหน้าบันทึก
@@ -2099,7 +2069,9 @@ async function submitF(){
     const r=await gasPost({rowData});
     if(r.status==='success'){toast('✅ บันทึกสำเร็จ! แถวที่ '+r.row,'success');}
     else toast('เกิดข้อผิดพลาด: '+(r.msg||''),'error');
-  }catch(e){toast('ส่งไม่ได้: '+e.message,'error');}
+  }catch(e){
+    toast('ส่งไม่ได้: '+e.message,'error');
+  }
   finally{
     ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;});
     ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='none';});
@@ -2135,9 +2107,7 @@ async function loadDash(){
     const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1){allData=data;renderDash(data);}
     else document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';
-  }catch(e){const isLocal = window.location.protocol === 'about:' || window.location.origin === 'null';
-    document.getElementById('dashSub').innerHTML = isLocal
-      ? '⚠️ เปิดจากไฟล์โดยตรงไม่ได้ → <a href="' + GAS_URL + '" target="_blank" style="color:var(--purple);font-weight:700;">คลิกเปิดจาก GAS URL</a>'
+  }catch(e){document.getElementById('dashSub').textContent='โหลดไม่ได้: '+e.message;font-weight:700;">คลิกเปิดจาก GAS URL</a>'
       : 'โหลดไม่ได้: '+e.message;}
   finally{document.getElementById('rfSpin').style.display='none';}
 }
@@ -2209,9 +2179,7 @@ async function loadH(){
     const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1){allData=data;filterH();calcProdT();}
     else document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ยังไม่มีข้อมูล</div>';
-  }catch(e){const isLocal2 = window.location.protocol === 'about:' || window.location.origin === 'null';
-    document.getElementById('histList').innerHTML = isLocal2
-      ? '<div style="text-align:center;padding:32px;"><div style="font-size:28px;margin-bottom:10px;">⚠️</div><div style="font-size:13px;color:var(--text2);margin-bottom:12px;">ไม่สามารถโหลดข้อมูลจากไฟล์โดยตรงได้</div><a href="' + GAS_URL + '" target="_blank" style="background:var(--purple);color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none;">🔗 เปิดแอปจาก GAS URL แทน</a></div>'
+  }catch(e){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';padding:32px;"><div style="font-size:28px;margin-bottom:10px;">⚠️</div><div style="font-size:13px;color:var(--text2);margin-bottom:12px;">ไม่สามารถโหลดข้อมูลจากไฟล์โดยตรงได้</div><a href="' + GAS_URL + '" target="_blank" style="background:var(--purple);color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none;">🔗 เปิดแอปจาก GAS URL แทน</a></div>'
       : '<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';}
 }
 
@@ -2608,7 +2576,9 @@ async function saveEdit(){
       closeModal();
       await loadH();
     } else toast('เกิดข้อผิดพลาด: '+(result.msg||''),'error');
-  }catch(e){toast('บันทึกไม่ได้: '+e.message,'error');}
+  }catch(e){
+    toast('บันทึกไม่ได้: '+e.message,'error');
+  }
   finally{btn.disabled=false;sp.style.display='none';}
 }
 
