@@ -98,7 +98,13 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .cok{background:var(--green-bg);color:var(--green);}
 .cerr{background:var(--red-bg);color:var(--red);}
 
-/* ─── HISTORY ─── */
+/* ─── HISTORY TABS ─── */
+.htab{flex:1;min-width:60px;padding:6px 8px;background:none;border:none;color:var(--text3);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border-radius:6px;transition:.15s;white-space:nowrap;}
+.htab.active{background:var(--white);color:var(--purple);box-shadow:0 1px 4px rgba(107,79,160,.15);}
+/* ─── MODAL TABS ─── */
+.mtab{flex:1;min-width:55px;padding:9px 6px;background:none;border:none;color:var(--text3);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;}
+.mtab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--white);}
+
 .mr{background:var(--white);border-radius:9px;padding:11px;margin-bottom:8px;box-shadow:0 2px 8px rgba(107,79,160,.07);border-left:3px solid var(--purple);}
 .mr .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .mr .info{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;font-size:11px;color:var(--text2);}
@@ -277,7 +283,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     <div style="font-size:10px;color:rgba(255,255,255,.7);text-align:right;" id="hDate"></div>
   </div>
   <nav class="nav">
-    <button class="nb active" onclick="sw('form')"><span>📝</span>บันทึกเวร</button>
+    <button class="nb active" onclick="sw('dashboard')"><span>📊</span>Dashboard</button>
+    <button class="nb" onclick="sw('form')"><span>📝</span>บันทึกเวร</button>
     <button class="nb" onclick="sw('preview')"><span>🖼️</span>ตัวอย่าง</button>
     <button class="nb" onclick="sw('history')"><span>📋</span>ประวัติ</button>
     <button class="nb" onclick="sw('settings')"><span>⚙️</span>ตั้งค่า</button>
@@ -286,8 +293,83 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 <div class="main">
 
+<!-- ════════ DASHBOARD PAGE ════════ -->
+<div class="page active" id="page-dashboard">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div>
+      <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;">📊 Dashboard</div>
+      <div style="font-size:11px;color:var(--text3);" id="dashSub">กำลังโหลด...</div>
+    </div>
+    <button onclick="loadDash()" style="background:var(--purple-bg);border:none;border-radius:8px;padding:7px 12px;color:var(--purple);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;">
+      <span id="rfSpin" style="display:none;width:12px;height:12px;border:2px solid var(--purple-bg);border-top-color:var(--purple);border-radius:50%;animation:sp .6s linear infinite;"></span>🔄 รีเฟรช
+    </button>
+  </div>
+
+  <!-- Last shift banner -->
+  <div id="lastBanner" style="display:none;background:linear-gradient(135deg,#4e3880,#8B6FC0);border-radius:var(--r);padding:12px 14px;color:#fff;margin-bottom:12px;">
+    <div style="font-size:10px;opacity:.75;margin-bottom:2px;">เวรล่าสุด</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div id="lastBannerText" style="font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;"></div>
+      <div id="lastBannerNurse" style="font-size:11px;opacity:.85;"></div>
+    </div>
+  </div>
+
+  <!-- Stat grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;">
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--purple);text-align:center;padding:12px 8px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">คงพยาบาล</div>
+      <div id="ds-total" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--purple);">—</div>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--teal);text-align:center;padding:12px 8px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">รับใหม่</div>
+      <div id="ds-new" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--teal);">—</div>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--orange);text-align:center;padding:12px 8px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">กลับบ้าน</div>
+      <div id="ds-dc" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--orange);">—</div>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--red);text-align:center;padding:12px 8px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Refer/เสียชีวิต</div>
+      <div id="ds-ref" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--red);">—</div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="card">
+    <div class="ch"><div class="chi t">📈</div><div class="cl">ตัวชี้วัดเวรล่าสุด</div></div>
+    <div class="cb" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="ds-kpi">
+      <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Productivity</div><div style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:700;color:var(--purple);" id="ds-prod">—</div><div style="height:5px;background:var(--gray2);border-radius:3px;margin-top:4px;"><div id="ds-prod-bar" style="height:100%;border-radius:3px;background:var(--purple);width:0%;transition:.5s;"></div></div></div>
+      <div><div style="font-size:10px;color:var(--text3);margin-bottom:3px;">ครองเตียง</div><div style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:700;color:var(--teal);" id="ds-occ">—</div><div style="height:5px;background:var(--gray2);border-radius:3px;margin-top:4px;"><div id="ds-occ-bar" style="height:100%;border-radius:3px;background:var(--teal);width:0%;transition:.5s;"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Patient type + staff -->
+  <div class="card">
+    <div class="ch"><div class="chi p">🏥</div><div class="cl">ประเภทผู้ป่วย + บุคลากร</div></div>
+    <div class="cb" id="ds-type"><div style="text-align:center;color:var(--text3);font-size:12px;">รอข้อมูล</div></div>
+  </div>
+
+  <!-- Equipment -->
+  <div class="card">
+    <div class="ch"><div class="chi t">🚑</div><div class="cl">อุปกรณ์ฉุกเฉิน</div></div>
+    <div class="cb" id="ds-devices"><div style="text-align:center;color:var(--text3);font-size:12px;">รอข้อมูล</div></div>
+  </div>
+
+  <!-- Risk latest -->
+  <div class="card">
+    <div class="ch"><div class="chi r">⚠️</div><div class="cl">ความเสี่ยงล่าสุด</div></div>
+    <div class="cb" id="ds-risk"><div style="text-align:center;color:var(--green);font-size:12px;">✓ ไม่มีเหตุการณ์ความเสี่ยง</div></div>
+  </div>
+
+  <!-- Mini chart -->
+  <div class="card">
+    <div class="ch"><div class="chi p">📉</div><div class="cl">คงพยาบาล 7 เวรล่าสุด</div></div>
+    <div class="cb" id="ds-chart"><div style="text-align:center;color:var(--text3);font-size:12px;">รอข้อมูล</div></div>
+  </div>
+</div>
+
 <!-- ════════ FORM PAGE ════════ -->
-<div class="page active" id="page-form">
+<div class="page" id="page-form">
   <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">📝 บันทึกเหตุการณ์เวร</div>
   <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">กรอกข้อมูล → กดดูตัวอย่าง → บันทึก/Export รูป</div>
 
@@ -303,7 +385,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="stitle">จำนวนผู้ป่วย</div>
       <div class="fr three">
-        <div class="f"><label>ยอดยกมา</label><input type="number" id="f-prev" min="0" placeholder="0"></div>
+        <div class="f">
+          <label>ยอดยกมา <span id="prev-loading" style="font-size:10px;color:var(--teal);">⟳</span></label>
+          <input type="number" id="f-prev" min="0" placeholder="ดึงจากเวรที่แล้ว" readonly style="background:var(--teal-lt);border-color:#9fd8d2;color:var(--teal);font-weight:700;">
+        </div>
         <div class="f"><label>รับใหม่</label><input type="number" id="f-new" min="0" placeholder="0"></div>
         <div class="f"><label>รับย้าย</label><input type="number" id="f-tin" min="0" placeholder="0"></div>
       </div>
@@ -325,11 +410,23 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     <div class="cb">
       <div class="fr">
         <div class="f"><label>Productivity (%)</label><input type="number" id="f-prod" step="0.1" placeholder="0.0"></div>
-        <div class="f"><label>ครองเตียง (%)</label><input type="number" id="f-occ" step="0.1" placeholder="0.0"></div>
+        <div class="f">
+          <label>ครองเตียง (%) <span style="font-size:10px;color:var(--teal);">คงพยาบาล×100÷30</span></label>
+          <input type="number" id="f-occ" step="0.01" placeholder="อัตโนมัติ" readonly style="background:var(--teal-lt);border-color:#9fd8d2;color:var(--teal);font-weight:700;">
+        </div>
+      </div>
+      <div class="fr" id="prodT-row" style="display:none;">
+        <div class="f">
+          <label>Productivity รวม <span style="font-size:10px;color:var(--purple);">(เฉพาะเวรบ่าย: เฉลี่ย ดึก+เช้า+บ่าย÷3)</span></label>
+          <input type="number" id="f-prodT" step="0.01" placeholder="คำนวณอัตโนมัติ" readonly style="background:var(--purple-bg);border-color:#c4aee8;color:var(--purple);font-weight:700;">
+        </div>
       </div>
       <div class="fr">
-        <div class="f"><label>Productivity รวม</label><input type="number" id="f-prodT" step="0.1" placeholder="0.0"></div>
         <div class="f"><label>Tube</label><input type="number" id="f-tube" min="0" placeholder="0"></div>
+        <div class="f" id="prodT-note" style="display:none;">
+          <label style="color:var(--text3);">ข้อมูลที่ใช้คำนวณ Prod. รวม</label>
+          <div id="prodT-detail" style="font-size:11px;color:var(--text3);background:var(--gray1);border-radius:7px;padding:8px 10px;border:1.5px solid var(--gray2);">รอโหลดข้อมูลเวรดึก-เช้า...</div>
+        </div>
       </div>
       <div class="stitle">ประเภทผู้ป่วย</div>
       <div class="fr">
@@ -432,29 +529,43 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
   <!-- 6 ความเสี่ยง -->
   <div class="card">
-    <div class="ch"><div class="chi r">⚠️</div><div class="cl">เหตุการณ์ความเสี่ยง</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="ch"><div class="chi r">⚠️</div><div class="cl">เหตุการณ์ความเสี่ยง</div></div>
     <div class="cb">
-      <div class="fr one" style="margin-bottom:11px;">
-        <div class="f"><label>สถานะ</label>
-          <select id="f-riskMain"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+      <div class="fr one" style="margin-bottom:4px;">
+        <div class="f"><label>มีเหตุการณ์ความเสี่ยง?</label>
+          <select id="f-riskMain" onchange="toggleRiskFields()">
+            <option value="">-- เลือก --</option>
+            <option>มี</option>
+            <option>ไม่มี</option>
+          </select>
         </div>
       </div>
-      <div class="risk-c">
-        <div class="risk-n">⚠️ ความเสี่ยงที่ 1</div>
-        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r1t" placeholder="ประเภท"></div></div>
-        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r1d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r1h" placeholder="HN"></div></div>
+      <!-- risk fields: hidden until "มี" selected -->
+      <div id="risk-fields" style="display:none;margin-top:8px;">
+        <div class="risk-c">
+          <div class="risk-n">⚠️ ความเสี่ยงที่ 1</div>
+          <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r1t" placeholder="ประเภทความเสี่ยง"></div></div>
+          <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r1d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r1h" placeholder="HN"></div></div>
+        </div>
+        <div class="risk-c">
+          <div class="risk-n">⚠️ ความเสี่ยงที่ 2</div>
+          <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r2t" placeholder="ประเภทความเสี่ยง"></div></div>
+          <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r2d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r2h" placeholder="HN"></div></div>
+        </div>
+        <div class="risk-c">
+          <div class="risk-n">⚠️ ความเสี่ยงที่ 3</div>
+          <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r3t" placeholder="ประเภทความเสี่ยง"></div></div>
+          <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r3d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r3h" placeholder="HN"></div></div>
+        </div>
       </div>
-      <div class="risk-c">
-        <div class="risk-n">⚠️ ความเสี่ยงที่ 2</div>
-        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r2t" placeholder="ประเภท"></div></div>
-        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r2d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r2h" placeholder="HN"></div></div>
-      </div>
-      <div class="risk-c">
-        <div class="risk-n">⚠️ ความเสี่ยงที่ 3</div>
-        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r3t" placeholder="ประเภท"></div></div>
-        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r3d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r3h" placeholder="HN"></div></div>
-      </div>
-      <div class="fr one"><div class="f"><label>เหตุการณ์เพิ่มเติม</label><textarea id="f-rExtra" placeholder="บันทึกเพิ่มเติม..."></textarea></div></div>
+    </div>
+  </div>
+
+  <!-- 6b เหตุการณ์เพิ่มเติม -->
+  <div class="card">
+    <div class="ch"><div class="chi p">📌</div><div class="cl">เหตุการณ์เพิ่มเติม</div></div>
+    <div class="cb">
+      <div class="f"><label>บันทึกเหตุการณ์อื่นๆ หรือข้อมูลเพิ่มเติม</label><textarea id="f-rExtra" placeholder="เช่น ผู้ป่วย VIP, แจ้งญาติ, ประสานงานพิเศษ..." style="min-height:90px;"></textarea></div>
     </div>
   </div>
 
@@ -708,17 +819,214 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 <!-- ════════ HISTORY PAGE ════════ -->
 <div class="page" id="page-history">
-  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">📋 ประวัติ</div>
-  <div style="font-size:11px;color:var(--text3);margin-bottom:12px;" id="histCount">—</div>
-  <div style="display:flex;gap:7px;margin-bottom:12px;">
-    <input id="hSearch" placeholder="🔍 ค้นหา..." oninput="filterH()"
+  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">📋 ประวัติการบันทึก</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:10px;" id="histCount">—</div>
+
+  <!-- Search + filter -->
+  <div style="display:flex;gap:7px;margin-bottom:10px;">
+    <input id="hSearch" placeholder="🔍 ค้นหา วันที่ / หน.เวร..." oninput="filterH()"
       style="flex:1;background:var(--white);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 10px;font-family:'Sarabun',sans-serif;font-size:12px;outline:none;">
     <select id="hShift" onchange="filterH()"
       style="background:var(--white);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 9px;font-family:'Sarabun',sans-serif;font-size:12px;outline:none;-webkit-appearance:none;">
       <option value="">ทุกเวร</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option>
     </select>
+    <button onclick="loadH()" style="background:var(--purple-bg);border:none;border-radius:7px;padding:8px 10px;color:var(--purple);font-size:12px;font-weight:700;cursor:pointer;">🔄</button>
   </div>
+
+  <!-- View mode tabs -->
+  <div style="display:flex;gap:0;background:var(--gray2);border-radius:8px;padding:3px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;">
+    <button class="htab active" id="htab-all" onclick="setHistTab('all')">ทั้งหมด</button>
+    <button class="htab" id="htab-risk" onclick="setHistTab('risk')">⚠️ ความเสี่ยง</button>
+    <button class="htab" id="htab-extra" onclick="setHistTab('extra')">📌 เพิ่มเติม</button>
+    <button class="htab" id="htab-absent" onclick="setHistTab('absent')">👤 ขาดลา</button>
+    <button class="htab" id="htab-val" onclick="setHistTab('val')">💼 ของมีค่า</button>
+    <button class="htab" id="htab-allergy" onclick="setHistTab('allergy')">💊 แพ้ยา</button>
+  </div>
+
   <div id="histList"><div style="text-align:center;padding:32px;color:var(--text3);">กำลังโหลด...</div></div>
+</div>
+
+<!-- ════════ DETAIL MODAL ════════ -->
+<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;padding:16px;">
+  <div style="background:var(--white);border-radius:14px;max-width:460px;margin:0 auto;overflow:hidden;">
+    <!-- Modal header -->
+    <div style="background:linear-gradient(135deg,#4e3880,#8B6FC0);padding:14px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:9px;opacity:.75;margin-bottom:1px;">รายละเอียดบันทึกเวร</div>
+        <div id="modal-title" style="font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;">—</div>
+      </div>
+      <button onclick="closeModal()" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;color:#fff;padding:6px 12px;font-family:'Sarabun',sans-serif;font-size:12px;cursor:pointer;">✕ ปิด</button>
+    </div>
+
+    <!-- Modal tabs -->
+    <div style="display:flex;background:var(--gray1);border-bottom:1px solid var(--gray2);overflow-x:auto;scrollbar-width:none;">
+      <button class="mtab active" id="mtab-info" onclick="setModalTab('info')">📊 ข้อมูล</button>
+      <button class="mtab" id="mtab-risk" onclick="setModalTab('risk')">⚠️ ความเสี่ยง</button>
+      <button class="mtab" id="mtab-staff" onclick="setModalTab('staff')">👥 บุคลากร</button>
+      <button class="mtab" id="mtab-misc" onclick="setModalTab('misc')">📌 อื่นๆ</button>
+      <button class="mtab" id="mtab-edit" onclick="setModalTab('edit')">✏️ แก้ไข</button>
+    </div>
+
+    <!-- Modal content panels -->
+    <div id="modal-body" style="padding:14px;max-height:70vh;overflow-y:auto;">
+      <!-- info panel -->
+      <div id="mpanel-info">
+        <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">จำนวนผู้ป่วย</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+          <div class="mbox"><div class="mk">ยกมา</div><div class="mv" id="m-prev">—</div></div>
+          <div class="mbox"><div class="mk">รับใหม่</div><div class="mv teal" id="m-new">—</div></div>
+          <div class="mbox"><div class="mk">กลับบ้าน</div><div class="mv" id="m-dc">—</div></div>
+          <div class="mbox"><div class="mk">คงพยาบาล</div><div class="mv purple" id="m-total">—</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+          <div class="mbox"><div class="mk">รับย้าย</div><div class="mv" id="m-tin">—</div></div>
+          <div class="mbox"><div class="mk">ย้ายออก</div><div class="mv" id="m-tout">—</div></div>
+          <div class="mbox"><div class="mk">Refer</div><div class="mv bad" id="m-refer">—</div></div>
+          <div class="mbox"><div class="mk">เสียชีวิต</div><div class="mv bad" id="m-dead">—</div></div>
+        </div>
+        <div class="rs"><div class="rs-dot" style="background:var(--teal)"></div><div class="rs-label">ตัวชี้วัด</div><div class="rs-line"></div></div>
+        <table class="rtbl" style="margin-bottom:10px;">
+          <tr><td class="rk">Productivity</td><td class="rv" id="m-prod">—</td></tr>
+          <tr><td class="rk">ครองเตียง</td><td class="rv" id="m-occ">—</td></tr>
+          <tr><td class="rk">Productivity รวม</td><td class="rv" id="m-prodT">—</td></tr>
+          <tr><td class="rk">Tube</td><td class="rv" id="m-tube">—</td></tr>
+        </table>
+        <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประเภทผู้ป่วย / โรค</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px;">
+          <div class="mbox"><div class="mk">ประเภท 4</div><div class="mv bad" id="m-t4">—</div></div>
+          <div class="mbox"><div class="mk">ประเภท 3</div><div class="mv warn" id="m-t3">—</div></div>
+          <div class="mbox"><div class="mk">ประเภท 2</div><div class="mv" id="m-t2">—</div></div>
+          <div class="mbox"><div class="mk">ประเภท 1</div><div class="mv good" id="m-t1">—</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+          <div class="mbox"><div class="mk">Trauma</div><div class="mv purple" id="m-trauma">—</div></div>
+          <div class="mbox"><div class="mk">Neuro</div><div class="mv teal" id="m-neuro">—</div></div>
+          <div class="mbox"><div class="mk">Plastic</div><div class="mv" id="m-plastic">—</div></div>
+          <div class="mbox"><div class="mk">Multiple</div><div class="mv" id="m-multi">—</div></div>
+        </div>
+      </div>
+
+      <!-- risk panel -->
+      <div id="mpanel-risk" style="display:none;">
+        <div class="rs"><div class="rs-dot" style="background:var(--red)"></div><div class="rs-label">เหตุการณ์ความเสี่ยง</div><div class="rs-line"></div></div>
+        <div id="m-riskList" style="margin-bottom:10px;"></div>
+        <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">เฝ้าระวัง</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:10px;">
+          <div class="mbox"><div class="mk">Fall</div><div class="mv bad" id="m-fall">—</div></div>
+          <div class="mbox"><div class="mk">Bed sore</div><div class="mv warn" id="m-bedsore">—</div></div>
+          <div class="mbox"><div class="mk">ชื่อซ้ำ</div><div class="mv warn" id="m-dup">—</div></div>
+        </div>
+        <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">📌 เหตุการณ์เพิ่มเติม</div><div class="rs-line"></div></div>
+        <div id="m-riskExtra" style="font-size:12px;color:var(--text2);background:var(--gray1);border-radius:7px;padding:9px 11px;min-height:40px;"></div>
+      </div>
+
+      <!-- staff panel -->
+      <div id="mpanel-staff" style="display:none;">
+        <div class="rs"><div class="rs-dot" style="background:var(--green)"></div><div class="rs-label">บุคลากร</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+          <div class="mbox"><div class="mk">RN</div><div class="mv purple" id="m-rn">—</div></div>
+          <div class="mbox"><div class="mk">Aide/PN</div><div class="mv" id="m-aide">—</div></div>
+          <div class="mbox"><div class="mk">Worker</div><div class="mv" id="m-worker">—</div></div>
+          <div class="mbox"><div class="mk">รวม</div><div class="mv teal" id="m-staff">—</div></div>
+        </div>
+        <table class="rtbl" style="margin-bottom:10px;">
+          <tr><td class="rk">ขาดลา/มาสาย</td><td class="rv" id="m-absent">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="m-absentD" style="font-size:11px;">—</td></tr>
+          <tr><td class="rk">การผัน/Off</td><td class="rv" id="m-off">—</td></tr>
+        </table>
+        <div class="rs"><div class="rs-dot" style="background:var(--teal)"></div><div class="rs-label">อุปกรณ์</div><div class="rs-line"></div></div>
+        <div class="dev-row" id="m-devices"></div>
+        <div class="rs" style="margin-top:10px;"><div class="rs-dot" style="background:var(--gray3)"></div><div class="rs-label">ลงนาม</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="sig-box"><div class="sig-label">หัวหน้าเวร</div><div class="sig-name" id="m-charge">—</div></div>
+          <div class="sig-box"><div class="sig-label">หัวหน้าหอ</div><div class="sig-name" id="m-wh">—</div></div>
+        </div>
+      </div>
+
+      <!-- misc panel -->
+      <div id="mpanel-misc" style="display:none;">
+        <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">ของมีค่า / ของค้าง</div><div class="rs-line"></div></div>
+        <table class="rtbl" style="margin-bottom:10px;">
+          <tr><td class="rk">ของมีค่า</td><td class="rv" id="m-val">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="m-valD" style="font-size:11px;">—</td></tr>
+          <tr><td class="rk">สถานะ</td><td class="rv" id="m-valS">—</td></tr>
+          <tr><td class="rk">ของค้าง</td><td class="rv" id="m-pend">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="m-pendD" style="font-size:11px;">—</td></tr>
+          <tr><td class="rk">สถานะ</td><td class="rv" id="m-pendS">—</td></tr>
+        </table>
+        <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประวัติแพ้ยา</div><div class="rs-line"></div></div>
+        <table class="rtbl" style="margin-bottom:10px;">
+          <tr><td class="rk">แพ้ยา</td><td class="rv" id="m-allergy">—</td></tr>
+          <tr><td class="rk">HN / ชื่อยา</td><td class="rv" id="m-aD" style="font-size:11px;">—</td></tr>
+          <tr><td class="rk">สถานะบัตร</td><td class="rv" id="m-aCard">—</td></tr>
+        </table>
+        <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">เตรียม</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+          <div class="mbox"><div class="mk">เตรียมตรวจ</div><div class="mv" id="m-pex">—</div></div>
+          <div class="mbox"><div class="mk">เตรียมผ่าตัด</div><div class="mv" id="m-pop">—</div></div>
+        </div>
+      </div>
+
+      <!-- edit panel -->
+      <div id="mpanel-edit" style="display:none;">
+        <div style="background:var(--orange-bg);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--orange);margin-bottom:12px;border-left:3px solid var(--orange);">
+          ⚠️ การแก้ไขจะเขียนทับข้อมูลเดิมใน Google Sheet โดยตรง
+        </div>
+        <input type="hidden" id="edit-rowIndex">
+        <div class="stitle">ข้อมูลพื้นฐาน</div>
+        <div class="fr"><div class="f"><label>วันที่</label><input type="date" id="e-date"></div><div class="f"><label>เวร</label><select id="e-shift"><option>ดึก</option><option>เช้า</option><option>บ่าย</option></select></div></div>
+        <div class="fr three">
+          <div class="f"><label>ยกมา</label><input type="number" id="e-prev" min="0"></div>
+          <div class="f"><label>รับใหม่</label><input type="number" id="e-new" min="0"></div>
+          <div class="f"><label>รับย้าย</label><input type="number" id="e-tin" min="0"></div>
+        </div>
+        <div class="fr three">
+          <div class="f"><label>ย้ายออก</label><input type="number" id="e-tout" min="0"></div>
+          <div class="f"><label>กลับบ้าน</label><input type="number" id="e-dc" min="0"></div>
+          <div class="f"><label>Refer</label><input type="number" id="e-refer" min="0"></div>
+        </div>
+        <div class="fr"><div class="f"><label>เสียชีวิต</label><input type="number" id="e-dead" min="0"></div><div class="f"><label>คงพยาบาล</label><input type="number" id="e-total" min="0"></div></div>
+        <div class="stitle">ตัวชี้วัด</div>
+        <div class="fr"><div class="f"><label>Productivity %</label><input type="number" id="e-prod" step="0.1"></div><div class="f"><label>ครองเตียง %</label><input type="number" id="e-occ" step="0.01"></div></div>
+        <div class="fr"><div class="f"><label>Prod. รวม</label><input type="number" id="e-prodT" step="0.01"></div><div class="f"><label>Tube</label><input type="number" id="e-tube" min="0"></div></div>
+        <div class="stitle">ความเสี่ยง</div>
+        <div class="fr one"><div class="f"><label>สถานะ</label><select id="e-riskMain"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div></div>
+        <div class="fr one"><div class="f"><label>ความเสี่ยง 1 (ประเภท)</label><input type="text" id="e-r1t"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="e-r1d"></div><div class="f"><label>HN</label><input type="text" id="e-r1h"></div></div>
+        <div class="fr one"><div class="f"><label>ความเสี่ยง 2 (ประเภท)</label><input type="text" id="e-r2t"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="e-r2d"></div><div class="f"><label>HN</label><input type="text" id="e-r2h"></div></div>
+        <div class="fr one"><div class="f"><label>ความเสี่ยง 3 (ประเภท)</label><input type="text" id="e-r3t"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="e-r3d"></div><div class="f"><label>HN</label><input type="text" id="e-r3h"></div></div>
+        <div class="fr one"><div class="f"><label>เหตุการณ์เพิ่มเติม</label><textarea id="e-rExtra" style="min-height:60px;"></textarea></div></div>
+        <div class="stitle">บุคลากร / แพ้ยา</div>
+        <div class="fr"><div class="f"><label>RN</label><input type="number" id="e-rn" min="0"></div><div class="f"><label>Aide/PN</label><input type="number" id="e-aide" min="0"></div></div>
+        <div class="fr"><div class="f"><label>Worker</label><input type="number" id="e-worker" min="0"></div><div class="f"><label>รวม</label><input type="number" id="e-staff" min="0"></div></div>
+        <div class="fr"><div class="f"><label>ขาดลา/มาสาย</label><select id="e-absent"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>การผัน/Off</label><select id="e-off"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div></div>
+        <div class="fr one"><div class="f"><label>รายละเอียดขาด/Off</label><input type="text" id="e-absentD"></div></div>
+        <div class="fr"><div class="f"><label>แพ้ยา</label><select id="e-allergy"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>สถานะบัตร</label><select id="e-aCard"><option value="">เลือก</option><option>มีบัตร</option><option>แจ้งเภสัชแล้ว</option><option>รอแจ้งซ้ำ</option></select></div></div>
+        <div class="fr one"><div class="f"><label>HN และชื่อยา</label><input type="text" id="e-aD"></div></div>
+        <div class="stitle">ของมีค่า / หัวหน้าเวร</div>
+        <div class="fr"><div class="f"><label>ของมีค่า</label><select id="e-val"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>สถานะ</label><input type="text" id="e-valS"></div></div>
+        <div class="fr one"><div class="f"><label>รายละเอียดของมีค่า</label><input type="text" id="e-valD"></div></div>
+        <div class="fr"><div class="f"><label>หัวหน้าเวร</label>
+          <select id="e-charge">
+            <option value="">-- เลือก --</option>
+            <option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option><option>เบญจมาศ</option>
+            <option>สาคร</option><option>นวลตา</option><option>สุนันทา</option><option>อัญชลี</option>
+            <option>จารุวรรณ</option><option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option>
+            <option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option><option>สุพรรณี</option>
+            <option>อริสรา</option><option>อุ้มบุญ</option><option>ชนาภา</option><option>กนกพร</option>
+            <option>วริศรา</option><option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option>
+          </select>
+        </div><div class="f"><label>หัวหน้าหอ</label><input type="text" id="e-wh"></div></div>
+        <div style="margin-top:14px;">
+          <button class="btn btn-p" id="editSaveBtn" onclick="saveEdit()">
+            <span id="editSpin" class="spin" style="display:none"></span>💾 บันทึกการแก้ไข
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ════════ SETTINGS PAGE ════════ -->
@@ -774,19 +1082,31 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('hDate').innerHTML = now.toLocaleDateString('th-TH',{weekday:'short',day:'2-digit',month:'short'})+'<br>'+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('f-date').value = now.toISOString().split('T')[0];
   document.getElementById('gasUrl').value = GAS_URL;
-  ['f-prev','f-new','f-tin','f-tout','f-dc','f-refer','f-dead'].forEach(id=>
+  ['f-new','f-tin','f-tout','f-dc','f-refer','f-dead'].forEach(id=>
     document.getElementById(id)?.addEventListener('input',calcT));
+  // listen to total change for occupancy calc
+  document.getElementById('f-total').addEventListener('change', calcOcc);
+  // listen to shift for prodT row
+  document.getElementById('f-shift').addEventListener('change', onShiftChange);
+  // listen to prod change for prodT
+  document.getElementById('f-prod').addEventListener('input', calcProdT);
+  // load last shift คงพยาบาล
+  fetchLastShift();
+  // load dashboard data
+  loadDash();
 });
 
 // ─── TABS ───
 function sw(name){
+  const tabNames = ['dashboard','form','preview','history','settings'];
   document.querySelectorAll('.nb').forEach((b,i)=>{
-    b.classList.toggle('active',['form','preview','history','settings'][i]===name);
+    b.classList.toggle('active', tabNames[i]===name);
   });
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if(name==='history') loadH();
+  if(name==='dashboard') loadDash();
 }
 
 // ─── TOGGLE CARD ───
@@ -800,7 +1120,125 @@ function tc(el){
 // ─── CALC TOTAL ───
 function calcT(){
   const n=id=>parseFloat(document.getElementById(id)?.value)||0;
-  document.getElementById('f-total').value = Math.max(0,n('f-prev')+n('f-new')+n('f-tin')-n('f-tout')-n('f-dc')-n('f-refer')-n('f-dead'));
+  const total = Math.max(0, n('f-prev')+n('f-new')+n('f-tin')-n('f-tout')-n('f-dc')-n('f-refer')-n('f-dead'));
+  document.getElementById('f-total').value = total;
+  calcOcc(total);
+  calcProdT();
+}
+
+// ─── CALC OCCUPANCY: คงพยาบาล * 100 / 30 ───
+function calcOcc(totalOverride){
+  const total = totalOverride !== undefined ? totalOverride :
+    parseFloat(document.getElementById('f-total')?.value)||0;
+  const occ = total > 0 ? (total * 100 / 30).toFixed(2) : '';
+  document.getElementById('f-occ').value = occ;
+}
+
+// ─── SHOW/HIDE PRODТ ROW: เฉพาะเวรบ่าย ───
+function onShiftChange(){
+  const shift = document.getElementById('f-shift').value;
+  const isAfternoon = shift === 'บ่าย';
+  document.getElementById('prodT-row').style.display = isAfternoon ? '' : 'none';
+  document.getElementById('prodT-note').style.display = isAfternoon ? '' : 'none';
+  if(isAfternoon) calcProdT();
+}
+
+// ─── CALC PRODТ: เฉลี่ย prod ดึก+เช้า+บ่าย ในวันเดียวกัน ───
+async function calcProdT(){
+  const shift = document.getElementById('f-shift').value;
+  if(shift !== 'บ่าย') return;
+
+  const currentProd = parseFloat(document.getElementById('f-prod').value) || null;
+  const date = document.getElementById('f-date').value;
+  if(!date){ document.getElementById('f-prodT').value=''; return; }
+
+  // look in allData for same date
+  const rows = allData.slice(1).filter(r=>r[0]!=='');
+  const sameDay = rows.filter(r=>{
+    const rd = r[1] instanceof Date ? r[1].toISOString().split('T')[0] : String(r[1]).split('T')[0];
+    return rd === date;
+  });
+
+  const getShiftProd = (sh) => {
+    const row = sameDay.find(r=>r[2]===sh);
+    return row ? parseFloat(row[15]) : null;
+  };
+
+  const prodDawn = getShiftProd('ดึก');
+  const prodMorn = getShiftProd('เช้า');
+  const prodAft  = currentProd; // current input
+
+  const parts = [
+    {label:'ดึก', val: prodDawn},
+    {label:'เช้า', val: prodMorn},
+    {label:'บ่าย', val: prodAft},
+  ];
+  const validParts = parts.filter(p=>p.val !== null);
+
+  const detail = document.getElementById('prodT-detail');
+  const detailTxt = parts.map(p=>`${p.label}: ${p.val !== null ? p.val.toFixed(1)+'%' : 'ยังไม่มีข้อมูล'}`).join(' | ');
+  detail.textContent = detailTxt;
+
+  if(validParts.length === 3){
+    const avg = (prodDawn + prodMorn + prodAft) / 3;
+    document.getElementById('f-prodT').value = avg.toFixed(2);
+  } else if(validParts.length > 0){
+    // partial: show what we have, mark as pending
+    const sum = validParts.reduce((a,b)=>a+b.val,0);
+    const avg = sum / validParts.length;
+    document.getElementById('f-prodT').value = avg.toFixed(2);
+    detail.textContent = detailTxt + ` (ใช้ ${validParts.length}/3 เวร)`;
+  } else {
+    document.getElementById('f-prodT').value = '';
+  }
+}
+
+// ─── FETCH LAST SHIFT คงพยาบาล ───
+async function fetchLastShift(){
+  const spinner = document.getElementById('prev-loading');
+  try{
+    const res = await fetch(`${GAS_URL}?action=getLastShift`);
+    const data = await res.json();
+    const val = data.value;
+    const prevEl = document.getElementById('f-prev');
+    prevEl.value = val || 0;
+    if(spinner) spinner.textContent = val ? `✓ ${val} คน` : '✓';
+    if(spinner) spinner.style.color = 'var(--green)';
+    // also load all data for prodT calculation
+    await loadAllDataSilent();
+    calcT();
+  } catch(e){
+    if(spinner){ spinner.textContent='⚠ ไม่ได้'; spinner.style.color='var(--orange)'; }
+    // fallback: allow manual edit
+    document.getElementById('f-prev').readOnly = false;
+    document.getElementById('f-prev').style.background = '';
+    document.getElementById('f-prev').style.borderColor = '';
+    document.getElementById('f-prev').style.color = '';
+    document.getElementById('f-prev').placeholder = '0';
+  }
+}
+
+// Load all data silently for prodT calculation
+async function loadAllDataSilent(){
+  if(allData.length > 0) return; // already loaded
+  try{
+    const res = await fetch(`${GAS_URL}?action=getData`);
+    const data = await res.json();
+    if(Array.isArray(data) && data.length > 1) allData = data;
+  } catch(e){ /* silent */ }
+}
+
+// ─── TOGGLE RISK FIELDS ───
+function toggleRiskFields(){
+  const val = document.getElementById('f-riskMain').value;
+  const fields = document.getElementById('risk-fields');
+  fields.style.display = val === 'มี' ? '' : 'none';
+  if(val !== 'มี'){
+    ['f-r1t','f-r1d','f-r1h','f-r2t','f-r2d','f-r2h','f-r3t','f-r3d','f-r3h'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.value='';
+    });
+  }
 }
 
 // ─── GO PREVIEW ───
@@ -839,9 +1277,15 @@ function updateReport(){
   set('r-total',n('f-total'));
 
   // Indicators
-  setText('r-prod',  v('f-prod')  ? v('f-prod')+'%'   : '—');
-  setText('r-occ',   v('f-occ')   ? v('f-occ')+'%'    : '—');
-  setText('r-prodT', v('f-prodT') ? v('f-prodT')       : '—');
+  const prodVal = parseFloat(document.getElementById('f-prod')?.value)||0;
+  const occVal  = parseFloat(document.getElementById('f-occ')?.value)||0;
+  setText('r-prod',  prodVal ? prodVal.toFixed(1)+'%' : '—');
+  setText('r-occ',   occVal  ? occVal.toFixed(2)+'%'  : '—');
+  // prodT only shown if บ่าย
+  const prodTEl = document.getElementById('f-prodT');
+  const prodTVal = parseFloat(prodTEl?.value)||0;
+  const isBaai = v('f-shift') === 'บ่าย';
+  setText('r-prodT', isBaai && prodTVal ? prodTVal.toFixed(2)+'%' : (isBaai ? '—' : 'แสดงเฉพาะเวรบ่าย'));
   setText('r-tube',  n('f-tube'));
 
   // Types
@@ -1015,17 +1459,101 @@ function clearF(){
   document.querySelectorAll('#page-form input,#page-form select,#page-form textarea').forEach(el=>{
     if(el.id==='f-wh') el.value='อัญญารัตน์';
     else if(el.id==='f-date') el.value=new Date().toISOString().split('T')[0];
+    else if(el.id==='f-prev') {} // don't clear — re-fetch below
+    else if(el.id==='f-occ') {} // don't clear — recalculated
+    else if(el.id==='f-prodT') {} // don't clear — recalculated
     else el.value='';
   });
+  // hide risk fields
+  document.getElementById('risk-fields').style.display='none';
+  document.getElementById('prodT-row').style.display='none';
+  document.getElementById('prodT-note').style.display='none';
+  // re-fetch last shift
+  const spinner = document.getElementById('prev-loading');
+  if(spinner){ spinner.textContent='⟳'; spinner.style.color='var(--teal)'; }
+  fetchLastShift();
   toast('ล้างข้อมูลแล้ว','info');
 }
 
-// ─── HISTORY ───
-async function loadH(){
+// ─── DASHBOARD ───
+async function loadDash(){
+  document.getElementById('rfSpin').style.display='inline-block';
   try{
     const res=await fetch(`${GAS_URL}?action=getData`);
     const data=await res.json();
-    if(Array.isArray(data)&&data.length>1){allData=data;filterH();}
+    if(Array.isArray(data)&&data.length>1){allData=data;renderDash(data);}
+    else document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';
+  }catch(e){document.getElementById('dashSub').textContent='โหลดไม่ได้: '+e.message;}
+  finally{document.getElementById('rfSpin').style.display='none';}
+}
+
+function renderDash(data){
+  const rows=data.slice(1).filter(r=>r[0]!=='');
+  if(!rows.length){document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';return;}
+  const last=rows[rows.length-1];
+  document.getElementById('dashSub').textContent=`ล่าสุด: ${fmt(last[1])} เวร${last[2]||'—'} | ${rows.length} รายการ`;
+  document.getElementById('lastBanner').style.display='block';
+  document.getElementById('lastBannerText').textContent=`${fmt(last[1])} เวร ${last[2]||'—'}`;
+  document.getElementById('lastBannerNurse').textContent=`หน.เวร: ${last[61]||'—'}`;
+  document.getElementById('ds-total').textContent=last[10]||0;
+  document.getElementById('ds-new').textContent=last[4]||0;
+  document.getElementById('ds-dc').textContent=last[7]||0;
+  document.getElementById('ds-ref').textContent=(parseInt(last[8]||0)+parseInt(last[9]||0));
+  const prod=parseFloat(last[15])||0, occ=parseFloat(last[16])||0;
+  document.getElementById('ds-prod').textContent=prod?prod.toFixed(1)+'%':'—';
+  document.getElementById('ds-occ').textContent=occ?occ.toFixed(1)+'%':'—';
+  document.getElementById('ds-prod-bar').style.width=Math.min(prod,100)+'%';
+  document.getElementById('ds-occ-bar').style.width=Math.min(occ,100)+'%';
+  // types + staff
+  document.getElementById('ds-type').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+      ${[['T4',last[11],'bad'],['T3',last[12],'warn'],['T2',last[13],''],['T1',last[14],'good']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+      ${[['RN',last[19],'purple'],['Aide',last[20],''],['Worker',last[21],''],['รวม',last[56]||((parseInt(last[19]||0)+parseInt(last[20]||0)+parseInt(last[21]||0))),'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+    </div>`;
+  // devices
+  document.getElementById('ds-devices').innerHTML=`<div class="dev-row">`+
+    [['🚑','Emergency',last[26]],['⚡','Defib',last[27]],['🫁','Oxygen',last[28]]].map(([ic,l,v])=>{
+      const ok=v==='พร้อมใช้'; return`<div class="dev-box ${ok?'dev-ok':'dev-ng'}">${ic} ${l}<br>${ok?'✓ พร้อม':'✗ ไม่พร้อม'}</div>`;
+    }).join('')+'</div>';
+  // risk
+  const riskRows=rows.filter(r=>r[41]==='มี'||r[42]||r[45]||r[48]).slice(-3).reverse();
+  if(riskRows.length){
+    document.getElementById('ds-risk').innerHTML=riskRows.map(r=>{
+      const risks=[[r[42],r[43],r[44]],[r[45],r[46],r[47]],[r[48],r[49],r[50]]].filter(x=>x[0]);
+      return risks.map(([t,d,h])=>`<div class="risk-item"><div class="ri-type">⚠️ ${t}</div><div class="ri-det">${d||'—'}</div>${h?`<div class="ri-hn">HN: ${h}</div>`:''}</div>`).join('');
+    }).join('');
+  }
+  // mini chart
+  const last7=rows.slice(-7);
+  const mx=Math.max(...last7.map(r=>parseInt(r[10])||0),1);
+  document.getElementById('ds-chart').innerHTML=`
+    <div style="display:flex;align-items:flex-end;gap:5px;height:70px;margin-bottom:6px;">
+      ${last7.map(r=>{
+        const v=parseInt(r[10])||0,h=Math.round(v/mx*62);
+        const c=r[2]==='ดึก'?'var(--purple)':r[2]==='เช้า'?'#c08020':'var(--orange)';
+        return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:9px;color:var(--text3);">${v}</div><div style="width:100%;height:${h}px;background:${c};border-radius:3px 3px 0 0;min-height:3px;"></div></div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:5px;">${last7.map(r=>`<div style="flex:1;font-size:9px;color:var(--text3);text-align:center;">${shortD(r[1])}</div>`).join('')}</div>`;
+}
+
+// ─── HISTORY ───
+let histTab='all';
+function setHistTab(tab){
+  histTab=tab;
+  document.querySelectorAll('.htab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('htab-'+tab).classList.add('active');
+  filterH();
+}
+
+async function loadH(){
+  document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">🔄 กำลังโหลด...</div>';
+  try{
+    const res=await fetch(`${GAS_URL}?action=getData`);
+    const data=await res.json();
+    if(Array.isArray(data)&&data.length>1){allData=data;filterH();calcProdT();}
     else document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ยังไม่มีข้อมูล</div>';
   }catch(e){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';}
 }
@@ -1034,26 +1562,184 @@ function filterH(){
   const s=document.getElementById('hSearch').value.toLowerCase();
   const sf=document.getElementById('hShift').value;
   const rows=(allData.slice(1)||[]).filter(r=>r[0]!=='');
-  const filt=rows.filter(r=>(!sf||r[2]===sf)&&r.join(' ').toLowerCase().includes(s)).reverse();
+  let filt=rows.filter(r=>(!sf||r[2]===sf)&&r.join(' ').toLowerCase().includes(s));
+  // tab filter
+  if(histTab==='risk') filt=filt.filter(r=>r[41]==='มี'||r[42]||r[45]||r[48]);
+  if(histTab==='extra') filt=filt.filter(r=>r[51]&&String(r[51]).trim());
+  if(histTab==='absent') filt=filt.filter(r=>r[57]==='มี');
+  if(histTab==='val') filt=filt.filter(r=>r[35]==='มี');
+  if(histTab==='allergy') filt=filt.filter(r=>r[52]==='มี');
+  filt=filt.reverse();
   document.getElementById('histCount').textContent=`${filt.length} รายการ`;
   if(!filt.length){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ไม่พบข้อมูล</div>';return;}
   const pc=s=>s==='ดึก'?'sdawn':s==='เช้า'?'smorn':'safte';
-  document.getElementById('histList').innerHTML=filt.map(r=>`
-    <div class="mr">
+  document.getElementById('histList').innerHTML=filt.map((r,i)=>{
+    const origIdx=allData.indexOf(r); // track original row index
+    const hasRisk=r[41]==='มี'||r[42]||r[45]||r[48];
+    const hasExtra=r[51]&&String(r[51]).trim();
+    const hasAbsent=r[57]==='มี';
+    const hasVal=r[35]==='มี';
+    const hasAllergy=r[52]==='มี';
+    return `<div class="mr" style="cursor:pointer;" onclick="openDetail(${origIdx})">
       <div class="top">
-        <div style="font-weight:700;font-size:13px;">${fmt(r[1])}</div>
+        <div>
+          <div style="font-weight:700;font-size:13px;">${fmt(r[1])}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px;">หน.เวร: ${r[61]||'—'}</div>
+        </div>
         <span class="sp ${pc(r[2])}">${r[2]||'—'}</span>
       </div>
       <div class="info">
         <div><div class="k">คงพยาบาล</div><div class="v" style="color:var(--purple);font-size:15px;">${r[10]||0}</div></div>
         <div><div class="k">รับใหม่</div><div class="v">${r[4]||0}</div></div>
         <div><div class="k">กลับบ้าน</div><div class="v">${r[7]||0}</div></div>
-        <div><div class="k">Productivity</div><div class="v">${r[15]?r[15]+'%':'—'}</div></div>
-        <div><div class="k">ครองเตียง</div><div class="v">${r[16]?r[16]+'%':'—'}</div></div>
-        <div><div class="k">หน.เวร</div><div class="v">${r[61]||'—'}</div></div>
+        <div><div class="k">Productivity</div><div class="v">${r[15]?parseFloat(r[15]).toFixed(1)+'%':'—'}</div></div>
+        <div><div class="k">ครองเตียง</div><div class="v">${r[16]?parseFloat(r[16]).toFixed(1)+'%':'—'}</div></div>
+        <div><div class="k">RN</div><div class="v">${r[19]||0}</div></div>
       </div>
-      ${(r[41]==='มี'||r[42]||r[45]||r[48])?'<div style="margin-top:6px;"><span class="bg bgr">⚠️ มีความเสี่ยง</span></div>':''}
-    </div>`).join('');
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;">
+        ${hasRisk?'<span class="bg bgr">⚠️ ความเสี่ยง</span>':''}
+        ${hasExtra?'<span class="bg bgp">📌 เพิ่มเติม</span>':''}
+        ${hasAbsent?'<span class="bg bgo">👤 ขาดลา</span>':''}
+        ${hasVal?'<span class="bg bgp">💼 ของมีค่า</span>':''}
+        ${hasAllergy?'<span class="bg bgo">💊 แพ้ยา</span>':''}
+      </div>
+      <div style="margin-top:7px;text-align:right;">
+        <span style="font-size:11px;color:var(--purple);font-weight:600;">แตะเพื่อดูรายละเอียด / แก้ไข →</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── MODAL ───
+let currentModalRow = null;
+let currentModalRowIdx = -1;
+let currentModalTab = 'info';
+
+function openDetail(rowIdx){
+  const r = allData[rowIdx];
+  if(!r) return;
+  currentModalRow = r;
+  currentModalRowIdx = rowIdx;
+  currentModalTab = 'info';
+
+  // set title
+  const shiftClass=r[2]==='ดึก'?'sdawn':r[2]==='เช้า'?'smorn':'safte';
+  document.getElementById('modal-title').textContent=`${fmt(r[1])} เวร${r[2]||'—'} — ${r[61]||''}`;
+
+  // fill info panel
+  const si=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v??'—';};
+  si('m-prev',r[3]); si('m-new',r[4]); si('m-dc',r[7]); si('m-total',r[10]);
+  si('m-tin',r[5]); si('m-tout',r[6]); si('m-refer',r[8]); si('m-dead',r[9]);
+  si('m-prod',r[15]?parseFloat(r[15]).toFixed(1)+'%':'—');
+  si('m-occ',r[16]?parseFloat(r[16]).toFixed(2)+'%':'—');
+  si('m-prodT',r[17]?parseFloat(r[17]).toFixed(2)+'%':'แสดงเฉพาะเวรบ่าย');
+  si('m-tube',r[18]);
+  si('m-t4',r[11]); si('m-t3',r[12]); si('m-t2',r[13]); si('m-t1',r[14]);
+  si('m-trauma',r[22]); si('m-neuro',r[23]); si('m-plastic',r[24]); si('m-multi',r[25]);
+
+  // fill risk panel
+  const risks=[[r[42],r[43],r[44]],[r[45],r[46],r[47]],[r[48],r[49],r[50]]].filter(x=>x[0]);
+  document.getElementById('m-riskList').innerHTML = r[41]==='มี' && risks.length ?
+    risks.map(([t,d,h])=>`<div class="risk-item"><div class="ri-type">⚠️ ${t||'—'}</div><div class="ri-det">${d||'—'}</div>${h?`<div class="ri-hn">HN: ${h}</div>`:''}</div>`).join('') :
+    `<div style="font-size:11px;color:var(--green);background:var(--green-bg);padding:7px 10px;border-radius:6px;">✓ ไม่มีเหตุการณ์ความเสี่ยง</div>`;
+  si('m-fall',r[29]); si('m-bedsore',r[30]); si('m-dup',r[33]);
+  document.getElementById('m-riskExtra').textContent = r[51] || '—';
+
+  // fill staff panel
+  si('m-rn',r[19]); si('m-aide',r[20]); si('m-worker',r[21]); si('m-staff',r[56]);
+  si('m-absent',r[57]); si('m-absentD',r[58]); si('m-off',r[59]);
+  document.getElementById('m-devices').innerHTML = 
+    [['🚑','Emergency',r[26]],['⚡','Defib',r[27]],['🫁','Oxygen',r[28]]].map(([ic,l,v])=>{
+      const ok=v==='พร้อมใช้'; return`<div class="dev-box ${ok?'dev-ok':'dev-ng'}">${ic} ${l}<br>${ok?'✓ พร้อม':'✗ ไม่พร้อม'}</div>`;
+    }).join('');
+  si('m-charge',r[61]); si('m-wh',r[62]);
+
+  // fill misc panel
+  si('m-val',r[35]); si('m-valD',r[36]); si('m-valS',r[37]);
+  si('m-pend',r[38]); si('m-pendD',r[39]); si('m-pendS',r[40]);
+  si('m-allergy',r[52]); si('m-aD',r[53]); si('m-aCard',r[55]);
+  si('m-pex',r[31]); si('m-pop',r[32]);
+
+  // fill edit panel
+  document.getElementById('edit-rowIndex').value = rowIdx;
+  const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v??'';};
+  // format date for input
+  const rd=r[1] instanceof Date ? r[1].toISOString().split('T')[0] : String(r[1]).split('T')[0];
+  sv('e-date',rd); sv('e-shift',r[2]);
+  sv('e-prev',r[3]); sv('e-new',r[4]); sv('e-tin',r[5]); sv('e-tout',r[6]);
+  sv('e-dc',r[7]); sv('e-refer',r[8]); sv('e-dead',r[9]); sv('e-total',r[10]);
+  sv('e-prod',r[15]); sv('e-occ',r[16]); sv('e-prodT',r[17]); sv('e-tube',r[18]);
+  sv('e-riskMain',r[41]); sv('e-r1t',r[42]); sv('e-r1d',r[43]); sv('e-r1h',r[44]);
+  sv('e-r2t',r[45]); sv('e-r2d',r[46]); sv('e-r2h',r[47]);
+  sv('e-r3t',r[48]); sv('e-r3d',r[49]); sv('e-r3h',r[50]);
+  sv('e-rExtra',r[51]);
+  sv('e-rn',r[19]); sv('e-aide',r[20]); sv('e-worker',r[21]); sv('e-staff',r[56]);
+  sv('e-absent',r[57]); sv('e-absentD',r[58]); sv('e-off',r[59]);
+  sv('e-allergy',r[52]); sv('e-aD',r[53]); sv('e-aCard',r[55]);
+  sv('e-val',r[35]); sv('e-valD',r[36]); sv('e-valS',r[37]);
+  sv('e-charge',r[61]); sv('e-wh',r[62]);
+
+  setModalTab('info');
+  document.getElementById('detailModal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('detailModal').style.display='none';
+  document.body.style.overflow='';
+}
+
+function setModalTab(tab){
+  currentModalTab=tab;
+  ['info','risk','staff','misc','edit'].forEach(t=>{
+    document.getElementById('mtab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('mpanel-'+t).style.display=t===tab?'':'none';
+  });
+}
+
+// ─── SAVE EDIT ───
+async function saveEdit(){
+  const rowIdx = parseInt(document.getElementById('edit-rowIndex').value);
+  if(isNaN(rowIdx)||!allData[rowIdx]){toast('ไม่พบข้อมูลแถวนี้','error');return;}
+  const v=id=>document.getElementById(id)?.value||'';
+  const n=id=>parseFloat(document.getElementById(id)?.value)||0;
+  // Build full rowData preserving original ID
+  const orig = allData[rowIdx];
+  const rowData=[
+    orig[0], v('e-date'), v('e-shift'),
+    n('e-prev'),n('e-new'),n('e-tin'),n('e-tout'),n('e-dc'),n('e-refer'),n('e-dead'),n('e-total'),
+    n('e-t4')||orig[11]||0, n('e-t3')||orig[12]||0, n('e-t2')||orig[13]||0, n('e-t1')||orig[14]||0,
+    n('e-prod'),n('e-occ'),n('e-prodT'),
+    n('e-tube'),n('e-rn'),n('e-aide'),n('e-worker'),
+    orig[22]||0,orig[23]||0,orig[24]||0,orig[25]||0,
+    orig[26]||'',orig[27]||'',orig[28]||'',
+    orig[29]||0,orig[30]||0,n('e-pex')||orig[31]||0,n('e-pop')||orig[32]||0,orig[33]||0,orig[34]||0,
+    v('e-val'),v('e-valD'),v('e-valS'),
+    orig[38]||'',orig[39]||'',orig[40]||'',
+    v('e-riskMain'),
+    v('e-r1t'),v('e-r1d'),v('e-r1h'),
+    v('e-r2t'),v('e-r2d'),v('e-r2h'),
+    v('e-r3t'),v('e-r3d'),v('e-r3h'),
+    v('e-rExtra'),
+    v('e-allergy'),v('e-aD'),orig[54]||'',v('e-aCard'),
+    n('e-staff'),v('e-absent'),v('e-absentD'),
+    v('e-off'),orig[60]||'',
+    v('e-charge'),v('e-wh')
+  ];
+  // The GAS script finds the row by ID in column A
+  const btn=document.getElementById('editSaveBtn');
+  const sp=document.getElementById('editSpin');
+  btn.disabled=true; sp.style.display='inline-block';
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({rowData, updateById: orig[0]}),headers:{'Content-Type':'application/json'}});
+    const result=await res.json();
+    if(result.status==='success'){
+      toast('✅ แก้ไขสำเร็จ!','success');
+      closeModal();
+      await loadH();
+    } else toast('เกิดข้อผิดพลาด: '+(result.msg||''),'error');
+  }catch(e){toast('บันทึกไม่ได้: '+e.message,'error');}
+  finally{btn.disabled=false;sp.style.display='none';}
 }
 
 // ─── SETTINGS ───
@@ -1075,6 +1761,8 @@ function toast(msg,type='info'){
 }
 
 function fmt(d){if(!d)return'—';try{const dt=d instanceof Date?d:new Date(d);return dt.toLocaleDateString('th-TH',{day:'2-digit',month:'short'});}catch{return String(d);}}
+function shortD(d){if(!d)return'';try{const dt=d instanceof Date?d:new Date(d);return`${dt.getDate()}/${dt.getMonth()+1}`;}catch{return'';}}
+
 </script>
 </body>
 </html>
