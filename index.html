@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
@@ -302,6 +301,12 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <div class="main">
+<!-- ─── LOCAL FILE WARNING BANNER ─── -->
+<div id="localBanner" style="display:none;background:linear-gradient(135deg,#e07820,#d06a10);color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:14px;text-align:center;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;">⚠️ กรุณาเปิดแอปจาก URL</div>
+  <div style="font-size:12px;opacity:.9;margin-bottom:10px;">การเปิดจากไฟล์โดยตรง (about:blank) ทำให้ไม่สามารถโหลดข้อมูลได้</div>
+  <a id="gasOpenLink" href="#" target="_blank" style="background:#fff;color:#d06a10;padding:8px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;display:inline-block;">🔗 เปิดแอปจาก GAS URL</a>
+</div>
 
 <!-- ════════ DASHBOARD PAGE ════════ -->
 <div class="page active" id="page-dashboard">
@@ -939,7 +944,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px;">
-    <button class="btn btn-s" onclick="sw('form')">✏️ แก้ไขข้อมูล</button>
+    <button class="btn btn-s" onclick="editFromPreview()">✏️ แก้ไขข้อมูล</button>
     <button class="btn btn-p" id="submitBtn2" onclick="submitF()">
       <span id="subSpin2" class="spin" style="display:none"></span>💾 บันทึก Sheet
     </button>
@@ -1061,7 +1066,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <div class="mbox"><div class="mk">Multiple</div><div class="mv" id="m-multi">—</div></div>
         </div>
       </div>
-
+        <div style="margin-top:14px;">
+          <button class="btn btn-p" onclick="setModalTab('edit')" style="font-size:13px;">✏️ แก้ไขข้อมูลนี้</button>
+        </div>
+      </div>
       <!-- risk panel -->
       <div id="mpanel-risk" style="display:none;">
         <div class="rs"><div class="rs-dot" style="background:var(--red)"></div><div class="rs-label">เหตุการณ์ความเสี่ยง</div><div class="rs-line"></div></div>
@@ -1145,6 +1153,22 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
         <div class="stitle">ตัวชี้วัด</div>
         <div class="fr"><div class="f"><label>Productivity %</label><input type="number" id="e-prod" step="0.1"></div><div class="f"><label>ครองเตียง %</label><input type="number" id="e-occ" step="0.01"></div></div>
         <div class="fr"><div class="f"><label>Prod. รวม</label><input type="number" id="e-prodT" step="0.01"></div><div class="f"><label>Tube</label><input type="number" id="e-tube" min="0"></div></div>
+        <div class="stitle">ประเภทผู้ป่วย</div>
+        <div class="fr"><div class="f"><label>ประเภท 4</label><input type="number" id="e-t4" min="0"></div><div class="f"><label>ประเภท 3</label><input type="number" id="e-t3" min="0"></div></div>
+        <div class="fr"><div class="f"><label>ประเภท 2</label><input type="number" id="e-t2" min="0"></div><div class="f"><label>ประเภท 1</label><input type="number" id="e-t1" min="0"></div></div>
+        <div class="stitle">ประเภทโรค</div>
+        <div class="fr"><div class="f"><label>Trauma</label><input type="number" id="e-trauma" min="0"></div><div class="f"><label>Neuro</label><input type="number" id="e-neuro" min="0"></div></div>
+        <div class="fr"><div class="f"><label>Plastic</label><input type="number" id="e-plastic" min="0"></div><div class="f"><label>Multiple Injury</label><input type="number" id="e-multi" min="0"></div></div>
+        <div class="stitle">อุปกรณ์ฉุกเฉิน</div>
+        <div class="fr three">
+          <div class="f"><label>รถ Emergency</label><select id="e-emg"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
+          <div class="f"><label>Defibrillator</label><select id="e-defib"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
+          <div class="f"><label>ถัง Oxygen</label><select id="e-o2"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
+        </div>
+        <div class="stitle">เฝ้าระวัง</div>
+        <div class="fr"><div class="f"><label>Fall</label><input type="number" id="e-fall" min="0"></div><div class="f"><label>Bed sore</label><input type="number" id="e-bedsore" min="0"></div></div>
+        <div class="fr"><div class="f"><label>เตรียมตรวจ</label><input type="number" id="e-pex" min="0"></div><div class="f"><label>เตรียมผ่าตัด</label><input type="number" id="e-pop" min="0"></div></div>
+        <div class="fr"><div class="f"><label>ชื่อซ้ำ</label><input type="number" id="e-dup" min="0"></div><div class="f"><label>ชื่อคล้าย</label><input type="number" id="e-sim" min="0"></div></div>
         <div class="stitle">ความเสี่ยง</div>
         <div class="fr one"><div class="f"><label>สถานะ</label><select id="e-riskMain"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div></div>
         <div class="fr one"><div class="f"><label>ความเสี่ยง 1 (ประเภท)</label><input type="text" id="e-r1t"></div></div>
@@ -1158,12 +1182,15 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
         <div class="fr"><div class="f"><label>RN</label><input type="number" id="e-rn" min="0"></div><div class="f"><label>Aide/PN</label><input type="number" id="e-aide" min="0"></div></div>
         <div class="fr"><div class="f"><label>Worker</label><input type="number" id="e-worker" min="0"></div><div class="f"><label>รวม</label><input type="number" id="e-staff" min="0"></div></div>
         <div class="fr"><div class="f"><label>ขาดลา/มาสาย</label><select id="e-absent"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>การผัน/Off</label><select id="e-off"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div></div>
-        <div class="fr one"><div class="f"><label>รายละเอียดขาด/Off</label><input type="text" id="e-absentD"></div></div>
+        <div class="fr one"><div class="f"><label>รายละเอียดขาดลา/มาสาย</label><input type="text" id="e-absentD" placeholder="ชื่อ — เหตุผล"></div></div>
+        <div class="fr one"><div class="f"><label>รายละเอียดผัน/Off</label><input type="text" id="e-offD" placeholder="ชื่อ — ผันเป็นเวรอะไร"></div></div>
         <div class="fr"><div class="f"><label>แพ้ยา</label><select id="e-allergy"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>สถานะบัตร</label><select id="e-aCard"><option value="">เลือก</option><option>มีบัตร</option><option>แจ้งเภสัชแล้ว</option><option>รอแจ้งซ้ำ</option></select></div></div>
         <div class="fr one"><div class="f"><label>HN และชื่อยา</label><input type="text" id="e-aD"></div></div>
-        <div class="stitle">ของมีค่า / หัวหน้าเวร</div>
+        <div class="stitle">ของมีค่า / ของค้าง</div>
         <div class="fr"><div class="f"><label>ของมีค่า</label><select id="e-val"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>สถานะ</label><input type="text" id="e-valS"></div></div>
         <div class="fr one"><div class="f"><label>รายละเอียดของมีค่า</label><input type="text" id="e-valD"></div></div>
+        <div class="fr"><div class="f"><label>ของค้าง</label><select id="e-pend"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select></div><div class="f"><label>สถานะ</label><input type="text" id="e-pendS"></div></div>
+        <div class="fr one"><div class="f"><label>รายละเอียดของค้าง</label><input type="text" id="e-pendD"></div></div>
         <div class="fr"><div class="f"><label>หัวหน้าเวร</label>
           <select id="e-charge">
             <option value="">-- เลือก --</option>
@@ -1228,8 +1255,11 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbwSui60lZFdK2swhwAcHf6dUDb5s0XOAA2shb-eoZdh1u0SGG3_Rww1xxOqtCnt18keTA/exec';
-let GAS_URL = localStorage.getItem('gasUrl') || DEFAULT_URL;
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyIvdZtyTEEVnnQZpqUZD4fN2XNDS7A3Rv6PYkg4hQ6kiIYyYH5SuQvxBvbah_NAJfRyQ/exec';
+// Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
+const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
+  window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
+let GAS_URL = localStorage.getItem('gasUrl') || GAS_SELF || DEFAULT_URL;
 let allData = [];
 
 // ─── INIT ───
@@ -1253,6 +1283,14 @@ window.addEventListener('DOMContentLoaded',()=>{
   fetchLastShift();
   // load dashboard data
   loadDash();
+  // Show warning banner if opened from about:blank or file://
+  const isLocal = window.location.protocol === 'about:' || window.location.origin === 'null' || window.location.protocol === 'file:';
+  if(isLocal){
+    const banner = document.getElementById('localBanner');
+    const link   = document.getElementById('gasOpenLink');
+    if(banner) banner.style.display = 'block';
+    if(link)   link.href = GAS_URL;
+  }
 });
 
 // ─── TABS ───
@@ -1369,12 +1407,87 @@ async function calcProdT(){
   }
 }
 
+// ─── gasGet: google.script.run ใน GAS context, fetch นอก GAS ───
+function gasGet(params){
+  return new Promise((resolve, reject)=>{
+    // Strategy 1: google.script.run (ใน GAS context)
+    if(typeof google !== 'undefined' && google.script && google.script.run){
+      const isData = params.startsWith('action=getData');
+      google.script.run
+        .withSuccessHandler(d => resolve(d))
+        .withFailureHandler(e => reject(new Error(String(e.message||e))))
+        [isData ? 'getDataForWeb' : 'getLastShiftForWeb']();
+      return;
+    }
+    // ถ้าเปิดจาก about:blank หรือ file:// — fetch จะไม่ได้
+    const origin = window.location.origin;
+    const isLocalFile = origin === 'null' || origin === '' || window.location.protocol === 'about:';
+    if(isLocalFile){
+      // แสดงข้อความแนะนำให้เปิดจาก URL แทน
+      reject(new Error('กรุณาเปิดแอปผ่าน GAS URL แทนการเปิดไฟล์โดยตรง'));
+      return;
+    }
+    const sep = GAS_URL.includes('?') ? '&' : '?';
+    const url = GAS_URL + sep + params;
+    // Strategy 2: direct fetch (GitHub Pages / https)
+    fetch(url, { method:'GET', mode:'cors', credentials:'omit', cache:'no-cache' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(d => resolve(d))
+      .catch(() => {
+        // Strategy 3: allorigins proxy
+        const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+        fetch(proxy)
+          .then(r => r.json())
+          .then(d => {
+            const contents = d.contents;
+            if(!contents) throw new Error('No contents from proxy');
+            return JSON.parse(contents);
+          })
+          .then(d => resolve(d))
+          .catch(e => reject(e));
+      });
+  });
+}
+
+function gasGet(params){
+  return new Promise((resolve, reject)=>{
+    // ถ้าอยู่ใน GAS context ใช้ google.script.run
+    if(typeof google !== 'undefined' && google.script && google.script.run){
+      const isData = params.startsWith('action=getData');
+      google.script.run
+        .withSuccessHandler(d => resolve(d))
+        .withFailureHandler(e => reject(new Error(String(e.message||e))))
+        [isData ? 'getDataForWeb' : 'getLastShiftForWeb']();
+      return;
+    }
+    const sep = GAS_URL.includes('?') ? '&' : '?';
+    const url = GAS_URL + sep + params;
+    // Strategy 1: direct fetch (works from https:// origins like GitHub Pages)
+    fetch(url, { method:'GET', mode:'cors', credentials:'omit', cache:'no-cache' })
+      .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+      .then(d => resolve(d))
+      .catch(() => {
+        // Strategy 2: proxy via allorigins (fallback for CORS issues)
+        const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+        fetch(proxy)
+          .then(r => r.json())
+          .then(d => {
+            const contents = d.contents;
+            if(!contents) throw new Error('No contents from proxy');
+            return JSON.parse(contents);
+          })
+          .then(d => resolve(d))
+          .catch(e => reject(e));
+      });
+  });
+}
+
 // ─── FETCH LAST SHIFT คงพยาบาล ───
 async function fetchLastShift(){
   const spinner = document.getElementById('prev-loading');
   try{
-    const res = await fetch(`${GAS_URL}?action=getLastShift`);
-    const data = await res.json();
+    const data = await gasGet('action=getLastShift');
+    
     const val = data.value;
     const prevEl = document.getElementById('f-prev');
     prevEl.value = val || 0;
@@ -1384,7 +1497,11 @@ async function fetchLastShift(){
     await loadAllDataSilent();
     calcT();
   } catch(e){
-    if(spinner){ spinner.textContent='⚠ ไม่ได้'; spinner.style.color='var(--orange)'; }
+    const isLocalF = window.location.protocol === 'about:' || window.location.origin === 'null';
+    if(spinner){ 
+      spinner.textContent = isLocalF ? '⚠ เปิดจาก GAS URL' : '⚠ ไม่ได้';
+      spinner.style.color='var(--orange)'; 
+    }
     // fallback: allow manual edit
     document.getElementById('f-prev').readOnly = false;
     document.getElementById('f-prev').style.background = '';
@@ -1396,10 +1513,9 @@ async function fetchLastShift(){
 
 // Load all data silently for prodT calculation
 async function loadAllDataSilent(){
-  if(allData.length > 0) return; // already loaded
+  if(allData.length > 0) return;
   try{
-    const res = await fetch(`${GAS_URL}?action=getData`);
-    const data = await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data) && data.length > 1) allData = data;
   } catch(e){ /* silent */ }
 }
@@ -1430,12 +1546,146 @@ function toggleRiskFields(){
   }
 }
 
-// ─── GO PREVIEW (from form button) ───
+// ─── GAS POST — ใช้ google.script.run ใน GAS context, fetch นอก GAS ───
+function gasPost(payload){
+  return new Promise((resolve, reject)=>{
+    if(typeof google !== 'undefined' && google.script && google.script.run){
+      google.script.run
+        .withSuccessHandler(d => resolve(d))
+        .withFailureHandler(e => reject(new Error(String(e.message||e))))
+        .saveRowFromClient(payload);
+      return;
+    }
+    fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {'Content-Type':'application/json'}
+    })
+    .then(r => r.json())
+    .then(d => resolve(d))
+    .catch(e => reject(e));
+  });
+}
+
+// ─── EDIT FROM PREVIEW ───
+// กดแก้ไขจากหน้าตัวอย่าง → fill ฟอร์มด้วยข้อมูลเดิมแล้วสลับไปหน้าบันทึก
+function editFromPreview(){
+  // ถ้าโหลดจาก Sheet มีข้อมูลอยู่
+  if(currentPreviewRow){
+    fillFormFromRow(currentPreviewRow);
+    sw('form');
+    toast('โหลดข้อมูลเดิมแล้ว — แก้ไขได้เลย','info');
+    return;
+  }
+  // ถ้าเป็น mode form อยู่แล้ว ไปหน้าฟอร์มเลย
+  sw('form');
+}
+
+// fill ฟอร์มบันทึกด้วยข้อมูลจาก row (array)
+function fillFormFromRow(r){
+  const sv = (id, v) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = (v !== null && v !== undefined) ? String(v) : '';
+  };
+  const sn = (id, v) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = (v !== null && v !== undefined && v !== '') ? String(v) : '';
+  };
+
+  // วันที่ + เวร
+  sv('f-date', normDate(r[1]));
+  sv('f-shift', r[2]);
+  document.getElementById('f-shift')?.dispatchEvent(new Event('change'));
+
+  // จำนวนผู้ป่วย
+  sn('f-prev', r[3]);  sn('f-new', r[4]);   sn('f-tin', r[5]);
+  sn('f-tout', r[6]);  sn('f-dc', r[7]);    sn('f-refer', r[8]);
+  sn('f-dead', r[9]);  sn('f-total', r[10]);
+
+  // ตัวชี้วัด
+  sn('f-prod', r[15]); sn('f-occ', r[16]);  sn('f-prodT', r[17]);
+  sn('f-tube', r[18]);
+
+  // ประเภทผู้ป่วย
+  sn('f-t4', r[11]);   sn('f-t3', r[12]);   sn('f-t2', r[13]);   sn('f-t1', r[14]);
+
+  // ประเภทโรค
+  sn('f-trauma', r[22]); sn('f-neuro', r[23]); sn('f-plastic', r[24]); sn('f-multi', r[25]);
+
+  // บุคลากร
+  sn('f-rn', r[19]);   sn('f-aide', r[20]); sn('f-worker', r[21]); sn('f-staff', r[56]);
+
+  // อุปกรณ์
+  sv('f-emg', r[26]);  sv('f-defib', r[27]); sv('f-o2', r[28]);
+
+  // เฝ้าระวัง
+  sn('f-fall', r[29]);    sn('f-bedsore', r[30]);
+  sn('f-pex', r[31]);     sn('f-pop', r[32]);
+  sn('f-dup', r[33]);     sn('f-sim', r[34]);
+
+  // ขาดลา/ผัน — แสดง conditional panel ถ้ามี
+  sv('f-absent', r[57]);
+  if(r[57]==='มี'){
+    document.getElementById('absent-detail').style.display='';
+    sv('f-absentD', r[58]);
+  }
+  sv('f-off', r[59]);
+  if(r[59]==='มี'){
+    document.getElementById('off-detail').style.display='';
+    sv('f-offD', r[60]);
+  }
+
+  // ของมีค่า
+  sv('f-val', r[35]);
+  if(r[35]==='มี'){
+    document.getElementById('val-detail').style.display='';
+    sv('f-valD', r[36]); sv('f-valS', r[37]);
+  }
+  // ของค้าง
+  sv('f-pend', r[38]);
+  if(r[38]==='มี'){
+    document.getElementById('pend-detail').style.display='';
+    sv('f-pendD', r[39]); sv('f-pendS', r[40]);
+  }
+
+  // ความเสี่ยง
+  sv('f-riskMain', r[41]);
+  if(r[41]==='มี'){
+    document.getElementById('risk-fields').style.display='';
+    sv('f-r1t', r[42]); sv('f-r1d', r[43]); sv('f-r1h', r[44]);
+    sv('f-r2t', r[45]); sv('f-r2d', r[46]); sv('f-r2h', r[47]);
+    sv('f-r3t', r[48]); sv('f-r3d', r[49]); sv('f-r3h', r[50]);
+  }
+  sv('f-rExtra', r[51]);
+
+  // แพ้ยา
+  sv('f-allergy', r[52]);
+  if(r[52]==='มี'){
+    document.getElementById('allergy-detail').style.display='';
+    sv('f-aD', r[53]); sv('f-aCard', r[55]);
+  }
+
+  // หัวหน้าเวร
+  sv('f-charge', r[61]); sv('f-wh', r[62]);
+
+  // recalculate auto fields
+  calcT();
+  if(r[2]==='บ่าย'){
+    document.getElementById('prodT-row').style.display='';
+    document.getElementById('prodT-note').style.display='';
+  }
+}
 function goPreview(){
   setPreviewMode('form');
+  currentPreviewRow = null; // from form, not from sheet
   updateReport();
   sw('preview');
 }
+
+// ─── CURRENT PREVIEW ROW (เก็บ row ที่กำลังแสดงใน preview) ───
+let currentPreviewRow = null;
 
 // ─── PREVIEW MODE ───
 let previewMode = 'form';
@@ -1462,8 +1712,7 @@ async function onPreviewDateChange(){
 
   // fetch fresh data to ensure we have latest
   try{
-    const res=await fetch(`${GAS_URL}?action=getData`);
-    const data=await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1) allData=data;
   }catch(e){}
 
@@ -1498,8 +1747,7 @@ function pickShift(shift){
 async function loadPreviewSheetData(){
   if(allData.length) return;
   try{
-    const res=await fetch(`${GAS_URL}?action=getData`);
-    const data=await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1){ allData=data; }
   }catch(e){}
 }
@@ -1533,8 +1781,7 @@ async function loadPreviewFromSheet(){
 
   // always fetch fresh
   try{
-    const res=await fetch(`${GAS_URL}?action=getData`);
-    const data=await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1) allData=data;
     else{
       status.className='cs cerr'; status.textContent='❌ Sheet ว่างหรือโหลดไม่ได้';
@@ -1572,6 +1819,7 @@ async function loadPreviewFromSheet(){
   }
 
   updateReportFromRow(row);
+  currentPreviewRow = row;
   status.className='cs cok';
   status.textContent=`✅ โหลดสำเร็จ — เวร${shift} วันที่ ${fmtShort(date)} · หน.เวร: ${row[61]||'—'}`;
 }
@@ -1848,8 +2096,7 @@ async function submitF(){
   ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
   ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='inline-block';});
   try{
-    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({rowData}),headers:{'Content-Type':'application/json'}});
-    const r=await res.json();
+    const r=await gasPost({rowData});
     if(r.status==='success'){toast('✅ บันทึกสำเร็จ! แถวที่ '+r.row,'success');}
     else toast('เกิดข้อผิดพลาด: '+(r.msg||''),'error');
   }catch(e){toast('ส่งไม่ได้: '+e.message,'error');}
@@ -1885,11 +2132,13 @@ function clearF(){
 async function loadDash(){
   document.getElementById('rfSpin').style.display='inline-block';
   try{
-    const res=await fetch(`${GAS_URL}?action=getData`);
-    const data=await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1){allData=data;renderDash(data);}
     else document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';
-  }catch(e){document.getElementById('dashSub').textContent='โหลดไม่ได้: '+e.message;}
+  }catch(e){const isLocal = window.location.protocol === 'about:' || window.location.origin === 'null';
+    document.getElementById('dashSub').innerHTML = isLocal
+      ? '⚠️ เปิดจากไฟล์โดยตรงไม่ได้ → <a href="' + GAS_URL + '" target="_blank" style="color:var(--purple);font-weight:700;">คลิกเปิดจาก GAS URL</a>'
+      : 'โหลดไม่ได้: '+e.message;}
   finally{document.getElementById('rfSpin').style.display='none';}
 }
 
@@ -1957,11 +2206,13 @@ function setHistTab(tab){
 async function loadH(){
   document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">🔄 กำลังโหลด...</div>';
   try{
-    const res=await fetch(`${GAS_URL}?action=getData`);
-    const data=await res.json();
+    const data = await gasGet('action=getData');
     if(Array.isArray(data)&&data.length>1){allData=data;filterH();calcProdT();}
     else document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ยังไม่มีข้อมูล</div>';
-  }catch(e){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';}
+  }catch(e){const isLocal2 = window.location.protocol === 'about:' || window.location.origin === 'null';
+    document.getElementById('histList').innerHTML = isLocal2
+      ? '<div style="text-align:center;padding:32px;"><div style="font-size:28px;margin-bottom:10px;">⚠️</div><div style="font-size:13px;color:var(--text2);margin-bottom:12px;">ไม่สามารถโหลดข้อมูลจากไฟล์โดยตรงได้</div><a href="' + GAS_URL + '" target="_blank" style="background:var(--purple);color:#fff;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none;">🔗 เปิดแอปจาก GAS URL แทน</a></div>'
+      : '<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';}
 }
 
 // ─── DATE NORMALIZE (รองรับทุก format จาก Google Sheets) ───
@@ -2075,7 +2326,8 @@ function filterH(){
   const pc=s=>s==='ดึก'?'sdawn':s==='เช้า'?'smorn':'safte';
 
   document.getElementById('histList').innerHTML=filt.map(r=>{
-    const origIdx=allData.indexOf(r);
+    const rowId=String(r[0]||'');
+    const origIdx=allData.findIndex(row=>String(row[0]||'')===rowId);
     const dateHead=`<div class="top"><div><div style="font-weight:700;font-size:13px;">${fmt(r[1])}</div><div style="font-size:10px;color:var(--text3);margin-top:1px;">หน.เวร: ${r[61]||'—'}</div></div><span class="sp ${pc(r[2])}">${r[2]||'—'}</span></div>`;
     const moreBtn=`<div style="margin-top:8px;text-align:right;"><button onclick="openDetail(${origIdx})" style="background:var(--purple-bg);border:none;border-radius:20px;color:var(--purple);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:700;padding:4px 12px;cursor:pointer;">ดูทั้งหมด / แก้ไข →</button></div>`;
 
@@ -2252,24 +2504,53 @@ function openDetail(rowIdx){
 
   // fill edit panel
   document.getElementById('edit-rowIndex').value = rowIdx;
-  const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v??'';};
-  // format date for input
-  const rd=normDate(r[1]);
-  sv('e-date',rd); sv('e-shift',r[2]);
+  const sv=(id,v)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const val = (v!==null&&v!==undefined&&v!==false) ? String(v) : '';
+    el.value = val;
+    // Force trigger change event for selects so conditional panels show
+    if(el.tagName==='SELECT' && val) el.dispatchEvent(new Event('change'));
+  };
+  // date
+  sv('e-date', normDate(r[1]));
+  sv('e-shift', r[2]);
+  // patient counts
   sv('e-prev',r[3]); sv('e-new',r[4]); sv('e-tin',r[5]); sv('e-tout',r[6]);
   sv('e-dc',r[7]); sv('e-refer',r[8]); sv('e-dead',r[9]); sv('e-total',r[10]);
+  // indicators
   sv('e-prod',r[15]); sv('e-occ',r[16]); sv('e-prodT',r[17]); sv('e-tube',r[18]);
-  sv('e-riskMain',r[41]); sv('e-r1t',r[42]); sv('e-r1d',r[43]); sv('e-r1h',r[44]);
+  // patient types
+  sv('e-t4',r[11]); sv('e-t3',r[12]); sv('e-t2',r[13]); sv('e-t1',r[14]);
+  // disease types
+  sv('e-trauma',r[22]); sv('e-neuro',r[23]); sv('e-plastic',r[24]); sv('e-multi',r[25]);
+  // equipment
+  sv('e-emg',r[26]); sv('e-defib',r[27]); sv('e-o2',r[28]);
+  // surveillance
+  sv('e-fall',r[29]); sv('e-bedsore',r[30]); sv('e-pex',r[31]); sv('e-pop',r[32]);
+  sv('e-dup',r[33]); sv('e-sim',r[34]);
+  // risk
+  sv('e-riskMain',r[41]);
+  sv('e-r1t',r[42]); sv('e-r1d',r[43]); sv('e-r1h',r[44]);
   sv('e-r2t',r[45]); sv('e-r2d',r[46]); sv('e-r2h',r[47]);
   sv('e-r3t',r[48]); sv('e-r3d',r[49]); sv('e-r3h',r[50]);
   sv('e-rExtra',r[51]);
+  // staff
   sv('e-rn',r[19]); sv('e-aide',r[20]); sv('e-worker',r[21]); sv('e-staff',r[56]);
-  sv('e-absent',r[57]); sv('e-absentD',r[58]); sv('e-off',r[59]);
+  sv('e-absent',r[57]); sv('e-absentD',r[58]);
+  sv('e-off',r[59]);    sv('e-offD',r[60]);
+  // allergy
   sv('e-allergy',r[52]); sv('e-aD',r[53]); sv('e-aCard',r[55]);
+  // valuables
   sv('e-val',r[35]); sv('e-valD',r[36]); sv('e-valS',r[37]);
+  sv('e-pend',r[38]); sv('e-pendD',r[39]); sv('e-pendS',r[40]);
+  // charge nurse
   sv('e-charge',r[61]); sv('e-wh',r[62]);
 
+  // open on info tab first so user sees filled data, then can switch to edit
   setModalTab('info');
+  // Small delay to ensure DOM is ready before showing
+  setTimeout(()=>{ document.getElementById('detailModal').scrollTop=0; }, 50);
   document.getElementById('detailModal').style.display='block';
   document.body.style.overflow='hidden';
 }
@@ -2298,14 +2579,14 @@ async function saveEdit(){
   const rowData=[
     orig[0], v('e-date'), v('e-shift'),
     n('e-prev'),n('e-new'),n('e-tin'),n('e-tout'),n('e-dc'),n('e-refer'),n('e-dead'),n('e-total'),
-    n('e-t4')||orig[11]||0, n('e-t3')||orig[12]||0, n('e-t2')||orig[13]||0, n('e-t1')||orig[14]||0,
+    n('e-t4'), n('e-t3'), n('e-t2'), n('e-t1'),
     n('e-prod'),n('e-occ'),n('e-prodT'),
     n('e-tube'),n('e-rn'),n('e-aide'),n('e-worker'),
-    orig[22]||0,orig[23]||0,orig[24]||0,orig[25]||0,
-    orig[26]||'',orig[27]||'',orig[28]||'',
-    orig[29]||0,orig[30]||0,n('e-pex')||orig[31]||0,n('e-pop')||orig[32]||0,orig[33]||0,orig[34]||0,
+    n('e-trauma'),n('e-neuro'),n('e-plastic'),n('e-multi'),
+    v('e-emg'),v('e-defib'),v('e-o2'),
+    n('e-fall'),n('e-bedsore'),n('e-pex'),n('e-pop'),n('e-dup'),n('e-sim'),
     v('e-val'),v('e-valD'),v('e-valS'),
-    orig[38]||'',orig[39]||'',orig[40]||'',
+    v('e-pend'),v('e-pendD'),v('e-pendS'),
     v('e-riskMain'),
     v('e-r1t'),v('e-r1d'),v('e-r1h'),
     v('e-r2t'),v('e-r2d'),v('e-r2h'),
@@ -2313,7 +2594,7 @@ async function saveEdit(){
     v('e-rExtra'),
     v('e-allergy'),v('e-aD'),orig[54]||'',v('e-aCard'),
     n('e-staff'),v('e-absent'),v('e-absentD'),
-    v('e-off'),orig[60]||'',
+    v('e-off'),v('e-offD'),
     v('e-charge'),v('e-wh')
   ];
   // The GAS script finds the row by ID in column A
@@ -2321,8 +2602,7 @@ async function saveEdit(){
   const sp=document.getElementById('editSpin');
   btn.disabled=true; sp.style.display='inline-block';
   try{
-    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({rowData, updateById: orig[0]}),headers:{'Content-Type':'application/json'}});
-    const result=await res.json();
+    const result = await gasPost({rowData, updateById: orig[0]});
     if(result.status==='success'){
       toast('✅ แก้ไขสำเร็จ!','success');
       closeModal();
@@ -2338,7 +2618,7 @@ async function testC(){
   const u=document.getElementById('gasUrl').value.trim()||GAS_URL;
   const el=document.getElementById('cStatus');
   el.style.display='block';el.className='cs';el.textContent='🔄 กำลังทดสอบ...';
-  try{const r=await fetch(`${u}?action=getLastShift`);const d=await r.json();el.className='cs cok';el.textContent=`✅ สำเร็จ! คงพยาบาลล่าสุด: ${d.value||'—'}`;}
+  try{const d=await gasGet('action=getLastShift');el.className='cs cok';el.textContent=`✅ สำเร็จ! คงพยาบาลล่าสุด: ${d.value||'—'}`;}
   catch(e){el.className='cs cerr';el.textContent='❌ ไม่ได้: '+e.message;}
 }
 
