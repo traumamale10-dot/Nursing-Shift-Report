@@ -2,1274 +2,1079 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บันทึกเหตุการณ์เวร · ศอช ชั้น 10</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Trauma Male — บันทึกเวร + Export</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-:root{
-  --gd:#1f4e3d;--gm:#2d6a4f;--gl:#52b788;
-  --lime:#8bc34a;--gold:#c9a84c;--khaki:#e8dfc0;
-  --sage:#d4e8d0;--sage2:#b7d4b0;
-  --w:#fff;--ow:#f5f7f4;--g50:#f0f2ef;
-  --g100:#e4e8e2;--g200:#c8cfc5;--g400:#8a9487;--g700:#3c4a38;
-  --ink:#1a2418;--red:#e53935;--amber:#f59e0b;
-  --sh:0 2px 12px rgba(31,78,61,.10);
-  --shm:0 4px 20px rgba(31,78,61,.14);
-  --r:14px;--rs:9px;
-  --sidebar:220px;
+:root {
+  --purple:    #6B4FA0;
+  --purple-dk: #4e3880;
+  --purple-lt: #8B6FC0;
+  --purple-bg: #f0ebfa;
+  --purple-soft:#e8e0f5;
+  --teal:      #2b8a80;
+  --teal-lt:   #e6f5f3;
+  --bg:        #f4f2f8;
+  --white:     #ffffff;
+  --gray1:     #f8f7fc;
+  --gray2:     #ede9f5;
+  --gray3:     #c5bcd8;
+  --gray4:     #8a7fa8;
+  --text:      #2d2540;
+  --text2:     #5a5070;
+  --text3:     #8a7fa8;
+  --red:       #e05060;
+  --red-bg:    #fdeef0;
+  --orange:    #d06a10;
+  --orange-bg: #fef3e6;
+  --green:     #1e7a46;
+  --green-bg:  #e6f5ee;
+  --r:         12px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{font-family:'Sarabun','IBM Plex Sans Thai',sans-serif;background:var(--ow);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:72px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
 
-/* NAV */
-.nav{position:sticky;top:0;z-index:300;background:var(--gd);box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px}
-.nav-logo{font-size:.95rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:pulse 2.4s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.7}}
-.nav-right{font-size:.72rem;color:rgba(255,255,255,.55);font-weight:600}
+/* ─── HEADER ─── */
+.header{background:var(--purple);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(107,79,160,.3);}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;}
+.hbrand{display:flex;align-items:center;gap:10px;}
+.hlogo{width:34px;height:34px;background:rgba(255,255,255,.2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.htitle{font-family:'Kanit',sans-serif;font-weight:700;font-size:14px;color:#fff;line-height:1.2;}
+.hsub{font-size:10px;color:rgba(255,255,255,.75);}
+.nav{display:flex;background:var(--purple-dk);overflow-x:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nb{flex:1;min-width:64px;padding:9px 4px 7px;background:none;border:none;color:rgba(255,255,255,.6);font-family:'Sarabun',sans-serif;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;transition:.2s;}
+.nb span{font-size:16px;}
+.nb.active{color:#fff;border-bottom-color:rgba(255,255,255,.9);}
 
-/* BOTTOM BAR (mobile) / SIDEBAR (desktop) */
-.sidebar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--gd);display:flex;box-shadow:0 -2px 16px rgba(0,0,0,.2)}
-.sb-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 10px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Sarabun',sans-serif;font-size:.6rem;font-weight:600;cursor:pointer;gap:2px;transition:.2s}
-.sb-btn .ico{font-size:1.3rem;line-height:1}
-.sb-btn.active{color:var(--lime)}
-.sb-btn.active .ico{filter:drop-shadow(0 0 5px rgba(139,195,74,.8))}
-.sb-label{white-space:nowrap}
+/* ─── MAIN ─── */
+.main{padding:14px;max-width:480px;margin:0 auto;padding-bottom:90px;}
+.page{display:none;}
+.page.active{display:block;animation:fu .22s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-/* PAGES */
-.page{display:none;animation:fadeUp .3s ease}
-.page.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* ─── CARD ─── */
+.card{background:var(--white);border-radius:var(--r);box-shadow:0 2px 10px rgba(107,79,160,.08);margin-bottom:12px;overflow:hidden;}
+.ch{padding:11px 14px 9px;border-bottom:1px solid var(--gray2);display:flex;align-items:center;gap:8px;}
+.chi{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.chi.p{background:var(--purple-bg);} .chi.t{background:var(--teal-lt);} .chi.r{background:var(--red-bg);} .chi.o{background:var(--orange-bg);}
+.cl{font-weight:700;font-size:13px;}
+.ctog{margin-left:auto;color:var(--text3);font-size:11px;cursor:pointer;padding:2px 7px;background:var(--gray2);border-radius:20px;}
+.cb{padding:13px;}
 
-/* MAIN */
-.main{max-width:780px;margin:0 auto;padding:16px 12px}
+/* ─── FIELDS ─── */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;}
+.fr.one{grid-template-columns:1fr;}
+.fr.three{grid-template-columns:1fr 1fr 1fr;}
+.f{display:flex;flex-direction:column;gap:4px;}
+.f label{font-size:11px;color:var(--text2);font-weight:600;}
+.f input,.f select,.f textarea{background:var(--gray1);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:9px 10px;font-family:'Sarabun',sans-serif;font-size:13px;outline:none;transition:.2s;width:100%;-webkit-appearance:none;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--purple-lt);background:#fff;box-shadow:0 0 0 3px rgba(107,79,160,.09);}
+.f select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a7fa8' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:26px;}
+.f textarea{resize:none;min-height:70px;}
+.f input[readonly]{color:var(--text3);background:var(--gray2);}
+.stitle{font-family:'Kanit',sans-serif;font-size:12px;font-weight:600;color:var(--purple);margin:13px 0 9px;display:flex;align-items:center;gap:5px;}
+.stitle::after{content:'';flex:1;height:1px;background:var(--gray2);}
 
-/* PAGE HEADER */
-.pg-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--g100)}
-.pg-head h1{font-size:1.2rem;font-weight:700;color:var(--gd);line-height:1.2}
-.pg-head p{font-size:.75rem;color:var(--g400);margin-top:3px}
-.pg-badge{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gl);background:rgba(82,183,136,.1);border:1px solid rgba(82,183,136,.3);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+/* ─── BTN ─── */
+.btn{padding:11px 18px;border:none;border-radius:10px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:700;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;}
+.btn-p{background:var(--purple);color:#fff;box-shadow:0 3px 12px rgba(107,79,160,.28);}
+.btn-p:active{background:var(--purple-dk);transform:scale(.98);}
+.btn-s{background:var(--gray2);color:var(--text2);}
+.btn-t{background:var(--teal);color:#fff;}
+.btn-row{display:grid;grid-template-columns:1fr 2fr;gap:9px;}
+.risk-c{background:var(--red-bg);border:1px solid #f8d0d5;border-radius:9px;padding:11px;margin-bottom:8px;}
+.risk-n{font-size:11px;font-weight:700;color:var(--red);margin-bottom:7px;}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
 
-/* CARD */
-.card{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden;position:relative}
-.card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--lime),var(--gl))}
-.cb{padding:16px 16px 16px 20px}
-.chdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--g100)}
-.cico{width:36px;height:36px;border-radius:var(--rs);background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.ctitle{font-size:.95rem;font-weight:700;color:var(--gd)}
-.csub{font-size:.72rem;color:var(--g400);margin-top:1px}
+/* ─── SETTINGS ─── */
+.si{background:var(--white);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(107,79,160,.07);}
+.si h3{font-size:12px;color:var(--text2);margin-bottom:9px;font-weight:700;}
+.si input{background:var(--gray1);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:9px 11px;font-family:'Sarabun',sans-serif;font-size:13px;outline:none;width:100%;margin-bottom:7px;}
+.si input:focus{border-color:var(--purple-lt);}
+.cs{font-size:12px;padding:7px 11px;border-radius:7px;margin-top:5px;}
+.cok{background:var(--green-bg);color:var(--green);}
+.cerr{background:var(--red-bg);color:var(--red);}
 
-/* STAFF */
-.staff-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.sc-chip{flex:1;min-width:130px;background:var(--g50);border:1px solid var(--g100);border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:8px}
-.s-ico{width:28px;height:28px;border-radius:50%;background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.s-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g400)}
-.s-val{font-size:.9rem;font-weight:700;color:var(--gd);margin-top:1px}
-.s-val select{border:none;background:transparent;font-family:'Sarabun',sans-serif;font-size:.9rem;font-weight:700;color:var(--gd);cursor:pointer;outline:none;padding:0;max-width:130px}
+/* ─── HISTORY ─── */
+.mr{background:var(--white);border-radius:9px;padding:11px;margin-bottom:8px;box-shadow:0 2px 8px rgba(107,79,160,.07);border-left:3px solid var(--purple);}
+.mr .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.mr .info{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;font-size:11px;color:var(--text2);}
+.mr .info .k{color:var(--text3);font-size:10px;}
+.mr .info .v{font-weight:600;color:var(--text);}
 
-/* SECTION LABEL */
-.sec{font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gm);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
-.sec::after{content:'';flex:1;height:1px;background:var(--g100)}
+/* ─── SHIFT PILL ─── */
+.sp{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.sdawn{background:var(--purple-bg);color:var(--purple);}
+.smorn{background:#fff8e3;color:#a06810;}
+.safte{background:var(--orange-bg);color:var(--orange);}
 
-/* FORM */
-.fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:.75rem;font-weight:600;color:var(--g700)}
-.fg input,.fg select,.fg textarea{padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--ink);outline:none;transition:.2s;width:100%;min-height:44px}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(82,183,136,.15)}
-.fg textarea{min-height:76px;resize:vertical}
-.fg .cmp{background:var(--sage);border-color:var(--sage2);font-weight:700;color:var(--gm)}
-.fg input[type=number]{-moz-appearance:textfield}
-.fg input[type=number]::-webkit-inner-spin-button{display:none}
+/* ─── BADGE ─── */
+.bg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.bgp{background:var(--purple-bg);color:var(--purple);}
+.bgt{background:var(--teal-lt);color:var(--teal);}
+.bgr{background:var(--red-bg);color:var(--red);}
+.bgg{background:var(--green-bg);color:var(--green);}
+.bgo{background:var(--orange-bg);color:var(--orange);}
 
-/* STEPPER */
-.nw{display:flex;align-items:center}
-.nw input{text-align:center;border-radius:0;flex:1;border-left:none;border-right:none;min-height:44px}
-.nb{width:44px;height:44px;border:1.5px solid var(--g100);background:var(--g50);color:var(--gm);font-size:1.2rem;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s;user-select:none}
-.nb:first-child{border-radius:var(--rs) 0 0 var(--rs)}
-.nb:last-child{border-radius:0 var(--rs) var(--rs) 0}
-.nb:active{background:var(--sage)}
+/* ─── TOAST ─── */
+#toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:7px;width:calc(100% - 28px);max-width:380px;pointer-events:none;}
+.ti{background:var(--white);border-radius:9px;padding:11px 15px;font-size:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);animation:fu .3s ease;pointer-events:auto;display:flex;align-items:center;gap:7px;border-left:3px solid var(--purple);}
+.ti.success{border-left-color:var(--green);}
+.ti.error{border-left-color:var(--red);}
+.ti.info{border-left-color:var(--teal);}
 
-/* GRIDS */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.g4{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+/* ══════════════════════════════════════════════
+   REPORT PAGES (A4 ratio, 390px wide)
+   ══════════════════════════════════════════════ */
+.report-wrap{display:flex;flex-direction:column;gap:16px;margin-bottom:12px;}
 
-/* CHECKBOX */
-.ckg{display:flex;flex-direction:column;gap:5px;padding:6px 0}
-.cki{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);cursor:pointer;user-select:none;transition:.15s}
-.cki input[type=checkbox]{width:18px;height:18px;accent-color:var(--gm);flex-shrink:0}
-.cki span{font-size:.88rem}
-.cki.on{border-color:var(--gl);background:rgba(82,183,136,.06)}
-
-/* TOGGLE */
-.trow{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:var(--rs);border:1.5px solid var(--g100);background:var(--w);margin-bottom:4px}
-.tlbl{font-size:.88rem;font-weight:600;color:var(--ink)}
-.tsw{position:relative;width:50px;height:27px;flex-shrink:0}
-.tsw input{opacity:0;width:0;height:0}
-.tsw .sl{position:absolute;inset:0;background:var(--g200);border-radius:27px;transition:.25s;cursor:pointer}
-.tsw .sl::before{content:'';position:absolute;width:21px;height:21px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.tsw input:checked+.sl{background:var(--gl)}
-.tsw input:checked+.sl::before{transform:translateX(23px)}
-
-/* CONDITIONAL */
-.ca{background:var(--g50);border:1.5px dashed var(--g200);border-radius:var(--rs);padding:12px;margin-top:4px;display:none}
-.ca.on{display:block;animation:fadeUp .2s ease}
-
-/* RISK */
-.risk-blk{background:#fffdf4;border:1.5px dashed rgba(201,168,76,.4);border-radius:var(--rs);padding:12px;margin-top:6px;display:none}
-.risk-blk.on{display:block}
-.risk-n{font-size:.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-
-/* BADGE */
-.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
-.b-auto{background:rgba(139,195,74,.12);color:var(--gm);border:1px solid rgba(82,183,136,.3)}
-.b-ok{background:var(--sage);color:var(--gd)}
-.b-warn{background:#fef3c7;color:#78350f}
-
-/* SUBMIT */
-.btn-sub{width:100%;padding:14px;background:var(--gd);color:#fff;border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 4px 14px rgba(31,78,61,.35);margin-top:16px;position:relative;overflow:hidden}
-.btn-sub::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(139,195,74,.2),transparent);transition:.4s}
-.btn-sub:hover::after{left:100%}
-.btn-sub:active{transform:scale(.98)}
-
-/* ─── DISPLAY PAGE ─── */
-.filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.filter-bar input,.filter-bar select{flex:1;min-width:110px;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none}
-.btn-load{padding:10px 16px;border-radius:var(--rs);border:none;background:var(--lime);color:var(--gd);font-family:'Sarabun',sans-serif;font-weight:700;cursor:pointer;font-size:.88rem;white-space:nowrap}
-
-/* DISPLAY CARD — styled like reference image */
-.dc{background:var(--w);border-radius:var(--r);border:1px solid var(--g100);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden;animation:fadeUp .3s ease}
-.dc-header{background:linear-gradient(135deg,#1a4332 0%,var(--gd) 60%,#2d6a4f 100%);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
-.dc-header::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%}
-.dc-hinfo{color:#fff;position:relative;z-index:1}
-.dc-hdate{font-size:.7rem;color:rgba(255,255,255,.6);letter-spacing:.04em}
-.dc-htitle{font-size:1.1rem;font-weight:700;margin-top:2px;letter-spacing:.01em}
-.dc-hstaff{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:4px;display:flex;align-items:center;gap:6px}
-.dc-badge{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:700;position:relative;z-index:1}
-.sh-ดึก{background:linear-gradient(135deg,#0d1b0f,#1a2f1c);color:#a8e063;border:2px solid #8bc34a;text-shadow:0 0 8px rgba(139,195,74,.5)}
-.sh-เช้า{background:linear-gradient(135deg,#fff3cd,#ffd966);color:#7a4f00;border:2px solid #e6a817;font-weight:800}
-.sh-บ่าย{background:linear-gradient(135deg,#e8f5fe,#b3d9f7);color:#0d4c7a;border:2px solid #3a9ad9;font-weight:800}
-
-/* SUMMARY ROW */
-.sum-row{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--g100);border-bottom:2px solid var(--g100)}
-.sum-box{background:var(--w);padding:12px 6px;text-align:center;transition:.2s}
-.sum-box:hover{background:var(--g50)}
-.sum-box.hi{background:linear-gradient(135deg,#1a4332,#2d6a4f);border-bottom:3px solid var(--lime)}
-.sum-box.hi .sv{font-size:1.5rem;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.3)}
-.sum-box.hi .sk{color:rgba(255,255,255,.75)}
-.sum-box.sum-yk{background:linear-gradient(135deg,#e8f4fd,#cfe2f3);border-bottom:2px solid #4a90d9}
-.sum-box.sum-yk .sv{color:#1a5276}
-.sum-box.sum-yk .sk{color:#2471a3}
-.sum-box.sum-in{background:linear-gradient(135deg,#eafaf1,#d5f5e3);border-bottom:2px solid #27ae60}
-.sum-box.sum-in .sv{color:#1e8449}
-.sum-box.sum-in .sk{color:#1a7a40}
-.sum-box.sum-mv{background:linear-gradient(135deg,#fef9e7,#fdebd0);border-bottom:2px solid #f39c12}
-.sum-box.sum-mv .sv{color:#9a7d0a}
-.sum-box.sum-mv .sk{color:#b7770d}
-.sum-box.sum-out{background:linear-gradient(135deg,#f0f4f8,#e2eaf4);border-bottom:2px solid #7f8c8d}
-.sum-box.sum-out .sv{color:#2c3e50}
-.sum-box.sum-out .sk{color:#566573}
-.sum-box.sum-ref{background:linear-gradient(135deg,#fdf2f8,#f9ebf9);border-bottom:2px solid #8e44ad}
-.sum-box.sum-ref .sv{color:#6c3483}
-.sum-box.sum-ref .sk{color:#7d3c98}
-.sum-box.sum-dead{background:linear-gradient(135deg,#fdedec,#fce4e4);border-bottom:2px solid #c0392b}
-.sum-box.sum-dead .sv{color:#922b21}
-.sum-box.sum-dead .sk{color:#a93226}
-.sv{font-size:1.2rem;font-weight:700;color:var(--gd);line-height:1}
-.sk{font-size:.58rem;color:var(--g400);margin-top:4px;letter-spacing:.03em;text-transform:uppercase}
-
-/* METRICS ROW */
-.met-row{display:flex;gap:0;background:linear-gradient(to right,var(--g50),#f8faf7);border-bottom:1px solid var(--g100)}
-.met-item{flex:1;padding:10px 10px;border-right:1px solid var(--g100);text-align:center}
-.met-item:last-child{border-right:none}
-.met-bar-wrap{height:6px;background:var(--g200);border-radius:3px;margin-top:5px;overflow:hidden}
-.met-bar{height:100%;background:linear-gradient(90deg,var(--gl),var(--lime));border-radius:3px;transition:.8s}
-.mv{font-size:.95rem;font-weight:700;color:var(--gm)}
-.mk{font-size:.6rem;color:var(--g400);text-transform:uppercase;letter-spacing:.04em}
-
-/* CARD BODY */
-.dc-body{padding:14px 16px}
-.dc-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* PANEL */
-.panel{border:1px solid var(--g100);border-radius:var(--rs);overflow:hidden;margin-bottom:10px;box-shadow:0 1px 4px rgba(31,78,61,.06)}
-.panel-head{background:linear-gradient(90deg,#d4ede8,#e6f4f1);padding:8px 12px;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#1a4332;display:flex;align-items:center;gap:6px;border-bottom:2px solid #b2d8d0}
-.panel-body{padding:10px 12px;background:var(--w)}
-.pi{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:4px 0;border-bottom:1px solid var(--g50)}
-.pi:last-child{border:none}
-.pi .pk{color:var(--g400);font-size:.74rem}
-.pi .pv{font-weight:600;color:var(--ink)}
-.pi.full{flex-direction:column;align-items:flex-start;gap:2px}
-.pi.full .pv{font-size:.82rem;font-weight:400;color:var(--ink);line-height:1.5}
-
-/* TYPE TABLE */
-.type-table{width:100%;border-collapse:collapse;font-size:.82rem;border-radius:var(--rs);overflow:hidden;box-shadow:0 1px 4px rgba(31,78,61,.06)}
-.type-table td,.type-table th{padding:6px 8px;border:1px solid var(--g100)}
-.type-table th{background:linear-gradient(90deg,var(--sage),#eef5ec);color:var(--gm);font-weight:700;text-align:center;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase}
-.type-table td{text-align:center;color:var(--ink);font-weight:600;font-size:.88rem}
-.type-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px}
-
-/* EVENT PILL */
-.ev-pill{background:#fffdf4;border-left:3px solid var(--gold);border-radius:0 var(--rs) var(--rs) 0;padding:8px 12px;font-size:.8rem;margin-bottom:6px}
-.ev-title{font-size:.68rem;font-weight:700;color:#7a5c10;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-
-/* ALERT PILL (ความเสี่ยง) */
-.alert-pill{background:#fff8f0;border-left:3px solid var(--red);border-radius:0 var(--rs) var(--rs) 0;padding:8px 12px;font-size:.8rem;margin-bottom:6px}
-.alert-pill .ev-title{color:#b71c1c}
-
-/* STATUS tag */
-.stag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700}
-.stag-ok{background:#d1fae5;color:#065f46}
-.stag-no{background:#fee2e2;color:#991b1b}
-.stag-na{background:var(--g100);color:var(--g700)}
-
-/* SAVE IMG BTN */
-.btn-img{display:flex;align-items:center;gap:6px;justify-content:center;width:100%;padding:10px;border:1.5px solid var(--g200);border-radius:var(--rs);background:var(--w);color:var(--gd);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;margin-top:10px}
-.btn-img:active{background:var(--sage)}
-
-/* EDIT BTN */
-.btn-edit{display:flex;align-items:center;gap:6px;justify-content:center;flex:1;padding:10px;border:1.5px solid var(--lime);border-radius:var(--rs);background:var(--w);color:var(--gm);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;margin-top:10px}
-.btn-edit:active{background:var(--sage)}
-.btn-row{display:flex;gap:8px}
-.dc-footer{text-align:center;font-size:.65rem;color:var(--g400);padding:6px 0 2px;letter-spacing:.04em}
-
-/* SEARCH PAGE */
-.search-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.cat-btn{padding:8px 16px;border-radius:20px;border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.82rem;font-weight:600;color:var(--g700);cursor:pointer;transition:.2s}
-.cat-btn.active{background:var(--gd);color:#fff;border-color:var(--gd)}
-.search-result{margin-top:10px}
-.sr-item{padding:12px 14px;border-radius:var(--rs);background:var(--w);border:1px solid var(--g100);margin-bottom:8px;cursor:pointer;transition:.15s}
-.sr-item:active{background:var(--g50)}
-.sr-date{font-size:.72rem;color:var(--g400);margin-bottom:3px}
-.sr-title{font-size:.9rem;font-weight:700;color:var(--gd)}
-.sr-detail{font-size:.8rem;color:var(--ink);margin-top:3px}
-
-/* MODAL (edit/view) */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.on{display:flex}
-.modal{background:var(--w);border-radius:var(--r) var(--r) 0 0;padding:20px 16px 32px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--g100)}
-.modal-title{font-size:1rem;font-weight:700;color:var(--gd)}
-.modal-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--g100);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
-.btn-save-edit{width:100%;padding:14px;background:var(--lime);color:var(--gd);border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:16px}
-
-/* EMPTY */
-.empty{text-align:center;padding:48px 16px;color:var(--g400)}
-.eico{font-size:2.4rem;margin-bottom:10px;opacity:.4}
-
-/* CONFIG */
-.cfg-box{background:var(--g50);border:1.5px dashed var(--g200);border-radius:var(--rs);padding:16px;margin-bottom:14px}
-.cfg-box label{font-size:.8rem;font-weight:700;color:var(--gd)}
-.cfg-box input{width:100%;margin-top:6px;padding:10px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);font-family:'Sarabun',sans-serif;font-size:.88rem;background:var(--w);color:var(--ink)}
-.cfg-saved{color:var(--gm);font-size:.78rem;font-weight:600;margin-top:4px;display:none}
-.cfg-tip{background:rgba(212,232,208,.3);border-radius:var(--rs);padding:14px;font-size:.82rem;color:var(--gd);line-height:1.9}
-.cfg-tip a{color:var(--gm)}
-
-/* DATE RANGE */
-.date-range-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
-.dr-item{display:flex;flex-direction:column;gap:3px;flex:1;min-width:120px}
-.dr-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g400)}
-.dr-item input[type=date]{padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none;width:100%}
-.dr-item input[type=date]:focus{border-color:var(--gl);box-shadow:0 0 0 3px rgba(82,183,136,.15)}
-.dr-sep{font-size:1.1rem;color:var(--g400);font-weight:700;flex-shrink:0;margin-top:16px}
-.dr-shift{padding:9px 12px;border-radius:var(--rs);border:1.5px solid var(--g200);background:var(--w);font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--ink);outline:none;cursor:pointer;flex-shrink:0;margin-top:16px}
-
-/* CALENDAR */
-.cal-nav{display:flex;align-items:flex-start;gap:4px}
-.cal-nav-btn{flex-shrink:0;width:32px;height:32px;margin-top:28px;border:1.5px solid var(--g200);background:var(--w);border-radius:var(--rs);font-size:1.1rem;cursor:pointer;color:var(--gm);display:flex;align-items:center;justify-content:center;transition:.15s}
-.cal-nav-btn:active{background:var(--sage)}
-.cal-months-wrap{display:flex;flex:1;gap:12px;overflow:hidden}
-.cal-month{flex:1;min-width:0}
-.cal-month-title{text-align:center;font-size:.82rem;font-weight:700;color:var(--gd);margin-bottom:8px;padding:4px 0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cal-dow{text-align:center;font-size:.58rem;font-weight:700;color:var(--g400);padding:2px 0;text-transform:uppercase}
-.cal-dow:first-child{color:#e53935}
-.cal-dow:last-child{color:#1565c0}
-.cal-day{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;transition:.15s;font-size:.78rem;font-weight:600;color:var(--ink);border:1.5px solid transparent;user-select:none}
-.cal-day:hover{background:var(--sage);border-color:var(--sage2)}
-.cal-day.empty{cursor:default;pointer-events:none}
-.cal-day.today{border-color:var(--gl);background:rgba(82,183,136,.06);color:var(--gm)}
-.cal-day.in-range{background:rgba(82,183,136,.1);border-color:transparent}
-.cal-day.range-start,.cal-day.range-end{background:var(--gd);color:#fff;border-color:var(--gd)}
-.cal-day.range-start.range-end{background:var(--gm)}
-.cal-day.has-data::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--lime)}
-.cal-day.range-start.has-data::after,.cal-day.range-end.has-data::after{background:rgba(139,195,74,.8)}
-.cal-day.sun{color:#e53935}
-.cal-day.sat{color:#1565c0}
-.cal-day.range-start,.cal-day.range-end{color:#fff!important}
-.cal-day.other-month{opacity:.3}
-
-/* FETCH MODAL */
-.fetch-modal{max-width:420px;padding:24px 20px 20px}
-.fetch-status-wrap{display:flex;flex-direction:column;align-items:center;padding:16px 0 8px;gap:12px}
-.fetch-anim{position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
-.fetch-circle{position:absolute;inset:0;border-radius:50%;border:3px solid var(--g100);border-top-color:var(--gl);animation:spin 1s linear infinite}
-.fetch-circle.done{border-color:var(--gl);animation:none}
-.fetch-circle.err{border-color:var(--red);animation:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-.fetch-icon{font-size:2rem;z-index:1}
-.fetch-msg{font-size:1rem;font-weight:700;color:var(--gd);text-align:center}
-.fetch-sub{font-size:.8rem;color:var(--g400);text-align:center;min-height:18px}
-.fetch-bar-wrap{width:100%;background:var(--g100);border-radius:8px;height:8px;overflow:hidden;margin-top:4px}
-.fetch-bar{height:100%;background:linear-gradient(90deg,var(--gl),var(--lime));border-radius:8px;width:0%;transition:width .4s ease}
-.fetch-result-box{width:100%;background:var(--g50);border-radius:var(--rs);padding:14px 16px;border:1px solid var(--g100)}
-.fr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--g100);font-size:.88rem}
-.fr-row:last-child{border:none;padding-bottom:0}
-.fr-key{color:var(--g400);font-size:.8rem}
-.fr-val{font-weight:700;color:var(--gd)}
-.fr-val.hi{color:var(--lime);font-size:1.1rem}
-.btn-fetch-done{width:100%;padding:13px;background:var(--gm);color:#fff;border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:14px;transition:.2s}
-.btn-fetch-done:active{transform:scale(.98)}
-.btn-fetch-open{display:flex;align-items:center;gap:8px;justify-content:center;padding:11px 20px;border:1.5px solid var(--gl);border-radius:var(--rs);background:var(--w);color:var(--gm);font-family:'Sarabun',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;width:100%;margin-bottom:12px}
-.btn-fetch-open:active{background:var(--sage)}
-
-
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:999;background:var(--gd);color:#fff;padding:11px 20px;border-radius:var(--rs);font-weight:600;font-size:.85rem;box-shadow:0 6px 24px rgba(31,78,61,.45);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--lime);white-space:nowrap;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-.field-err{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(229,57,53,.12)!important}
-
-@media(max-width:599px){
-  .cal-months-wrap{gap:0}
-  .cal-months-wrap .cal-month:last-child{display:none}
-  .dr-sep{display:none}
-  .date-range-row{flex-direction:column}
-  .dr-shift{margin-top:0;width:100%}
+.rpage{
+  width:390px;
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 4px 24px rgba(107,79,160,.18);
+  font-family:'Sarabun',sans-serif;
+  position:relative;
 }
 
-@media(min-width:960px){
-  body{padding-bottom:0;padding-left:var(--sidebar)}
-  .sidebar{top:56px;bottom:0;left:0;right:auto;width:var(--sidebar);flex-direction:column;justify-content:flex-start;padding:20px 0 16px;box-shadow:2px 0 16px rgba(0,0,0,.12)}
-  .sb-btn{flex:none;flex-direction:row;justify-content:flex-start;padding:12px 22px;gap:12px;font-size:.88rem;border-radius:0;border-left:3px solid transparent;width:100%}
-  .sb-btn .ico{font-size:1.15rem}
-  .sb-btn.active{border-left-color:var(--lime);background:rgba(139,195,74,.08);color:var(--lime)}
-  .sidebar-sep{height:1px;background:rgba(255,255,255,.08);margin:8px 0}
-  .page{margin-left:0}
-  .main{max-width:960px;padding:24px 28px}
-  .g4{grid-template-columns:repeat(4,1fr)}
-  .sum-row{grid-template-columns:repeat(7,1fr)}
-  .dc-row2{grid-template-columns:1fr 1fr}
-  #mainForm{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-  #mainForm>*{margin-bottom:0}
-  .toast{bottom:24px;left:auto;right:24px;transform:translateY(20px)}
-  .toast.show{transform:translateY(0)}
-  .modal{border-radius:var(--r);margin:auto}
-  .modal-overlay{align-items:center}
+/* Header bar */
+.rpage .rh{
+  background:linear-gradient(135deg,#4e3880 0%,#6B4FA0 50%,#8B6FC0 100%);
+  padding:14px 16px 12px;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
 }
-@media(min-width:600px) and (max-width:959px){
-  .g4{grid-template-columns:repeat(4,1fr)}
-  .sum-row{grid-template-columns:repeat(4,1fr)}
+.rpage .rh::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:100px;height:100px;
+  border-radius:50%;background:rgba(255,255,255,.07);
 }
+.rpage .rh::after{
+  content:'';position:absolute;bottom:-30px;left:20px;
+  width:80px;height:80px;
+  border-radius:50%;background:rgba(255,255,255,.05);
+}
+.rh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.rh-hosp{font-size:9px;font-weight:600;letter-spacing:.8px;opacity:.8;text-transform:uppercase;}
+.rh-ward{font-family:'Kanit',sans-serif;font-size:18px;font-weight:800;letter-spacing:.5px;line-height:1;}
+.rh-sub{font-size:10px;opacity:.8;margin-top:1px;}
+.rh-meta{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.rh-date{font-family:'Kanit',sans-serif;font-size:13px;font-weight:600;background:rgba(255,255,255,.18);padding:4px 10px;border-radius:20px;}
+.rh-shift-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.rh-shift-dawn{background:rgba(255,255,255,.2);}
+.rh-shift-morning{background:rgba(255,220,100,.25);}
+.rh-shift-afternoon{background:rgba(255,160,60,.25);}
+.rh-pg{font-size:10px;opacity:.7;margin-left:auto;}
+
+/* Body */
+.rpage .rb{padding:14px 14px 16px;}
+
+/* Section header */
+.rs{display:flex;align-items:center;gap:6px;margin:12px 0 7px;}
+.rs-dot{width:6px;height:6px;border-radius:50%;}
+.rs-label{font-family:'Kanit',sans-serif;font-size:11px;font-weight:700;color:var(--purple);letter-spacing:.3px;text-transform:uppercase;}
+.rs-line{flex:1;height:1px;background:var(--gray2);}
+
+/* Big stat row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px;}
+.stat-box{background:var(--gray1);border-radius:8px;padding:7px 6px;text-align:center;border-top:2.5px solid transparent;}
+.stat-box.s-purple{border-top-color:var(--purple);}
+.stat-box.s-teal{border-top-color:var(--teal);}
+.stat-box.s-red{border-top-color:var(--red);}
+.stat-box.s-orange{border-top-color:var(--orange);}
+.stat-box.s-green{border-top-color:var(--green);}
+.stat-box.s-gray{border-top-color:var(--gray3);}
+.stat-box .sv{font-family:'Kanit',sans-serif;font-size:20px;font-weight:800;line-height:1;}
+.stat-box.s-purple .sv{color:var(--purple);}
+.stat-box.s-teal .sv{color:var(--teal);}
+.stat-box.s-red .sv{color:var(--red);}
+.stat-box.s-orange .sv{color:var(--orange);}
+.stat-box.s-green .sv{color:var(--green);}
+.stat-box.s-gray .sv{color:var(--text2);}
+.stat-box .sl{font-size:9px;color:var(--text3);margin-top:1px;}
+
+/* Info table */
+.rtbl{width:100%;border-collapse:collapse;font-size:11px;}
+.rtbl tr td{padding:4px 6px;vertical-align:top;}
+.rtbl tr:not(:last-child) td{border-bottom:1px solid var(--gray2);}
+.rtbl .rk{color:var(--text3);width:95px;font-weight:500;}
+.rtbl .rv{color:var(--text);font-weight:600;}
+.rtbl .rv.good{color:var(--green);}
+.rtbl .rv.bad{color:var(--red);}
+.rtbl .rv.warn{color:var(--orange);}
+
+/* Two-col layout inside report */
+.r2col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* Mini box */
+.mbox{background:var(--gray1);border-radius:7px;padding:8px 9px;}
+.mbox .mk{font-size:9px;color:var(--text3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.mbox .mv{font-size:12px;font-weight:700;color:var(--text);}
+.mbox .mv.good{color:var(--green);}
+.mbox .mv.bad{color:var(--red);}
+.mbox .mv.purple{color:var(--purple);}
+.mbox .mv.teal{color:var(--teal);}
+
+/* Risk item */
+.risk-item{background:var(--red-bg);border-left:3px solid var(--red);border-radius:0 7px 7px 0;padding:7px 9px;margin-bottom:5px;}
+.risk-item .ri-type{font-size:10px;font-weight:700;color:var(--red);margin-bottom:2px;}
+.risk-item .ri-det{font-size:11px;color:var(--text2);}
+.risk-item .ri-hn{font-size:10px;color:var(--text3);}
+
+/* Device row */
+.dev-row{display:flex;gap:5px;margin-top:5px;}
+.dev-box{flex:1;border-radius:6px;padding:6px 5px;text-align:center;font-size:10px;font-weight:700;}
+.dev-ok{background:var(--teal-lt);color:var(--teal);}
+.dev-ng{background:var(--red-bg);color:var(--red);}
+
+/* Page number badge */
+.page-badge{position:absolute;bottom:10px;right:14px;font-size:9px;color:var(--text3);background:var(--gray2);padding:2px 8px;border-radius:20px;}
+
+/* Signature row */
+.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.sig-box{border-top:1.5px solid var(--gray3);padding-top:6px;text-align:center;}
+.sig-label{font-size:10px;color:var(--text3);}
+.sig-name{font-size:12px;font-weight:700;color:var(--text);margin-top:2px;}
+
+/* ─── EXPORT BUTTONS ─── */
+.export-bar{background:var(--white);border-radius:var(--r);padding:13px 14px;box-shadow:0 2px 10px rgba(107,79,160,.08);margin-bottom:12px;}
+.export-bar .ebt{font-size:11px;color:var(--text2);margin-bottom:9px;font-weight:700;}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ebtn{padding:10px;border:none;border-radius:9px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s;}
+.ebtn-p1{background:var(--purple-bg);color:var(--purple);}
+.ebtn-p2{background:var(--teal-lt);color:var(--teal);}
+.ebtn-both{background:var(--purple);color:#fff;grid-column:1/-1;padding:11px;}
+.ebtn:active{transform:scale(.97);}
+
+/* Progress overlay */
+#prog-overlay{display:none;position:fixed;inset:0;background:rgba(45,37,64,.65);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:10px;}
+#prog-overlay.show{display:flex;}
+#prog-overlay .po-card{background:#fff;border-radius:14px;padding:22px 28px;text-align:center;min-width:200px;}
+#prog-overlay .po-icon{font-size:32px;margin-bottom:6px;}
+#prog-overlay .po-msg{font-size:13px;color:var(--text2);font-weight:600;}
+.po-bar{height:5px;background:var(--gray2);border-radius:3px;margin-top:10px;overflow:hidden;}
+.po-fill{height:100%;background:var(--purple);border-radius:3px;animation:pf 1.5s ease infinite;}
+@keyframes pf{0%{width:0}70%{width:90%}100%{width:100%}}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <div class="nav-logo"><div class="dot"></div>บันทึกเหตุการณ์เวร · ศอช ชั้น 10</div>
-    <div class="nav-right" id="nav-date"></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="hbrand">
+      <div class="hlogo">🏥</div>
+      <div>
+        <div class="htitle">TRAUMA MALE</div>
+        <div class="hsub">หอผู้ป่วยศัลยกรรมอุบัติเหตุชาย ชั้น 10</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,.7);text-align:right;" id="hDate"></div>
   </div>
-</nav>
+  <nav class="nav">
+    <button class="nb active" onclick="sw('form')"><span>📝</span>บันทึกเวร</button>
+    <button class="nb" onclick="sw('preview')"><span>🖼️</span>ตัวอย่าง</button>
+    <button class="nb" onclick="sw('history')"><span>📋</span>ประวัติ</button>
+    <button class="nb" onclick="sw('settings')"><span>⚙️</span>ตั้งค่า</button>
+  </nav>
+</div>
 
-<!-- ═══════ PAGE: FORM ═══════ -->
+<div class="main">
+
+<!-- ════════ FORM PAGE ════════ -->
 <div class="page active" id="page-form">
-<div class="main">
-  <div class="pg-head">
-    <div><h1>บันทึกข้อมูลเวร</h1><p>กรอกข้อมูลให้ครบถ้วน</p></div>
-    <span class="pg-badge">RECORD</span>
-  </div>
-  <form id="mainForm" onsubmit="submitForm(event)">
+  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">📝 บันทึกเหตุการณ์เวร</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">กรอกข้อมูล → กดดูตัวอย่าง → บันทึก/Export รูป</div>
 
-  <!-- CARD 1 -->
+  <!-- 1 ข้อมูลพื้นฐาน -->
   <div class="card">
-   <div class="cb">
-    <div class="chdr"><div class="cico">🏥</div><div><div class="ctitle">สถิติผู้ป่วย</div><div class="csub">การ์ดที่ 1</div></div></div>
-    <div class="staff-row">
-      <div class="sc-chip"><div class="s-ico">👩‍⚕️</div><div><div class="s-lbl">หัวหน้าเวร</div><div class="s-val"><select id="f_BJ" onchange="updateStaff()"><option value="">— เลือก —</option><option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option><option>เบญจมาศ</option><option>สาคร</option><option>นวลตา</option><option>สุนันทา</option><option>อัญชลี</option><option>จารุวรรณ</option><option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option><option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option><option>สุพรรณี</option><option>อริสรา</option><option>อุ้มบุญ</option><option>ชนาภา</option><option>กนกพร</option><option>วริศรา</option><option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option></select></div></div></div>
-      <div class="sc-chip"><div class="s-ico">🏥</div><div><div class="s-lbl">หัวหน้าหอ</div><div class="s-val">คุณอัญญารัตน์</div></div></div>
+    <div class="ch"><div class="chi p">📅</div><div class="cl">ข้อมูลพื้นฐาน</div></div>
+    <div class="cb">
+      <div class="fr">
+        <div class="f"><label>วันที่ *</label><input type="date" id="f-date"></div>
+        <div class="f"><label>เวร *</label>
+          <select id="f-shift"><option value="">เลือกเวร</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option></select>
+        </div>
+      </div>
+      <div class="stitle">จำนวนผู้ป่วย</div>
+      <div class="fr three">
+        <div class="f"><label>ยอดยกมา</label><input type="number" id="f-prev" min="0" placeholder="0"></div>
+        <div class="f"><label>รับใหม่</label><input type="number" id="f-new" min="0" placeholder="0"></div>
+        <div class="f"><label>รับย้าย</label><input type="number" id="f-tin" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr three">
+        <div class="f"><label>ย้ายออก</label><input type="number" id="f-tout" min="0" placeholder="0"></div>
+        <div class="f"><label>กลับบ้าน</label><input type="number" id="f-dc" min="0" placeholder="0"></div>
+        <div class="f"><label>Refer</label><input type="number" id="f-refer" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>ถึงแก่กรรม</label><input type="number" id="f-dead" min="0" placeholder="0"></div>
+        <div class="f"><label>คงพยาบาล (อัตโนมัติ)</label><input type="number" id="f-total" readonly placeholder="0"></div>
+      </div>
     </div>
-    <div class="sec">📅 ข้อมูลทั่วไป</div>
-    <div class="g2" style="margin-bottom:10px">
-      <div class="fg"><label>วันที่</label><input type="date" id="f_B" required></div>
-      <div class="fg"><label>เวร</label><select id="f_C" required onchange="loadPrev()"><option value="">— เลือก —</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option></select></div>
-    </div>
-    <div class="fg" style="margin-bottom:10px"><label>ยอดยกมา <span class="badge b-auto">อัตโนมัติ</span></label><div class="nw"><button type="button" class="nb" onclick="sn('f_D',-1)">−</button><input type="number" id="f_D" value="19" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_D',1)">+</button></div></div>
-    <div class="sec">🔄 การเคลื่อนไหว</div>
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fg"><label>รับใหม่</label><div class="nw"><button type="button" class="nb" onclick="sn('f_E',-1)">−</button><input type="number" id="f_E" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_E',1)">+</button></div></div>
-      <div class="fg"><label>รับย้าย</label><div class="nw"><button type="button" class="nb" onclick="sn('f_F',-1)">−</button><input type="number" id="f_F" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_F',1)">+</button></div></div>
-      <div class="fg"><label>ย้าย</label><div class="nw"><button type="button" class="nb" onclick="sn('f_G',-1)">−</button><input type="number" id="f_G" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_G',1)">+</button></div></div>
-      <div class="fg"><label>กลับบ้าน</label><div class="nw"><button type="button" class="nb" onclick="sn('f_H',-1)">−</button><input type="number" id="f_H" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_H',1)">+</button></div></div>
-      <div class="fg"><label>Refer</label><div class="nw"><button type="button" class="nb" onclick="sn('f_I',-1)">−</button><input type="number" id="f_I" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_I',1)">+</button></div></div>
-      <div class="fg"><label>ถึงแก่กรรม</label><div class="nw"><button type="button" class="nb" onclick="sn('f_J',-1)">−</button><input type="number" id="f_J" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_J',1)">+</button></div></div>
-      <div class="fg" style="grid-column:1/-1"><label>คงพยาบาล <span class="badge b-auto">อัตโนมัติ</span></label><input type="number" id="f_K" class="cmp" readonly style="text-align:center;font-size:1.1rem"></div>
-    </div>
-    <div class="sec">🏷️ ประเภทผู้ป่วย <span id="type_check" style="margin-left:6px"></span></div>
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fg"><label>ประเภท 4</label><div class="nw"><button type="button" class="nb" onclick="sn('f_L',-1)">−</button><input type="number" id="f_L" value="0" oninput="chkType()"><button type="button" class="nb" onclick="sn('f_L',1)">+</button></div></div>
-      <div class="fg"><label>ประเภท 3</label><div class="nw"><button type="button" class="nb" onclick="sn('f_M',-1)">−</button><input type="number" id="f_M" value="0" oninput="chkType()"><button type="button" class="nb" onclick="sn('f_M',1)">+</button></div></div>
-      <div class="fg"><label>ประเภท 2</label><div class="nw"><button type="button" class="nb" onclick="sn('f_N',-1)">−</button><input type="number" id="f_N" value="0" oninput="chkType()"><button type="button" class="nb" onclick="sn('f_N',1)">+</button></div></div>
-      <div class="fg"><label>ประเภท 1</label><div class="nw"><button type="button" class="nb" onclick="sn('f_O',-1)">−</button><input type="number" id="f_O" value="0" oninput="chkType()"><button type="button" class="nb" onclick="sn('f_O',1)">+</button></div></div>
-    </div>
-    <div class="sec">📈 ตัวชี้วัด</div>
-    <div class="g3" style="margin-bottom:10px">
-      <div class="fg"><label>Productivity</label><input type="number" id="f_P" step="0.01" value="0" oninput="calcAll()"></div>
-      <div class="fg"><label>ครองเตียง % <span class="badge b-auto">อัตโนมัติ</span></label><input type="number" id="f_Q" class="cmp" readonly></div>
-      <div class="fg"><label>Productivity รวม</label><input type="text" id="f_R" class="cmp" readonly placeholder="ครบ 3 เวร"></div>
-    </div>
-    <div class="sec">👩‍⚕️ กำลังพล</div>
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fg"><label>Tube</label><div class="nw"><button type="button" class="nb" onclick="sn('f_S',-1)">−</button><input type="number" id="f_S" value="0"><button type="button" class="nb" onclick="sn('f_S',1)">+</button></div></div>
-      <div class="fg"><label>RN</label><div class="nw"><button type="button" class="nb" onclick="sn('f_T',-1)">−</button><input type="number" id="f_T" value="0"><button type="button" class="nb" onclick="sn('f_T',1)">+</button></div></div>
-      <div class="fg"><label>Aide/PN</label><div class="nw"><button type="button" class="nb" onclick="sn('f_U',-1)">−</button><input type="number" id="f_U" value="0"><button type="button" class="nb" onclick="sn('f_U',1)">+</button></div></div>
-      <div class="fg"><label>Worker</label><div class="nw"><button type="button" class="nb" onclick="sn('f_V',-1)">−</button><input type="number" id="f_V" value="0"><button type="button" class="nb" onclick="sn('f_V',1)">+</button></div></div>
-    </div>
-    <div class="sec">🚑 ประเภทผู้บาดเจ็บ</div>
-    <div class="g4" style="margin-bottom:10px">
-      <div class="fg"><label>Trauma</label><div class="nw"><button type="button" class="nb" onclick="sn('f_W',-1)">−</button><input type="number" id="f_W" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_W',1)">+</button></div></div>
-      <div class="fg"><label>Neuro</label><div class="nw"><button type="button" class="nb" onclick="sn('f_X',-1)">−</button><input type="number" id="f_X" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_X',1)">+</button></div></div>
-      <div class="fg"><label>Plastic</label><div class="nw"><button type="button" class="nb" onclick="sn('f_Y',-1)">−</button><input type="number" id="f_Y" value="0" oninput="calcAll()"><button type="button" class="nb" onclick="sn('f_Y',1)">+</button></div></div>
-      <div class="fg"><label>Multiple Injury <span class="badge b-auto">อัตโนมัติ</span></label><input type="number" id="f_Z" class="cmp" readonly></div>
-    </div>
-    <div class="sec">🛏️ เฝ้าระวัง / เตรียม</div>
-    <div class="g2" style="margin-bottom:8px">
-      <div class="fg"><label>Fall (เตียง)</label><input type="text" id="f_AD" placeholder="12,20,30"></div>
-      <div class="fg"><label>Bed sore (เตียง)</label><input type="text" id="f_AE" placeholder="15,21"></div>
-      <div class="fg"><label>เตรียมตรวจ</label><input type="text" id="f_AF" placeholder="เตียง..."></div>
-      <div class="fg"><label>เตรียมผ่าตัด</label><input type="text" id="f_AG" placeholder="เตียง..."></div>
-    </div>
-    <div class="g2">
-      <div class="fg"><label>ชื่อซ้ำ</label><input type="text" id="f_AH" placeholder="เตียง..."></div>
-      <div class="fg"><label>ชื่อคล้าย</label><input type="text" id="f_AI" placeholder="รายละเอียด..."></div>
-    </div>
-   </div>
   </div>
 
-  <!-- CARD 2 -->
+  <!-- 2 ตัวชี้วัด -->
   <div class="card">
-   <div class="cb">
-    <div class="chdr"><div class="cico">📋</div><div><div class="ctitle">อุปกรณ์ เหตุการณ์ บุคลากร</div><div class="csub">การ์ดที่ 2</div></div></div>
-    <div class="staff-row">
-      <div class="sc-chip"><div class="s-ico">👩‍⚕️</div><div><div class="s-lbl">หัวหน้าเวร</div><div class="s-val" id="bj2">—</div></div></div>
-      <div class="sc-chip"><div class="s-ico">🏥</div><div><div class="s-lbl">หัวหน้าหอ</div><div class="s-val">คุณอัญญารัตน์</div></div></div>
-    </div>
-    <div class="sec">🚑 สถานะอุปกรณ์</div>
-    <div class="g2" style="margin-bottom:10px">
-      <div class="fg"><label>รถ Emergency</label><select id="f_AA"><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
-      <div class="fg"><label>รถ Defibrillator</label><select id="f_AB"><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select></div>
-    </div>
-    <div class="fg" style="margin-bottom:10px">
-      <label>ถัง Oxygen <span style="font-size:.7rem;color:var(--g400);font-weight:400">(เลือกได้หลายข้อ)</span></label>
-      <div class="ckg" id="oxy_group">
-        <label class="cki"><input type="checkbox" name="oxy" value="พร้อมใช้" onchange="ckToggle(this)"><span>พร้อมใช้</span></label>
-        <label class="cki"><input type="checkbox" name="oxy" value="ไม่พร้อมใช้" onchange="ckToggle(this)"><span>ไม่พร้อมใช้</span></label>
-        <label class="cki"><input type="checkbox" name="oxy" value="เหลือ 1 ถัง" onchange="ckToggle(this)"><span>เหลือ 1 ถัง</span></label>
-        <label class="cki"><input type="checkbox" name="oxy" value="เหลือ 2 ถัง" onchange="ckToggle(this)"><span>เหลือ 2 ถัง</span></label>
-        <label class="cki"><input type="checkbox" name="oxy" value="ไปWardอื่น/OR" onchange="ckToggle(this)"><span>ไปWardอื่น/OR</span></label>
+    <div class="ch"><div class="chi t">📊</div><div class="cl">ตัวชี้วัด + ประเภทผู้ป่วย</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div class="fr">
+        <div class="f"><label>Productivity (%)</label><input type="number" id="f-prod" step="0.1" placeholder="0.0"></div>
+        <div class="f"><label>ครองเตียง (%)</label><input type="number" id="f-occ" step="0.1" placeholder="0.0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>Productivity รวม</label><input type="number" id="f-prodT" step="0.1" placeholder="0.0"></div>
+        <div class="f"><label>Tube</label><input type="number" id="f-tube" min="0" placeholder="0"></div>
+      </div>
+      <div class="stitle">ประเภทผู้ป่วย</div>
+      <div class="fr">
+        <div class="f"><label>ประเภท 4</label><input type="number" id="f-t4" min="0" placeholder="0"></div>
+        <div class="f"><label>ประเภท 3</label><input type="number" id="f-t3" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>ประเภท 2</label><input type="number" id="f-t2" min="0" placeholder="0"></div>
+        <div class="f"><label>ประเภท 1</label><input type="number" id="f-t1" min="0" placeholder="0"></div>
+      </div>
+      <div class="stitle">ประเภทโรค</div>
+      <div class="fr">
+        <div class="f"><label>Trauma</label><input type="number" id="f-trauma" min="0" placeholder="0"></div>
+        <div class="f"><label>Neuro</label><input type="number" id="f-neuro" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>Plastic</label><input type="number" id="f-plastic" min="0" placeholder="0"></div>
+        <div class="f"><label>Multiple Injury</label><input type="number" id="f-multi" min="0" placeholder="0"></div>
       </div>
     </div>
-    <div class="sec">💼 ของมีค่า / ของค้าง</div>
-    <div class="trow"><div class="tlbl">ของมีค่า OK</div><label class="tsw"><input type="checkbox" id="t_AJ" onchange="tog('t_AJ','c_AJ')"><span class="sl"></span></label></div>
-    <div class="ca" id="c_AJ"><div class="g2"><div class="fg"><label>รายละเอียด</label><textarea id="f_AK" placeholder="ระบุ..."></textarea></div><div class="fg"><label>สถานะ</label><input type="text" id="f_AL" placeholder="เช่น รอญาติ"></div></div></div>
-    <div class="trow" style="margin-top:8px"><div class="tlbl">ของค้าง</div><label class="tsw"><input type="checkbox" id="t_AM" onchange="tog('t_AM','c_AM')"><span class="sl"></span></label></div>
-    <div class="ca" id="c_AM"><div class="g2"><div class="fg"><label>รายละเอียด</label><textarea id="f_AN" placeholder="ระบุ..."></textarea></div><div class="fg"><label>สถานะ</label><input type="text" id="f_AO" placeholder="เช่น ส่งนึ่ง"></div></div></div>
-    <div class="sec">⚠️ เหตุการณ์ความเสี่ยง</div>
-    <div class="trow"><div class="tlbl">มีเหตุการณ์ความเสี่ยง</div><label class="tsw"><input type="checkbox" id="t_AP" onchange="tog('t_AP','c_AP')"><span class="sl"></span></label></div>
-    <div class="ca risk-blk" id="c_AP">
-      <div class="risk-n">🔴 เหตุการณ์ที่ 1</div>
-      <div class="g2" style="margin-bottom:10px"><div class="fg"><label>ประเภท</label><input type="text" id="f_AQ" placeholder="เช่น Missed diagnosis"></div><div class="fg"><label>HN</label><input type="text" id="f_AS" placeholder="HN..."></div><div class="fg" style="grid-column:1/-1"><label>รายละเอียด</label><textarea id="f_AR" placeholder="รายละเอียด..."></textarea></div></div>
-      <div class="risk-n">🟡 เหตุการณ์ที่ 2</div>
-      <div class="g2" style="margin-bottom:10px"><div class="fg"><label>ประเภท</label><input type="text" id="f_AT" placeholder="ระบุ..."></div><div class="fg"><label>HN</label><input type="text" id="f_AV" placeholder="HN..."></div><div class="fg" style="grid-column:1/-1"><label>รายละเอียด</label><textarea id="f_AU" placeholder="รายละเอียด..."></textarea></div></div>
-      <div class="risk-n">🟢 เหตุการณ์ที่ 3</div>
-      <div class="g2"><div class="fg"><label>ประเภท</label><input type="text" id="f_AW" placeholder="ระบุ..."></div><div class="fg"><label>HN</label><input type="text" id="f_AY" placeholder="HN..."></div><div class="fg" style="grid-column:1/-1"><label>รายละเอียด</label><textarea id="f_AX" placeholder="รายละเอียด..."></textarea></div></div>
-    </div>
-    <div class="fg" style="margin-top:10px"><label>เหตุการณ์เวร (เพิ่มเติม)</label><textarea id="f_AZ" placeholder="บันทึกเหตุการณ์อื่นๆ..."></textarea></div>
-    <div class="sec">💊 ประวัติการแพ้ยา</div>
-    <div class="trow"><div class="tlbl">มีประวัติการแพ้ยา</div><label class="tsw"><input type="checkbox" id="t_BA" onchange="tog('t_BA','c_BA')"><span class="sl"></span></label></div>
-    <div class="ca" id="c_BA"><div class="fg" style="margin-bottom:8px"><label>HN + ชื่อยา</label><input type="text" id="f_BB" placeholder="HN + ชื่อยา..."></div><div class="g2"><div class="fg"><label>ประวัติใน รพ.</label><select id="f_BC"><option>มี</option><option>ไม่มี</option></select></div><div class="fg"><label>สถานะบัตรแพ้ยา</label><select id="f_BD"><option>มีบัตร</option><option>แจ้งเภสัชแล้วรอบัตร</option><option>รอแจ้งซ้ำ</option></select></div></div></div>
-    <div class="sec">👥 บุคลากร</div>
-    <div class="g2" style="margin-bottom:8px"><div class="fg"><label>บุคลากร</label><select id="f_BE"><option>ครบ</option><option>ไม่ครบ</option></select></div><div></div></div>
-    <div class="trow"><div class="tlbl">การขาดลา/มาสาย</div><label class="tsw"><input type="checkbox" id="t_BF" onchange="tog('t_BF','c_BF')"><span class="sl"></span></label></div>
-    <div class="ca" id="c_BF"><div class="fg"><label>รายละเอียด</label><textarea id="f_BG" placeholder="ระบุ..."></textarea></div></div>
-    <div class="trow" style="margin-top:8px"><div class="tlbl">การผัน/Off เวร</div><label class="tsw"><input type="checkbox" id="t_BH" onchange="tog('t_BH','c_BH')"><span class="sl"></span></label></div>
-    <div class="ca" id="c_BH"><div class="fg"><label>รายละเอียด</label><textarea id="f_BI" placeholder="ระบุ..."></textarea></div></div>
-    <button type="submit" class="btn-sub">💾 บันทึกข้อมูลเวร</button>
-   </div>
   </div>
-  </form>
-</div></div>
 
-<!-- ═══════ PAGE: DISPLAY ═══════ -->
-<div class="page" id="page-display">
-<div class="main">
-  <div class="pg-head"><div><h1>แสดงข้อมูลเวร</h1><p>ประวัติการบันทึก</p></div><span class="pg-badge">DASHBOARD</span></div>
-  <div class="card"><div class="cb">
-    <button class="btn-fetch-open" onclick="openFetchModal()">📡 ดึงข้อมูลจาก Google Sheet</button>
-    <div class="date-range-row">
-      <div class="dr-item">
-        <div class="dr-label">วันเริ่มต้น</div>
-        <input type="date" id="filter_date_from" onchange="onRangeChange()">
+  <!-- 3 บุคลากร -->
+  <div class="card">
+    <div class="ch"><div class="chi o">👥</div><div class="cl">บุคลากร</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div class="fr">
+        <div class="f"><label>RN</label><input type="number" id="f-rn" min="0" placeholder="0"></div>
+        <div class="f"><label>Aide/PN</label><input type="number" id="f-aide" min="0" placeholder="0"></div>
       </div>
-      <div class="dr-sep">→</div>
-      <div class="dr-item">
-        <div class="dr-label">วันสิ้นสุด</div>
-        <input type="date" id="filter_date_to" onchange="onRangeChange()">
+      <div class="fr">
+        <div class="f"><label>Worker</label><input type="number" id="f-worker" min="0" placeholder="0"></div>
+        <div class="f"><label>รวมบุคลากร</label><input type="number" id="f-staff" min="0" placeholder="0"></div>
       </div>
-      <select id="filter_shift" onchange="onRangeChange()" class="dr-shift">
-        <option value="">ทุกเวร</option>
-        <option>ดึก</option><option>เช้า</option><option>บ่าย</option>
-      </select>
-    </div>
-  </div></div>
-  <div id="display_area"><div class="empty"><div class="eico">📡</div><div>กด "ดึงข้อมูลจาก Google Sheet" เพื่อโหลด</div></div></div>
-</div></div>
-
-<!-- ═══════ PAGE: SEARCH ═══════ -->
-<div class="page" id="page-search">
-<div class="main">
-  <div class="pg-head"><div><h1>ค้นหาข้อมูล</h1><p>ค้นตามหมวดหมู่</p></div><span class="pg-badge">SEARCH</span></div>
-  <div class="card"><div class="cb">
-    <div class="date-range-row" style="margin-bottom:12px">
-      <div class="dr-item">
-        <div class="dr-label">วันเริ่มต้น</div>
-        <input type="date" id="s_date_from" onchange="doSearch()">
-      </div>
-      <div class="dr-sep">→</div>
-      <div class="dr-item">
-        <div class="dr-label">วันสิ้นสุด</div>
-        <input type="date" id="s_date_to" onchange="doSearch()">
-      </div>
-    </div>
-    <div class="search-cats">
-      <button class="cat-btn active" onclick="setCat('absent',this)">ขาดลา/มาสาย</button>
-      <button class="cat-btn" onclick="setCat('risk',this)">ความเสี่ยง</button>
-      <button class="cat-btn" onclick="setCat('allergy',this)">แพ้ยา</button>
-      <button class="cat-btn" onclick="setCat('event',this)">เหตุการณ์เวร</button>
-      <button class="cat-btn" onclick="setCat('off',this)">ผัน/ออฟเวร</button>
-    </div>
-  </div></div>
-  <div id="search_result"><div class="empty"><div class="eico">🔍</div><div>เลือกช่วงวันที่และหมวดหมู่</div></div></div>
-</div></div>
-
-
-
-<!-- SIDEBAR / BOTTOM BAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-sep" style="display:none" id="sb-sep"></div>
-  <button class="sb-btn active" onclick="goPage('form',this)"><span class="ico">✏️</span><span class="sb-label">บันทึก</span></button>
-  <button class="sb-btn" onclick="goPage('display',this)"><span class="ico">📊</span><span class="sb-label">แสดงข้อมูล</span></button>
-  <button class="sb-btn" onclick="goPage('search',this)"><span class="ico">🔍</span><span class="sb-label">ค้นหา</span></button>
-
-</div>
-
-<!-- FETCH MODAL -->
-<div class="modal-overlay" id="fetchModal" onclick="if(event.target===this&&!fetchingData)closeFetchModal()">
-  <div class="modal fetch-modal">
-    <div class="modal-head">
-      <div class="modal-title" id="fetch-title">📡 ดึงข้อมูลจาก Google Sheet</div>
-      <button class="modal-close" id="fetch-close-btn" onclick="closeFetchModal()">✕</button>
-    </div>
-    <div id="fetch-body">
-      <div class="fetch-status-wrap">
-        <div class="fetch-anim" id="fetch-anim">
-          <div class="fetch-circle"></div>
-          <div class="fetch-icon" id="fetch-icon">📡</div>
+      <div class="fr">
+        <div class="f"><label>ขาดลา/มาสาย</label>
+          <select id="f-absent"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
         </div>
-        <div class="fetch-msg" id="fetch-msg">กำลังเชื่อมต่อ Google Sheet...</div>
-        <div class="fetch-sub" id="fetch-sub">โปรดรอสักครู่</div>
-        <div class="fetch-bar-wrap" id="fetch-bar-wrap">
-          <div class="fetch-bar" id="fetch-bar"></div>
+        <div class="f"><label>การผัน/Off</label>
+          <select id="f-off"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
         </div>
-        <div class="fetch-result-box" id="fetch-result-box" style="display:none"></div>
+      </div>
+      <div class="fr one">
+        <div class="f"><label>รายละเอียดขาด/มาสาย/Off</label><input type="text" id="f-absentD" placeholder="ชื่อ - เหตุผล"></div>
       </div>
     </div>
-    <button class="btn-fetch-done" id="fetch-done-btn" onclick="closeFetchModal()" style="display:none">✅ ปิด</button>
   </div>
-</div>
 
-
-<div class="modal-overlay" id="editModal">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-title">แก้ไขข้อมูลเวร</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+  <!-- 4 อุปกรณ์ -->
+  <div class="card">
+    <div class="ch"><div class="chi t">🚑</div><div class="cl">อุปกรณ์ + เฝ้าระวัง</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div class="fr three">
+        <div class="f"><label>รถ Emergency</label>
+          <select id="f-emg"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select>
+        </div>
+        <div class="f"><label>Defibrillator</label>
+          <select id="f-defib"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select>
+        </div>
+        <div class="f"><label>ถัง Oxygen</label>
+          <select id="f-o2"><option value="">เลือก</option><option>พร้อมใช้</option><option>ไม่พร้อมใช้</option></select>
+        </div>
+      </div>
+      <div class="stitle">เฝ้าระวัง</div>
+      <div class="fr">
+        <div class="f"><label>Fall</label><input type="number" id="f-fall" min="0" placeholder="0"></div>
+        <div class="f"><label>Bed sore</label><input type="number" id="f-bedsore" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>เตรียมตรวจ</label><input type="number" id="f-pex" min="0" placeholder="0"></div>
+        <div class="f"><label>เตรียมผ่าตัด</label><input type="number" id="f-pop" min="0" placeholder="0"></div>
+      </div>
+      <div class="fr">
+        <div class="f"><label>ชื่อซ้ำ</label><input type="number" id="f-dup" min="0" placeholder="0"></div>
+        <div class="f"><label>ชื่อคล้าย</label><input type="number" id="f-sim" min="0" placeholder="0"></div>
+      </div>
     </div>
-    <div id="modal-body"></div>
-    <button class="btn-save-edit" onclick="saveEdit()">💾 บันทึกการแก้ไข</button>
+  </div>
+
+  <!-- 5 ของมีค่า -->
+  <div class="card">
+    <div class="ch"><div class="chi p">💼</div><div class="cl">ของมีค่า / ของค้าง</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div class="fr">
+        <div class="f"><label>ของมีค่า</label>
+          <select id="f-val"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+        </div>
+        <div class="f"><label>สถานะ</label><input type="text" id="f-valS" placeholder="สถานะ"></div>
+      </div>
+      <div class="fr one"><div class="f"><label>รายละเอียดของมีค่า</label><input type="text" id="f-valD" placeholder="รายละเอียด"></div></div>
+      <div class="fr">
+        <div class="f"><label>ของค้าง</label>
+          <select id="f-pend"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+        </div>
+        <div class="f"><label>สถานะ</label><input type="text" id="f-pendS" placeholder="สถานะ"></div>
+      </div>
+      <div class="fr one"><div class="f"><label>รายละเอียดของค้าง</label><input type="text" id="f-pendD" placeholder="รายละเอียด"></div></div>
+    </div>
+  </div>
+
+  <!-- 6 ความเสี่ยง -->
+  <div class="card">
+    <div class="ch"><div class="chi r">⚠️</div><div class="cl">เหตุการณ์ความเสี่ยง</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div class="fr one" style="margin-bottom:11px;">
+        <div class="f"><label>สถานะ</label>
+          <select id="f-riskMain"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+        </div>
+      </div>
+      <div class="risk-c">
+        <div class="risk-n">⚠️ ความเสี่ยงที่ 1</div>
+        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r1t" placeholder="ประเภท"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r1d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r1h" placeholder="HN"></div></div>
+      </div>
+      <div class="risk-c">
+        <div class="risk-n">⚠️ ความเสี่ยงที่ 2</div>
+        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r2t" placeholder="ประเภท"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r2d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r2h" placeholder="HN"></div></div>
+      </div>
+      <div class="risk-c">
+        <div class="risk-n">⚠️ ความเสี่ยงที่ 3</div>
+        <div class="fr one"><div class="f"><label>ประเภท</label><input type="text" id="f-r3t" placeholder="ประเภท"></div></div>
+        <div class="fr"><div class="f"><label>รายละเอียด</label><input type="text" id="f-r3d" placeholder="รายละเอียด"></div><div class="f"><label>HN</label><input type="text" id="f-r3h" placeholder="HN"></div></div>
+      </div>
+      <div class="fr one"><div class="f"><label>เหตุการณ์เพิ่มเติม</label><textarea id="f-rExtra" placeholder="บันทึกเพิ่มเติม..."></textarea></div></div>
+    </div>
+  </div>
+
+  <!-- 7 แพ้ยา -->
+  <div class="card">
+    <div class="ch"><div class="chi o">💊</div><div class="cl">แพ้ยา + หัวหน้าเวร</div></div>
+    <div class="cb">
+      <div class="fr">
+        <div class="f"><label>แพ้ยา</label>
+          <select id="f-allergy"><option value="">เลือก</option><option>มี</option><option>ไม่มี</option></select>
+        </div>
+        <div class="f"><label>สถานะบัตร</label>
+          <select id="f-aCard"><option value="">เลือก</option><option>มีบัตร</option><option>แจ้งเภสัชแล้ว</option><option>รอแจ้งซ้ำ</option></select>
+        </div>
+      </div>
+      <div class="fr one"><div class="f"><label>HN และชื่อยา</label><input type="text" id="f-aD" placeholder="HN - ชื่อยา"></div></div>
+      <div class="stitle">ผู้รับผิดชอบ</div>
+      <div class="fr">
+        <div class="f"><label>หัวหน้าเวร *</label>
+          <select id="f-charge">
+            <option value="">-- เลือก --</option>
+            <option>สุรีรัตน์</option><option>จันจิรา</option><option>คำพุด</option><option>เบญจมาศ</option>
+            <option>สาคร</option><option>นวลตา</option><option>สุนันทา</option><option>อัญชลี</option>
+            <option>จารุวรรณ</option><option>พิศา</option><option>ฐิตินันท์</option><option>สรวงสุดา</option>
+            <option>ศิริรัตน์</option><option>พุทธชาติ</option><option>อรอุมา</option><option>สุพรรณี</option>
+            <option>อริสรา</option><option>อุ้มบุญ</option><option>ชนาภา</option><option>กนกพร</option>
+            <option>วริศรา</option><option>ภูวิศ</option><option>อริสา</option><option>อนัญญา</option><option>สิตานัน</option>
+          </select>
+        </div>
+        <div class="f"><label>หัวหน้าหอ</label><input type="text" id="f-wh" value="อัญญารัตน์"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-top:6px;">
+    <button class="btn btn-s" onclick="clearF()">🗑️ ล้าง</button>
+    <button class="btn btn-p" onclick="goPreview()">🖼️ ดูตัวอย่าง + Export</button>
+  </div>
+  <div style="margin-top:8px;">
+    <button class="btn btn-t" id="submitBtn" onclick="submitF()">
+      <span id="subSpin" class="spin" style="display:none"></span>💾 บันทึกไปยัง Google Sheet
+    </button>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ════════ PREVIEW PAGE ════════ -->
+<div class="page" id="page-preview">
+  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">🖼️ ตัวอย่างบันทึกเวร</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">ตรวจสอบข้อมูล จากนั้น Export เป็นรูปภาพ</div>
+
+  <!-- EXPORT BUTTONS -->
+  <div class="export-bar">
+    <div class="ebt">📥 Export รูปภาพ</div>
+    <div class="export-grid">
+      <button class="ebtn ebtn-p1" onclick="exportPage(1)">📄 หน้า 1</button>
+      <button class="ebtn ebtn-p2" onclick="exportPage(2)">📄 หน้า 2</button>
+      <button class="ebtn ebtn-both" onclick="exportBoth()">📦 Export ทั้ง 2 หน้า</button>
+    </div>
+  </div>
+
+  <!-- REPORT PAGES -->
+  <div class="report-wrap" id="reportWrap">
+    <!-- PAGE 1 -->
+    <div class="rpage" id="rp1">
+      <div class="rh">
+        <div class="rh-top">
+          <div>
+            <div class="rh-hosp">Maharat Nakhonratchasima Hospital</div>
+            <div class="rh-ward">TRAUMA MALE</div>
+            <div class="rh-sub">หอผู้ป่วยศัลยกรรมอุบัติเหตุชาย ชั้น 10 · 044-235514</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px;opacity:.7;margin-bottom:3px;">บันทึกเหตุการณ์เวร</div>
+            <div style="font-size:9px;opacity:.6;">NURSING SHIFT REPORT</div>
+          </div>
+        </div>
+        <div class="rh-meta">
+          <div class="rh-date" id="r-date">—</div>
+          <div class="rh-shift-pill" id="r-shiftpill">—</div>
+          <div class="rh-pg">หน้า 1 / 2</div>
+        </div>
+      </div>
+      <div class="rb">
+
+        <!-- PATIENT COUNT -->
+        <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">จำนวนผู้ป่วย</div><div class="rs-line"></div></div>
+        <div class="stat-row">
+          <div class="stat-box s-gray"><div class="sv" id="r-prev">0</div><div class="sl">ยกมา</div></div>
+          <div class="stat-box s-green"><div class="sv" id="r-new">0</div><div class="sl">รับใหม่</div></div>
+          <div class="stat-box s-orange"><div class="sv" id="r-dc">0</div><div class="sl">กลับบ้าน</div></div>
+          <div class="stat-box s-red"><div class="sv" id="r-refer">0</div><div class="sl">Refer</div></div>
+        </div>
+        <div class="stat-row" style="margin-top:5px;">
+          <div class="stat-box s-teal"><div class="sv" id="r-tin">0</div><div class="sl">รับย้าย</div></div>
+          <div class="stat-box s-gray"><div class="sv" id="r-tout">0</div><div class="sl">ย้ายออก</div></div>
+          <div class="stat-box s-red"><div class="sv" id="r-dead">0</div><div class="sl">ถึงแก่กรรม</div></div>
+          <div class="stat-box s-purple"><div class="sv" id="r-total">0</div><div class="sl">คงพยาบาล</div></div>
+        </div>
+
+        <!-- INDICATORS -->
+        <div class="rs" style="margin-top:10px;"><div class="rs-dot" style="background:var(--teal)"></div><div class="rs-label">ตัวชี้วัด</div><div class="rs-line"></div></div>
+        <div class="r2col">
+          <div>
+            <table class="rtbl">
+              <tr><td class="rk">Productivity</td><td class="rv purple" id="r-prod">—</td></tr>
+              <tr><td class="rk">ครองเตียง</td><td class="rv teal" id="r-occ">—</td></tr>
+              <tr><td class="rk">Prod. รวม</td><td class="rv" id="r-prodT">—</td></tr>
+              <tr><td class="rk">Tube</td><td class="rv" id="r-tube">—</td></tr>
+            </table>
+          </div>
+          <div>
+            <table class="rtbl">
+              <tr><td class="rk">ประเภท 4</td><td class="rv bad" id="r-t4">0</td></tr>
+              <tr><td class="rk">ประเภท 3</td><td class="rv warn" id="r-t3">0</td></tr>
+              <tr><td class="rk">ประเภท 2</td><td class="rv" id="r-t2">0</td></tr>
+              <tr><td class="rk">ประเภท 1</td><td class="rv good" id="r-t1">0</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- DISEASE TYPE -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประเภทโรค / บาดเจ็บ</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+          <div class="mbox"><div class="mk">Trauma</div><div class="mv purple" id="r-trauma">0</div></div>
+          <div class="mbox"><div class="mk">Neuro</div><div class="mv teal" id="r-neuro">0</div></div>
+          <div class="mbox"><div class="mk">Plastic</div><div class="mv" id="r-plastic">0</div></div>
+          <div class="mbox"><div class="mk">Multiple</div><div class="mv" id="r-multi">0</div></div>
+        </div>
+
+        <!-- STAFF -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--green)"></div><div class="rs-label">บุคลากร</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px;">
+          <div class="mbox"><div class="mk">RN</div><div class="mv purple" id="r-rn">0</div></div>
+          <div class="mbox"><div class="mk">Aide/PN</div><div class="mv" id="r-aide">0</div></div>
+          <div class="mbox"><div class="mk">Worker</div><div class="mv" id="r-worker">0</div></div>
+          <div class="mbox"><div class="mk">รวม</div><div class="mv teal" id="r-staff">0</div></div>
+        </div>
+        <table class="rtbl">
+          <tr><td class="rk">ขาดลา/มาสาย</td><td class="rv" id="r-absent">—</td></tr>
+          <tr><td class="rk">การผัน/Off</td><td class="rv" id="r-off">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="r-absentD" style="font-size:10px;">—</td></tr>
+        </table>
+
+        <!-- DEVICES -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--teal)"></div><div class="rs-label">อุปกรณ์ฉุกเฉิน</div><div class="rs-line"></div></div>
+        <div class="dev-row" id="r-devices">
+          <div class="dev-box dev-ok">🚑 Emergency<br>—</div>
+          <div class="dev-box dev-ok">⚡ Defibrillator<br>—</div>
+          <div class="dev-box dev-ok">🫁 Oxygen<br>—</div>
+        </div>
+
+      </div>
+      <div class="page-badge">หน้า 1/2</div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="rpage" id="rp2">
+      <div class="rh">
+        <div class="rh-top">
+          <div>
+            <div class="rh-hosp">Maharat Nakhonratchasima Hospital</div>
+            <div class="rh-ward">TRAUMA MALE</div>
+            <div class="rh-sub">หอผู้ป่วยศัลยกรรมอุบัติเหตุชาย ชั้น 10 · 044-235514</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px;opacity:.7;margin-bottom:3px;">บันทึกเหตุการณ์เวร</div>
+            <div style="font-size:9px;opacity:.6;">NURSING SHIFT REPORT</div>
+          </div>
+        </div>
+        <div class="rh-meta">
+          <div class="rh-date" id="r-date2">—</div>
+          <div class="rh-shift-pill" id="r-shiftpill2">—</div>
+          <div class="rh-pg">หน้า 2 / 2</div>
+        </div>
+      </div>
+      <div class="rb">
+
+        <!-- SURVEILLANCE -->
+        <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">การเฝ้าระวัง</div><div class="rs-line"></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;">
+          <div class="mbox"><div class="mk">Fall</div><div class="mv bad" id="r-fall">0</div></div>
+          <div class="mbox"><div class="mk">Bed sore</div><div class="mv warn" id="r-bedsore">0</div></div>
+          <div class="mbox"><div class="mk">เตรียมตรวจ</div><div class="mv" id="r-pex">0</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <div class="mbox"><div class="mk">เตรียม ผ่าตัด</div><div class="mv" id="r-pop">0</div></div>
+          <div class="mbox"><div class="mk">ชื่อซ้ำ</div><div class="mv warn" id="r-dup">0</div></div>
+          <div class="mbox"><div class="mk">ชื่อคล้าย</div><div class="mv warn" id="r-sim">0</div></div>
+        </div>
+
+        <!-- VALUABLES -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">ของมีค่า / ของค้าง</div><div class="rs-line"></div></div>
+        <table class="rtbl">
+          <tr><td class="rk">ของมีค่า</td><td class="rv" id="r-val">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="r-valD" style="font-size:10px;">—</td></tr>
+          <tr><td class="rk">สถานะ</td><td class="rv" id="r-valS">—</td></tr>
+          <tr><td class="rk">ของค้าง</td><td class="rv" id="r-pend">—</td></tr>
+          <tr><td class="rk">รายละเอียด</td><td class="rv" id="r-pendD" style="font-size:10px;">—</td></tr>
+          <tr><td class="rk">สถานะ</td><td class="rv" id="r-pendS">—</td></tr>
+        </table>
+
+        <!-- RISK -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--red)"></div><div class="rs-label">เหตุการณ์ความเสี่ยง</div><div class="rs-line"></div></div>
+        <div id="r-riskList">
+          <div style="font-size:11px;color:var(--green);background:var(--green-bg);padding:6px 10px;border-radius:6px;">✓ ไม่มีเหตุการณ์ความเสี่ยง</div>
+        </div>
+        <div id="r-riskExtra" style="display:none;margin-top:5px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;font-weight:600;">เพิ่มเติม</div>
+          <div id="r-riskExtraText" style="font-size:11px;color:var(--text2);background:var(--gray1);padding:7px 9px;border-radius:6px;"></div>
+        </div>
+
+        <!-- ALLERGY -->
+        <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประวัติแพ้ยา</div><div class="rs-line"></div></div>
+        <table class="rtbl">
+          <tr><td class="rk">แพ้ยา</td><td class="rv" id="r-allergy">—</td></tr>
+          <tr><td class="rk">HN / ชื่อยา</td><td class="rv" id="r-aD" style="font-size:10px;">—</td></tr>
+          <tr><td class="rk">สถานะบัตร</td><td class="rv" id="r-aCard">—</td></tr>
+        </table>
+
+        <!-- SIGNATURE -->
+        <div class="rs" style="margin-top:10px;"><div class="rs-dot" style="background:var(--gray3)"></div><div class="rs-label">ลงนาม</div><div class="rs-line"></div></div>
+        <div class="sig-row">
+          <div class="sig-box">
+            <div class="sig-label">หัวหน้าเวร</div>
+            <div class="sig-name" id="r-charge">—</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-label">หัวหน้าหอ</div>
+            <div class="sig-name" id="r-wh">—</div>
+          </div>
+        </div>
+
+        <!-- TIMESTAMP -->
+        <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--gray2);display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:9px;color:var(--text3);">พิมพ์เมื่อ: <span id="r-printTime">—</span></div>
+          <div style="font-size:9px;color:var(--purple);font-weight:700;">Trauma Male · Maharat</div>
+        </div>
+
+      </div>
+      <div class="page-badge">หน้า 2/2</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px;">
+    <button class="btn btn-s" onclick="sw('form')">✏️ แก้ไขข้อมูล</button>
+    <button class="btn btn-p" id="submitBtn2" onclick="submitF()">
+      <span id="subSpin2" class="spin" style="display:none"></span>💾 บันทึก Sheet
+    </button>
+  </div>
+</div>
+
+<!-- ════════ HISTORY PAGE ════════ -->
+<div class="page" id="page-history">
+  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px;">📋 ประวัติ</div>
+  <div style="font-size:11px;color:var(--text3);margin-bottom:12px;" id="histCount">—</div>
+  <div style="display:flex;gap:7px;margin-bottom:12px;">
+    <input id="hSearch" placeholder="🔍 ค้นหา..." oninput="filterH()"
+      style="flex:1;background:var(--white);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 10px;font-family:'Sarabun',sans-serif;font-size:12px;outline:none;">
+    <select id="hShift" onchange="filterH()"
+      style="background:var(--white);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 9px;font-family:'Sarabun',sans-serif;font-size:12px;outline:none;-webkit-appearance:none;">
+      <option value="">ทุกเวร</option><option>ดึก</option><option>เช้า</option><option>บ่าย</option>
+    </select>
+  </div>
+  <div id="histList"><div style="text-align:center;padding:32px;color:var(--text3);">กำลังโหลด...</div></div>
+</div>
+
+<!-- ════════ SETTINGS PAGE ════════ -->
+<div class="page" id="page-settings">
+  <div style="font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;margin-bottom:14px;">⚙️ ตั้งค่าระบบ</div>
+  <div class="si">
+    <h3>🔗 Google Apps Script URL</h3>
+    <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/...">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+      <button class="btn btn-p" onclick="saveU()" style="font-size:12px;padding:9px;">💾 บันทึก</button>
+      <button class="btn btn-t" onclick="testC()" style="font-size:12px;padding:9px;">🔌 ทดสอบ</button>
+    </div>
+    <div id="cStatus" class="cs" style="display:none;"></div>
+  </div>
+  <div class="si">
+    <h3>ℹ️ ข้อมูลหอผู้ป่วย</h3>
+    <table style="width:100%;font-size:12px;">
+      <tr style="border-bottom:1px solid var(--gray2);"><td style="padding:5px 0;color:var(--text3);">หอผู้ป่วย</td><td style="padding:5px 0;font-weight:700;color:var(--purple);">Trauma Male ชั้น 10</td></tr>
+      <tr style="border-bottom:1px solid var(--gray2);"><td style="padding:5px 0;color:var(--text3);">โรงพยาบาล</td><td style="padding:5px 0;font-weight:600;">มหาราชนครราชสีมา</td></tr>
+      <tr><td style="padding:5px 0;color:var(--text3);">เบอร์โทร</td><td style="padding:5px 0;font-weight:600;">044-235514</td></tr>
+    </table>
+  </div>
+  <div class="si">
+    <h3>🔧 การดำเนินการ</h3>
+    <div style="display:grid;gap:7px;">
+      <button class="btn btn-p" onclick="loadH()">🔄 โหลดประวัติใหม่</button>
+      <button class="btn btn-s" onclick="clearF();sw('form')">🗑️ ล้างฟอร์ม</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- Progress Overlay -->
+<div id="prog-overlay">
+  <div class="po-card">
+    <div class="po-icon" id="po-icon">📸</div>
+    <div class="po-msg" id="po-msg">กำลังสร้างรูปภาพ...</div>
+    <div class="po-bar"><div class="po-fill"></div></div>
+  </div>
+</div>
+
+<div id="toast"></div>
 
 <script>
-var allData=[], searchCat='absent', editRow=null, editIdx=-1;
-var DEFAULT_URL='https://script.google.com/macros/s/AKfycbxLkgbzvbRAkmIy7iXaULUESv5GO2TAuL9OsyOWl0sf1jg7-RiljH-90yo-5A26m10DVw/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbwSui60lZFdK2swhwAcHf6dUDb5s0XOAA2shb-eoZdh1u0SGG3_Rww1xxOqtCnt18keTA/exec';
+let GAS_URL = localStorage.getItem('gasUrl') || DEFAULT_URL;
+let allData = [];
 
-// ── Init ──
-(function(){
-  var d=new Date();
-  document.getElementById('nav-date').textContent=d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short',year:'2-digit'});
-})();
-
-window.addEventListener('load',()=>{
-  var today=localDateStr(new Date());
-  document.getElementById('f_B').value=today;
-  document.getElementById('filter_date_from').value=today;
-  document.getElementById('filter_date_to').value=today;
-  document.getElementById('s_date_from').value=today;
-  document.getElementById('s_date_to').value=today;
-  renderCalendar();
-  fetchLastKong();
-  openFetchModal();
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded',()=>{
+  const now = new Date();
+  document.getElementById('hDate').innerHTML = now.toLocaleDateString('th-TH',{weekday:'short',day:'2-digit',month:'short'})+'<br>'+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('f-date').value = now.toISOString().split('T')[0];
+  document.getElementById('gasUrl').value = GAS_URL;
+  ['f-prev','f-new','f-tin','f-tout','f-dc','f-refer','f-dead'].forEach(id=>
+    document.getElementById(id)?.addEventListener('input',calcT));
 });
 
-function getUrl(){return DEFAULT_URL;}
-
-// ── Navigation ──
-function goPage(name,btn){
+// ─── TABS ───
+function sw(name){
+  document.querySelectorAll('.nb').forEach((b,i)=>{
+    b.classList.toggle('active',['form','preview','history','settings'][i]===name);
+  });
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='display')loadDisplay();
-  if(name==='search')doSearch();
   window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='history') loadH();
 }
 
-// ── Helpers ──
-function gv(id){var el=document.getElementById(id);return el?el.value:'';}
-function sv(id,v){var el=document.getElementById(id);if(el)el.value=v;}
-function getOxy(){return Array.from(document.querySelectorAll('input[name=oxy]:checked')).map(c=>c.value).join(', ');}
-function togVal(swId){return document.getElementById(swId).checked?'มี':'ไม่มี';}
-function nv(id){return parseFloat(document.getElementById(id).value)||0;}
-
-// ── แปลง Date เป็น YYYY-MM-DD โดยใช้ local timezone ──
-function localDateStr(d){
-  var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+day;
+// ─── TOGGLE CARD ───
+function tc(el){
+  const body = el.closest('.card').querySelector('.cb');
+  const h = body.style.display==='none';
+  body.style.display = h?'':'none';
+  el.textContent = h?'▼':'▶';
 }
 
-function nd(val){
-  if(!val)return'';
-  var s=val.toString().trim();
-  // YYYY-MM-DD → คืนตรงๆ (ปลอดภัยที่สุด)
-  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);
-  // Date object
-  if(val instanceof Date)return localDateStr(val);
-  // รูปแบบ DD/MM/YYYY หรือ D/M/YYYY
-  var dmyMatch=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if(dmyMatch)return dmyMatch[3]+'-'+dmyMatch[2].padStart(2,'0')+'-'+dmyMatch[1].padStart(2,'0');
-  // รูปแบบอื่น: แทนที่ "/" ด้วย "-" แล้วลองใช้ YYYY-MM-DD อีกที
-  var norm=s.replace(/\//g,'-');
-  if(/^\d{4}-\d{2}-\d{2}/.test(norm))return norm.substring(0,10);
-  // fallback: parse แล้วใช้ local โดยชดเชย timezone
-  try{
-    var raw=new Date(s);
-    if(!isNaN(raw)){
-      // ชดเชย timezone offset เพื่อให้ได้ local date
-      var local=new Date(raw.getTime()+raw.getTimezoneOffset()*-60000);
-      return localDateStr(local);
-    }
-  }catch(e){}
-  return s.substring(0,10);
-}
-function V(r,i){var v=r[i];return(v!==undefined&&v!==null&&v!=='')? String(v):'—';}
-function has(r,i){var v=r[i];return v!==undefined&&v!==null&&v!==''&&v!=='—'&&v!=='ไม่มี';}
-
-// ── Staff display ──
-function updateStaff(){
-  var n=document.getElementById('f_BJ').value;
-  document.getElementById('bj2').textContent=n?'คุณ'+n:'—';
+// ─── CALC TOTAL ───
+function calcT(){
+  const n=id=>parseFloat(document.getElementById(id)?.value)||0;
+  document.getElementById('f-total').value = Math.max(0,n('f-prev')+n('f-new')+n('f-tin')-n('f-tout')-n('f-dc')-n('f-refer')-n('f-dead'));
 }
 
-// ── Stepper ──
-function sn(id,d){
-  var el=document.getElementById(id),v=(parseFloat(el.value)||0)+d;
-  if(v<0)v=0;el.value=v;el.dispatchEvent(new Event('input'));
+// ─── GO PREVIEW ───
+function goPreview(){
+  updateReport();
+  sw('preview');
 }
 
-// ── Calc ──
-function calcAll(){
-  var K=Math.max(0,nv('f_D')+nv('f_E')+nv('f_F')-nv('f_G')-nv('f_H')-nv('f_I')-nv('f_J'));
-  sv('f_K',K);sv('f_Q',(K*100/30).toFixed(2));
-  sv('f_Z',nv('f_K')-(nv('f_W')+nv('f_X')+nv('f_Y')));
-  chkType();
-}
-function chkType(){
-  var K=nv('f_K'),s=nv('f_L')+nv('f_M')+nv('f_N')+nv('f_O');
-  var el=document.getElementById('type_check');
-  el.innerHTML=K>0?(s===K?'<span class="badge b-ok">✓ ตรง</span>':'<span class="badge b-warn">⚠ '+s+'/'+K+'</span>'):'';
-}
-function tog(sw,ar){document.getElementById(ar).classList.toggle('on',document.getElementById(sw).checked);}
-function ckToggle(el){el.closest('.cki').classList.toggle('on',el.checked);}
+// ─── UPDATE REPORT ───
+function updateReport(){
+  const v=id=>document.getElementById(id)?.value||'';
+  const n=id=>parseInt(document.getElementById(id)?.value)||0;
 
-// ── Fetch last kong ──
-function fetchLastKong(){
-  fetch(getUrl()+'?action=getLastShift').then(r=>r.json())
-    .then(d=>{sv('f_D',(d.value!==undefined&&d.value!==null&&d.value!=='')? d.value:19);calcAll();})
-    .catch(()=>{sv('f_D',19);calcAll();});
-}
-function loadPrev(){fetchLastKong();}
+  // Date & shift
+  const dateStr = v('f-date');
+  const shift = v('f-shift');
+  const dateFmt = dateStr ? new Date(dateStr).toLocaleDateString('th-TH',{day:'2-digit',month:'long',year:'2-digit'}) : '—';
+  
+  ['r-date','r-date2'].forEach(id=>{document.getElementById(id).textContent=dateFmt;});
 
-// ── Local storage ──
-function saveLocal(row){
-  var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
-  // upsert: ถ้ามีวันที่+เวรเดิมอยู่แล้ว ให้ทับ ไม่สร้างซ้ำ
-  var key=nd(row[1])+'|'+(row[2]||'');
-  var found=false;
-  rows=rows.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return row;}return r;});
-  if(!found)rows.unshift(row);
-  if(rows.length>200)rows=rows.slice(0,200);
-  localStorage.setItem('shift_rows',JSON.stringify(rows));
-}
-function updateLocal(idx,row){
-  var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
-  if(idx>=0&&idx<rows.length){rows[idx]=row;localStorage.setItem('shift_rows',JSON.stringify(rows));}
-}
-function getLocal(){return JSON.parse(localStorage.getItem('shift_rows')||'[]');}
+  const shiftClass = shift==='ดึก'?'rh-shift-dawn':shift==='เช้า'?'rh-shift-morning':'rh-shift-afternoon';
+  ['r-shiftpill','r-shiftpill2'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.textContent = `เวร${shift||'—'}`;
+    el.className = `rh-shift-pill ${shiftClass}`;
+  });
 
-// ── Build row array from form ──
-function buildRow(){
-  return[
-    Date.now().toString(36),gv('f_B'),gv('f_C'),gv('f_D'),gv('f_E'),gv('f_F'),gv('f_G'),
-    gv('f_H'),gv('f_I'),gv('f_J'),gv('f_K'),gv('f_L'),gv('f_M'),gv('f_N'),gv('f_O'),
-    gv('f_P'),gv('f_Q'),'',gv('f_S'),gv('f_T'),gv('f_U'),gv('f_V'),
-    gv('f_W'),gv('f_X'),gv('f_Y'),gv('f_Z'),
-    gv('f_AA'),gv('f_AB'),getOxy(),
-    gv('f_AD'),gv('f_AE'),gv('f_AF'),gv('f_AG'),gv('f_AH'),gv('f_AI'),
-    togVal('t_AJ'),gv('f_AK'),gv('f_AL'),
-    togVal('t_AM'),gv('f_AN'),gv('f_AO'),
-    togVal('t_AP'),gv('f_AQ'),gv('f_AR'),gv('f_AS'),gv('f_AT'),gv('f_AU'),gv('f_AV'),gv('f_AW'),gv('f_AX'),gv('f_AY'),
-    gv('f_AZ'),togVal('t_BA'),gv('f_BB'),gv('f_BC'),gv('f_BD'),
-    gv('f_BE'),togVal('t_BF'),gv('f_BG'),togVal('t_BH'),gv('f_BI'),
-    gv('f_BJ'),'อัญญารัตน์'
+  // Page 1 — patient count
+  set('r-prev', n('f-prev'));
+  set('r-new',  n('f-new'));
+  set('r-dc',   n('f-dc'));
+  set('r-refer',n('f-refer'));
+  set('r-tin',  n('f-tin'));
+  set('r-tout', n('f-tout'));
+  set('r-dead', n('f-dead'));
+  set('r-total',n('f-total'));
+
+  // Indicators
+  setText('r-prod',  v('f-prod')  ? v('f-prod')+'%'   : '—');
+  setText('r-occ',   v('f-occ')   ? v('f-occ')+'%'    : '—');
+  setText('r-prodT', v('f-prodT') ? v('f-prodT')       : '—');
+  setText('r-tube',  n('f-tube'));
+
+  // Types
+  set('r-t4',n('f-t4')); set('r-t3',n('f-t3')); set('r-t2',n('f-t2')); set('r-t1',n('f-t1'));
+  set('r-trauma',n('f-trauma')); set('r-neuro',n('f-neuro')); set('r-plastic',n('f-plastic')); set('r-multi',n('f-multi'));
+
+  // Staff
+  set('r-rn',n('f-rn')); set('r-aide',n('f-aide')); set('r-worker',n('f-worker')); set('r-staff',n('f-staff'));
+  setText('r-absent', v('f-absent')||'—');
+  setText('r-off',    v('f-off')   ||'—');
+  setText('r-absentD',v('f-absentD')||'—');
+
+  // Devices
+  const devs = [
+    {icon:'🚑',label:'Emergency',val:v('f-emg')},
+    {icon:'⚡',label:'Defib',val:v('f-defib')},
+    {icon:'🫁',label:'Oxygen',val:v('f-o2')},
   ];
-}
-
-// ── Submit ──
-function submitForm(e){
-  e.preventDefault();
-  if(!validateForm())return;
-  var row=buildRow();
-  saveLocal(row);
-  // upsert allData by date|shift
-  var key=nd(row[1])+'|'+(row[2]||'');
-  var found=false;
-  allData=allData.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return row;}return r;});
-  if(!found)allData.unshift(row);
-  showToast('⏳ กำลังบันทึก...');
-  fetch(getUrl(),{method:'POST',body:JSON.stringify({rowData:row}),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow'})
-    .then(r=>{try{return r.json();}catch(e){return{status:'sent'};}})
-    .then(d=>{showToast(d&&d.status==='success'?'✅ บันทึกลง Sheet แถวที่ '+d.row:'✅ ส่งข้อมูลแล้ว');resetForm();})
-    .catch(()=>{showToast('✅ บันทึกแล้ว (ตรวจสอบใน Sheet)');resetForm();});
-}
-
-function validateForm(){
-  var ok=true;
-  ['f_B','f_C','f_BJ'].forEach(id=>{
-    var el=document.getElementById(id);
-    if(!el.value){el.classList.add('field-err');ok=false;setTimeout(()=>el.classList.remove('field-err'),3000);}
-  });
-  if(!ok)showToast('❌ กรุณากรอกข้อมูลให้ครบ');
-  return ok;
-}
-
-function resetForm(){
-  ['f_E','f_F','f_G','f_H','f_I','f_J','f_L','f_M','f_N','f_O','f_P','f_S','f_T','f_U','f_V','f_W','f_X','f_Y'].forEach(id=>sv(id,0));
-  ['f_AD','f_AE','f_AF','f_AG','f_AH','f_AI','f_AK','f_AL','f_AN','f_AO','f_AQ','f_AR','f_AS','f_AT','f_AU','f_AV','f_AW','f_AX','f_AY','f_AZ','f_BB','f_BG','f_BI'].forEach(id=>sv(id,''));
-  ['t_AJ','t_AM','t_AP','t_BA','t_BF','t_BH'].forEach(id=>document.getElementById(id).checked=false);
-  ['c_AJ','c_AM','c_AP','c_BA','c_BF','c_BH'].forEach(id=>document.getElementById(id).classList.remove('on'));
-  document.querySelectorAll('input[name=oxy]').forEach(c=>{c.checked=false;c.closest('.cki').classList.remove('on');});
-  fetchLastKong();window.scrollTo({top:0,behavior:'smooth'});
-}
-
-// ── Load Display (no popup — direct) ──
-var fetchingData=false;
-
-function openFetchModal(){
-  document.getElementById('fetchModal').classList.add('on');
-  document.getElementById('fetch-close-btn').style.display='none';
-  document.getElementById('fetch-done-btn').style.display='none';
-  document.getElementById('fetch-result-box').style.display='none';
-  document.getElementById('fetch-bar').style.width='0%';
-  document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle';
-  document.getElementById('fetch-icon').textContent='📡';
-  document.getElementById('fetch-msg').textContent='กำลังเชื่อมต่อ Google Sheet...';
-  document.getElementById('fetch-sub').textContent='โปรดรอสักครู่';
-  fetchingData=true;
-  // animate progress bar
-  var prog=0;
-  var barEl=document.getElementById('fetch-bar');
-  var progInt=setInterval(()=>{prog=Math.min(prog+Math.random()*12,88);barEl.style.width=prog+'%';},300);
-
-  fetch(getUrl()+'?action=getData', {redirect:'follow'})
-    .then(r=>{
-      if(!r.ok&&r.type!=='opaqueredirect')throw new Error('HTTP '+r.status);
-      return r.text();
-    })
-    .then(text=>{
-      var rows;
-      try{rows=JSON.parse(text);}catch(e){throw new Error('parse error');}
-      clearInterval(progInt);
-      barEl.style.width='100%';
-      var sr=Array.isArray(rows)?rows.filter((_,i)=>i>0&&rows[i][0]!==''&&rows[i][0]!==null):[];
-      var sheetMap=new Map();
-      sr.forEach(r=>{ var k=nd(r[1])+'|'+(r[2]||''); sheetMap.set(k,r); });
-      allData=Array.from(sheetMap.values());
-      allData.sort((a,b)=>{
-        var da=nd(a[1]),db=nd(b[1]);
-        if(db!==da)return db.localeCompare(da);
-        var so=['ดึก','เช้า','บ่าย'];
-        return so.indexOf(b[2])-so.indexOf(a[2]);
-      });
-      document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle done';
-      document.getElementById('fetch-icon').textContent='✅';
-      document.getElementById('fetch-msg').textContent='ดึงข้อมูลสำเร็จ!';
-      document.getElementById('fetch-sub').textContent='';
-      var rb=document.getElementById('fetch-result-box');
-      rb.style.display='block';
-      rb.innerHTML=`<div class="fr-row"><span class="fr-key">📊 ข้อมูลจาก Google Sheet</span><span class="fr-val hi">${allData.length} รายการ</span></div>`;
-      document.getElementById('fetch-close-btn').style.display='flex';
-      document.getElementById('fetch-done-btn').style.display='block';
-      fetchingData=false;
-      renderCalendar();
-      filterRender();
-    })
-    .catch(err=>{
-      clearInterval(progInt);
-      barEl.style.width='100%';
-      barEl.style.background='var(--red)';
-      document.getElementById('fetch-anim').querySelector('.fetch-circle').className='fetch-circle err';
-      document.getElementById('fetch-icon').textContent='❌';
-      document.getElementById('fetch-msg').textContent='เชื่อมต่อไม่สำเร็จ';
-      document.getElementById('fetch-sub').textContent=err&&err.message?err.message:'Network error';
-      var rb=document.getElementById('fetch-result-box');
-      rb.style.display='block';
-      rb.innerHTML=`<div class="fr-row"><span class="fr-key">💡 วิธีแก้ไข</span><span class="fr-val" style="color:var(--gm);font-size:.78rem">ตรวจสอบ GAS URL และ Deploy settings</span></div>`;
-      document.getElementById('fetch-close-btn').style.display='flex';
-      document.getElementById('fetch-done-btn').style.display='block';
-      document.getElementById('fetch-done-btn').textContent='🔄 ลองใหม่';
-      document.getElementById('fetch-done-btn').onclick=function(){openFetchModal();};
-      fetchingData=false;
-    });
-}
-
-function closeFetchModal(){
-  if(fetchingData)return;
-  document.getElementById('fetchModal').classList.remove('on');
-}
-
-function loadDisplay(){
-  renderCalendar();
-  filterRender();
-}
-
-// ── Calendar State ──
-var calBase=new Date(); // first month to show
-calBase.setDate(1);
-
-function calPrev(){
-  calBase.setMonth(calBase.getMonth()-1);
-  renderCalendar();
-}
-function calNext(){
-  calBase.setMonth(calBase.getMonth()+1);
-  renderCalendar();
-}
-
-function getDataDates(){
-  var s=new Set();
-  allData.forEach(r=>{var d=nd(r[1]);if(d)s.add(d);});
-  return s;
-}
-
-function renderCalendar(){
-  var wrap=document.getElementById('cal-months-wrap');
-  var dataDates=getDataDates();
-  var fromVal=document.getElementById('filter_date_from').value;
-  var toVal=document.getElementById('filter_date_to').value;
-  var thDays=['อา','จ','อ','พ','พฤ','ศ','ส'];
-  var thMonths=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-  var todayStr=localDateStr(new Date());
-
-  function buildMonth(year,month){
-    var title=thMonths[month]+' '+(year+543);
-    var firstDay=new Date(year,month,1).getDay(); // 0=Sun
-    var daysInMonth=new Date(year,month+1,0).getDate();
-    var cells='';
-    // DOW headers
-    var dow=thDays.map((d,i)=>`<div class="cal-dow">${d}</div>`).join('');
-    // Empty cells
-    for(var e=0;e<firstDay;e++) cells+=`<div class="cal-day empty"></div>`;
-    // Day cells
-    for(var d=1;d<=daysInMonth;d++){
-      var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      var cls='cal-day';
-      var dow2=new Date(year,month,d).getDay();
-      if(dow2===0)cls+=' sun';
-      else if(dow2===6)cls+=' sat';
-      if(ds===todayStr)cls+=' today';
-      if(dataDates.has(ds))cls+=' has-data';
-      // range highlight
-      if(fromVal&&toVal){
-        if(ds===fromVal&&ds===toVal)cls+=' range-start range-end';
-        else if(ds===fromVal)cls+=' range-start';
-        else if(ds===toVal)cls+=' range-end';
-        else if(ds>fromVal&&ds<toVal)cls+=' in-range';
-      } else if(fromVal&&ds===fromVal){cls+=' range-start range-end';}
-      else if(toVal&&ds===toVal){cls+=' range-start range-end';}
-      cells+=`<div class="${cls}" onclick="calDayClick('${ds}')">${d}</div>`;
-    }
-    return `<div class="cal-month">
-      <div class="cal-month-title">${title}</div>
-      <div class="cal-grid">${dow}${cells}</div>
-    </div>`;
-  }
-
-  var m1=buildMonth(calBase.getFullYear(),calBase.getMonth());
-  var next=new Date(calBase.getFullYear(),calBase.getMonth()+1,1);
-  var m2=buildMonth(next.getFullYear(),next.getMonth());
-  wrap.innerHTML=m1+m2;
-}
-
-function calDayClick(ds){
-  var fromEl=document.getElementById('filter_date_from');
-  var toEl=document.getElementById('filter_date_to');
-  var from=fromEl.value, to=toEl.value;
-  // ถ้ายังไม่มี from หรือ มี both แล้ว → reset เป็น from ใหม่
-  if(!from||(from&&to)){
-    fromEl.value=ds; toEl.value='';
-  } else {
-    // มี from อยู่แล้ว → set to (swap ถ้า to < from)
-    if(ds<from){toEl.value=from;fromEl.value=ds;}
-    else{toEl.value=ds;}
-  }
-  renderCalendar();
-  filterRender();
-}
-
-function onRangeChange(){
-  renderCalendar();
-  filterRender();
-}
-
-function filterRender(){
-  var df=document.getElementById('filter_date_from').value;
-  var dt=document.getElementById('filter_date_to').value;
-  var sf=document.getElementById('filter_shift').value;
-  var rows=allData.filter(r=>{
-    var rd=nd(r[1]),rs=(r[2]||'').toString().trim();
-    if(df&&dt){if(rd<df||rd>dt)return false;}
-    else if(df){if(rd!==df)return false;}
-    else if(dt){if(rd!==dt)return false;}
-    if(sf&&rs!==sf)return false;
-    return true;
-  });
-
-  renderDisplay(rows);
-}
-
-function renderDisplay(rows){
-  var area=document.getElementById('display_area');
-  if(!rows.length){area.innerHTML='<div class="empty"><div class="eico">📭</div><div>ไม่พบข้อมูล</div></div>';return;}
-  area.innerHTML=rows.map((r,i)=>buildDC(r,i)).join('');
-}
-
-// ── Build Display Card ──
-function buildDC(r,idx){
-  var shift=V(r,2),date=nd(r[1]);
-  var bj=r[61]?'คุณ'+r[61]:'—',bk='คุณอัญญารัตน์';
-  var K=parseFloat(r[10])||0,Q=parseFloat(r[16])||0,P=parseFloat(r[15])||0;
-  var id='dc_'+idx;
-
-  // Summary boxes (ยกมาก่อน คงพยาบาลทีหลัง)
-  var sum=`<div class="sum-row">
-    <div class="sum-box sum-yk"><div class="sv">${V(r,3)}</div><div class="sk">📋 ยกมา</div></div>
-    <div class="sum-box sum-in"><div class="sv">${has(r,4)?r[4]:0}</div><div class="sk">🆕 รับใหม่</div></div>
-    <div class="sum-box sum-mv"><div class="sv">${has(r,5)?r[5]:0}</div><div class="sk">🔄 รับย้าย</div></div>
-    <div class="sum-box sum-out"><div class="sv">${has(r,7)?r[7]:0}</div><div class="sk">🏠 กลับบ้าน</div></div>
-    <div class="sum-box sum-ref"><div class="sv">${has(r,8)?r[8]:0}</div><div class="sk">🚑 Refer</div></div>
-    <div class="sum-box sum-dead"><div class="sv">${has(r,9)?r[9]:0}</div><div class="sk">🕊️ เสียชีวิต</div></div>
-    <div class="sum-box hi"><div class="sv">${V(r,10)}</div><div class="sk">🏥 คงพยาบาล</div></div>
-  </div>`;
-
-  // Metrics
-  var bar1=Math.min(Q,100),bar2=Math.min(P/200*100,100)||0;
-  var met=`<div class="met-row">
-    <div class="met-item"><div class="mk">🛏️ Bed Occupancy</div><div class="mv">${Q.toFixed(2)}%</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar1}%"></div></div></div>
-    <div class="met-item"><div class="mk">⚡ Productivity</div><div class="mv">${P||'—'}</div><div class="met-bar-wrap"><div class="met-bar" style="width:${bar2}%;background:var(--gold)"></div></div></div>
-    <div class="met-item"><div class="mk">🩺 Tube</div><div class="mv">${V(r,18)}</div></div>
-    <div class="met-item"><div class="mk">👩‍⚕️ RN</div><div class="mv">${V(r,19)}</div></div>
-  </div>`;
-
-  // Type table (only if data)
-  var typeHtml='';
-  var hasType=r[11]||r[12]||r[13]||r[14];
-  if(hasType){
-    typeHtml=`<table class="type-table" style="margin-bottom:8px">
-      <tr><th>ประเภท</th><th>4</th><th>3</th><th>2</th><th>1</th></tr>
-      <tr><td>จำนวน</td><td>${V(r,11)}</td><td>${V(r,12)}</td><td>${V(r,13)}</td><td>${V(r,14)}</td></tr>
-    </table>`;
-  }
-
-  // Trauma panel
-  var traumaHtml='';
-  if(has(r,22)||has(r,23)||has(r,24)){
-    traumaHtml=`<div class="panel"><div class="panel-head">🚑 Trauma Patient</div><div class="panel-body">
-      <div class="pi"><span class="pk">Trauma</span><span class="pv">${V(r,22)}</span></div>
-      <div class="pi"><span class="pk">Neuro</span><span class="pv">${V(r,23)}</span></div>
-      <div class="pi"><span class="pk">Plastic</span><span class="pv">${V(r,24)}</span></div>
-      <div class="pi"><span class="pk">Multiple</span><span class="pv">${V(r,25)}</span></div>
-    </div></div>`;
-  }
-
-  // Nursing panel
-  var nurseHtml=`<div class="panel"><div class="panel-head">👩‍⚕️ Nursing Personnel</div><div class="panel-body">
-    <div class="pi"><span class="pk">RN</span><span class="pv">${V(r,19)}</span></div>
-    <div class="pi"><span class="pk">PN/Aide</span><span class="pv">${V(r,20)}</span></div>
-    <div class="pi"><span class="pk">Worker</span><span class="pv">${V(r,21)}</span></div>
-  </div></div>`;
-
-  // Watch panel
-  var watchItems='';
-  if(has(r,29))watchItems+=`<div class="pi"><span class="pk">Fall</span><span class="pv">${r[29]}</span></div>`;
-  if(has(r,30))watchItems+=`<div class="pi"><span class="pk">Bed sore</span><span class="pv">${r[30]}</span></div>`;
-  if(has(r,31))watchItems+=`<div class="pi"><span class="pk">Pre-exam</span><span class="pv">${r[31]}</span></div>`;
-  if(has(r,32))watchItems+=`<div class="pi"><span class="pk">Pre-op</span><span class="pv">${r[32]}</span></div>`;
-  if(has(r,33))watchItems+=`<div class="pi full"><span class="pk">ชื่อซ้ำ</span><span class="pv">${r[33]}</span></div>`;
-  if(has(r,34))watchItems+=`<div class="pi full"><span class="pk">ชื่อคล้าย</span><span class="pv">${r[34]}</span></div>`;
-  var watchHtml=watchItems?`<div class="panel"><div class="panel-head">🛏️ เฝ้าระวัง</div><div class="panel-body">${watchItems}</div></div>`:'';
-
-  // Equipment panel (card2)
-  var eqHtml=`<div class="panel"><div class="panel-head">🚑 อุปกรณ์</div><div class="panel-body">
-    <div class="pi"><span class="pk">Emergency Cart</span><span class="pv"><span class="stag ${r[26]==='พร้อมใช้'?'stag-ok':'stag-no'}">${V(r,26)}</span></span></div>
-    <div class="pi"><span class="pk">Defibrillator</span><span class="pv"><span class="stag ${r[27]==='พร้อมใช้'?'stag-ok':'stag-no'}">${V(r,27)}</span></span></div>
-    <div class="pi full"><span class="pk">Oxygen Tank</span><span class="pv">${V(r,28)}</span></div>
-  </div></div>`;
-
-  // Valuable/pending
-  var valHtml='';
-  if(has(r,35)||has(r,36)){
-    valHtml=`<div class="panel"><div class="panel-head">💼 ของมีค่า / ของค้าง</div><div class="panel-body">
-      ${has(r,35)?`<div class="pi"><span class="pk">ของมีค่า</span><span class="pv">${V(r,35)}</span></div>`:''}
-      ${r[35]==='มี'&&has(r,36)?`<div class="pi full"><span class="pk">รายละเอียด</span><span class="pv">${r[36]}</span></div>`:''}
-      ${r[35]==='มี'&&has(r,37)?`<div class="pi"><span class="pk">สถานะ</span><span class="pv">${r[37]}</span></div>`:''}
-      ${has(r,38)?`<div class="pi"><span class="pk">ของค้าง</span><span class="pv">${V(r,38)}</span></div>`:''}
-      ${r[38]==='มี'&&has(r,39)?`<div class="pi full"><span class="pk">รายละเอียด</span><span class="pv">${r[39]}</span></div>`:''}
-    </div></div>`;
-  }
-
-  // Risk events
-  var riskHtml='';
-  if(r[41]==='มี'){
-    var re=[];
-    if(has(r,42))re.push(`<div class="alert-pill"><div class="ev-title">🔴 ${r[42]}${has(r,43)?' — '+r[43]:''}${has(r,44)?' [HN:'+r[44]+']':''}</div></div>`);
-    if(has(r,45))re.push(`<div class="alert-pill"><div class="ev-title">🟡 ${r[45]}${has(r,46)?' — '+r[46]:''}${has(r,47)?' [HN:'+r[47]+']':''}</div></div>`);
-    if(has(r,48))re.push(`<div class="alert-pill"><div class="ev-title">🟢 ${r[48]}${has(r,49)?' — '+r[49]:''}${has(r,50)?' [HN:'+r[50]+']':''}</div></div>`);
-    if(re.length)riskHtml=`<div class="panel"><div class="panel-head">⚠️ เหตุการณ์ความเสี่ยง</div><div class="panel-body">${re.join('')}</div></div>`;
-  }
-  if(has(r,51))riskHtml+=`<div class="ev-pill"><div class="ev-title">📝 เหตุการณ์เวร</div>${r[51]}</div>`;
-
-  // Staff/allergy
-  var staffHtml='';
-  var staffItems='';
-  if(has(r,56))staffItems+=`<div class="pi"><span class="pk">บุคลากร</span><span class="pv"><span class="stag ${r[56]==='ครบ'?'stag-ok':'stag-no'}">${r[56]}</span></span></div>`;
-  if(r[57]==='มี'&&has(r,58))staffItems+=`<div class="pi full"><span class="pk">ขาดลา/มาสาย</span><span class="pv">${r[58]}</span></div>`;
-  if(r[59]==='มี'&&has(r,60))staffItems+=`<div class="pi full"><span class="pk">ผัน/Off เวร</span><span class="pv">${r[60]}</span></div>`;
-  if(staffItems)staffHtml=`<div class="panel"><div class="panel-head">👥 บุคลากร</div><div class="panel-body">${staffItems}</div></div>`;
-
-  var allergyHtml='';
-  if(r[52]==='มี'&&has(r,53)){
-    allergyHtml=`<div class="panel"><div class="panel-head">💊 แพ้ยา</div><div class="panel-body">
-      <div class="pi full"><span class="pk">HN + ยา</span><span class="pv">${r[53]}</span></div>
-      <div class="pi"><span class="pk">ประวัติ รพ.</span><span class="pv">${V(r,54)}</span></div>
-      <div class="pi"><span class="pk">สถานะบัตร</span><span class="pv">${V(r,55)}</span></div>
-    </div></div>`;
-  }
-
-  return `<div id="${id}">
-  <div class="dc">
-    <div class="dc-header">
-      <div class="dc-hinfo">
-        <div class="dc-hdate">📅 ${date}</div>
-        <div class="dc-htitle">รายงานเวร${shift}</div>
-        <div class="dc-hstaff"><span>👩‍⚕️ ${bj}</span><span style="opacity:.4">·</span><span>🏥 ${bk}</span></div>
-      </div>
-      <span class="dc-badge sh-${shift}">${shift}</span>
-    </div>
-    ${sum}${met}
-    <div class="dc-body">
-      ${typeHtml}
-      <div class="dc-row2">
-        <div>${nurseHtml}${traumaHtml}${watchHtml}</div>
-        <div>${eqHtml}${valHtml}${staffHtml}${allergyHtml}</div>
-      </div>
-      ${riskHtml}
-      <div class="dc-footer">ศอช ชั้น 10 · บันทึกเหตุการณ์เวร</div>
-      <div class="btn-row">
-        <button class="btn-edit" onclick="openEdit(${idx})">✏️ แก้ไขข้อมูล</button>
-        <button class="btn-img" onclick="saveImg('${id}','${date}_${shift}')">📸 บันทึกรูป</button>
-      </div>
-    </div>
-  </div>
-  </div>`;
-}
-
-// ── Search ──
-function setCat(cat,btn){
-  searchCat=cat;
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  doSearch();
-}
-
-function doSearch(){
-  var df=document.getElementById('s_date_from').value;
-  var dt=document.getElementById('s_date_to').value;
-  var rows=allData.filter(r=>{
-    var rd=nd(r[1]);
-    if(df&&dt){if(rd<df||rd>dt)return false;}
-    else if(df){if(rd<df)return false;}
-    else if(dt){if(rd>dt)return false;}
-    if(searchCat==='absent')return r[57]==='มี';
-    if(searchCat==='risk')return r[41]==='มี';
-    if(searchCat==='allergy')return r[52]==='มี';
-    if(searchCat==='event')return has(r,51);
-    if(searchCat==='off')return r[59]==='มี';
-    return true;
-  });
-  renderSearch(rows);
-}
-
-function renderSearch(rows){
-  var el=document.getElementById('search_result');
-  if(!rows.length){el.innerHTML='<div class="empty"><div class="eico">📭</div><div>ไม่พบข้อมูล</div></div>';return;}
-  el.innerHTML=rows.map((r,i)=>buildSR(r,i)).join('');
-}
-
-function buildSR(r,idx){
-  var date=nd(r[1]),shift=V(r,2),bj=r[61]?'คุณ'+r[61]:'—';
-  var detail='';
-  if(searchCat==='absent'&&has(r,58))detail=r[58];
-  else if(searchCat==='risk'&&has(r,43))detail=r[43];
-  else if(searchCat==='allergy'&&has(r,53))detail=r[53];
-  else if(searchCat==='event'&&has(r,51))detail=r[51];
-  else if(searchCat==='off'&&has(r,60))detail=r[60];
-  else detail='คงพยาบาล: '+V(r,10)+' | RN: '+V(r,19);
-  return `<div class="sr-item" onclick="viewSingle(${idx})">
-    <div class="sr-date">${date} · เวร${shift} · ${bj}</div>
-    <div class="sr-title">${shift==='ดึก'?'🌙':shift==='เช้า'?'🌅':'🌆'} เวร${shift}</div>
-    <div class="sr-detail">${detail}</div>
-  </div>`;
-}
-
-function viewSingle(idx){
-  var r=allData.length?allData[idx]:getLocal()[idx];
-  if(!r)return;
-  openEdit(idx);
-}
-
-// ── Edit Modal ──
-function openEdit(idx){
-  var pool=allData.length?allData:getLocal();
-  editRow=[...pool[idx]];editIdx=idx;
-  document.getElementById('modal-title').textContent='แก้ไขเวร '+nd(editRow[1])+' เวร'+editRow[2];
-  var cols=[
-    [1,'วันที่','date'],[2,'เวร','shift_sel'],[3,'ยอดยกมา','number'],[4,'รับใหม่','number'],
-    [5,'รับย้าย','number'],[6,'ย้าย','number'],[7,'กลับบ้าน','number'],[8,'Refer','number'],[9,'ถึงแก่กรรม','number'],
-    [15,'Productivity','number'],[18,'Tube','number'],[19,'RN','number'],[20,'Aide/PN','number'],[21,'Worker','number'],
-    [22,'Trauma','number'],[23,'Neuro','number'],[24,'Plastic','number'],
-    [29,'Fall (เตียง)','text'],[30,'Bed sore (เตียง)','text'],[31,'เตรียมตรวจ','text'],[32,'เตรียมผ่าตัด','text'],
-    [33,'ชื่อซ้ำ','text'],[34,'ชื่อคล้าย','text'],
-    [43,'รายละเอียดความเสี่ยง 1','textarea'],[44,'HN ความเสี่ยง 1','text'],
-    [46,'รายละเอียดความเสี่ยง 2','textarea'],[47,'HN ความเสี่ยง 2','text'],
-    [51,'เหตุการณ์เวร (เพิ่มเติม)','textarea'],
-    [53,'HN + ชื่อยา (แพ้ยา)','text'],
-    [57,'การขาดลา/มาสาย','toggle'],[58,'รายละเอียดขาดลา','textarea'],
-    [59,'การผัน/Off เวร','toggle'],[60,'รายละเอียดผัน/Off','textarea'],
-    [61,'หัวหน้าเวร','nurse_sel']
-  ];
-  var html=cols.map(([ci,lbl,type])=>{
-    var val=editRow[ci]||'';
-    if(type==='number')return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><input type="number" id="ed_${ci}" value="${val}"></div>`;
-    if(type==='text')return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><input type="text" id="ed_${ci}" value="${val}"></div>`;
-    if(type==='textarea')return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><textarea id="ed_${ci}">${val}</textarea></div>`;
-    if(type==='date')return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><input type="date" id="ed_${ci}" value="${val}"></div>`;
-    if(type==='toggle')return`<div class="trow" style="margin-bottom:8px"><div class="tlbl">${lbl}</div><label class="tsw"><input type="checkbox" id="ed_${ci}" ${val==='มี'?'checked':''}><span class="sl"></span></label></div>`;
-    if(type==='shift_sel')return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><select id="ed_${ci}"><option ${val==='ดึก'?'selected':''}>ดึก</option><option ${val==='เช้า'?'selected':''}>เช้า</option><option ${val==='บ่าย'?'selected':''}>บ่าย</option></select></div>`;
-    if(type==='nurse_sel'){
-      var nurses=['สุรีรัตน์','จันจิรา','คำพุด','เบญจมาศ','สาคร','นวลตา','สุนันทา','อัญชลี','จารุวรรณ','พิศา','ฐิตินันท์','สรวงสุดา','ศิริรัตน์','พุทธชาติ','อรอุมา','สุพรรณี','อริสรา','อุ้มบุญ','ชนาภา','กนกพร','วริศรา','ภูวิศ','อริสา','อนัญญา','สิตานัน'];
-      return`<div class="fg" style="margin-bottom:8px"><label>${lbl}</label><select id="ed_${ci}">${nurses.map(n=>`<option ${n===val?'selected':''}>${n}</option>`).join('')}</select></div>`;
-    }
-    return'';
+  document.getElementById('r-devices').innerHTML = devs.map(d=>{
+    const ok = d.val==='พร้อมใช้';
+    return `<div class="dev-box ${ok?'dev-ok':'dev-ng'}">${d.icon} ${d.label}<br>${ok?'✓ พร้อม':'✗ ไม่พร้อม'}</div>`;
   }).join('');
-  document.getElementById('modal-body').innerHTML=html;
-  document.getElementById('editModal').classList.add('on');
+
+  // Page 2 — surveillance
+  set('r-fall',n('f-fall')); set('r-bedsore',n('f-bedsore'));
+  set('r-pex',n('f-pex')); set('r-pop',n('f-pop'));
+  set('r-dup',n('f-dup')); set('r-sim',n('f-sim'));
+
+  // Valuables
+  setText('r-val',  v('f-val')  ||'—');
+  setText('r-valD', v('f-valD') ||'—');
+  setText('r-valS', v('f-valS') ||'—');
+  setText('r-pend', v('f-pend') ||'—');
+  setText('r-pendD',v('f-pendD')||'—');
+  setText('r-pendS',v('f-pendS')||'—');
+
+  // Risks
+  const risks = [
+    [v('f-r1t'),v('f-r1d'),v('f-r1h')],
+    [v('f-r2t'),v('f-r2d'),v('f-r2h')],
+    [v('f-r3t'),v('f-r3d'),v('f-r3h')],
+  ].filter(r=>r[0]);
+
+  if(risks.length){
+    document.getElementById('r-riskList').innerHTML = risks.map(([t,d,h])=>`
+      <div class="risk-item">
+        <div class="ri-type">⚠️ ${t}</div>
+        <div class="ri-det">${d||'—'}</div>
+        ${h?`<div class="ri-hn">HN: ${h}</div>`:''}
+      </div>`).join('');
+  } else {
+    document.getElementById('r-riskList').innerHTML = `<div style="font-size:11px;color:var(--green);background:var(--green-bg);padding:6px 10px;border-radius:6px;">✓ ไม่มีเหตุการณ์ความเสี่ยง</div>`;
+  }
+
+  const extra = v('f-rExtra');
+  const extraEl = document.getElementById('r-riskExtra');
+  if(extra){extraEl.style.display='block';document.getElementById('r-riskExtraText').textContent=extra;}
+  else{extraEl.style.display='none';}
+
+  // Allergy
+  setText('r-allergy', v('f-allergy')||'—');
+  setText('r-aD',      v('f-aD')     ||'—');
+  setText('r-aCard',   v('f-aCard')  ||'—');
+
+  // Signature
+  setText('r-charge', v('f-charge')||'—');
+  setText('r-wh',     v('f-wh')    ||'—');
+
+  // Print time
+  document.getElementById('r-printTime').textContent = new Date().toLocaleString('th-TH');
 }
 
-function closeModal(){document.getElementById('editModal').classList.remove('on');}
+function set(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
 
-function saveEdit(){
-  if(!editRow)return;
-  var cols=[1,2,3,4,5,6,7,8,9,15,18,19,20,21,22,23,24,29,30,31,32,33,34,43,44,46,47,51,53,57,58,59,60,61];
-  cols.forEach(ci=>{
-    var el=document.getElementById('ed_'+ci);
-    if(!el)return;
-    if(el.type==='checkbox')editRow[ci]=el.checked?'มี':'ไม่มี';
-    else editRow[ci]=el.value;
-  });
-  // recalc K, Q, Z
-  var K=Math.max(0,(+editRow[3])+(+editRow[4])+(+editRow[5])-(+editRow[6])-(+editRow[7])-(+editRow[8])-(+editRow[9]));
-  editRow[10]=K;editRow[16]=(K*100/30).toFixed(2);
-  editRow[25]=K-((+editRow[22])+(+editRow[23])+(+editRow[24]));
-  // upsert allData by date|shift
-  var key=nd(editRow[1])+'|'+(editRow[2]||'');
-  var found=false;
-  allData=allData.map(r=>{
-    if(nd(r[1])+'|'+(r[2]||'')===key){found=true;return editRow;}
-    return r;
-  });
-  if(!found&&editIdx>=0)allData[editIdx]=editRow;
-  // upsert localStorage by date|shift
-  var rows=JSON.parse(localStorage.getItem('shift_rows')||'[]');
-  var lFound=false;
-  rows=rows.map(r=>{if(nd(r[1])+'|'+(r[2]||'')===key){lFound=true;return editRow;}return r;});
-  if(!lFound)rows.unshift(editRow);
-  localStorage.setItem('shift_rows',JSON.stringify(rows));
-  // send to sheet
-  fetch(getUrl(),{method:'POST',body:JSON.stringify({rowData:editRow,updateId:editRow[0]}),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow'})
-    .then(r=>r.json()).then(()=>{}).catch(()=>{});
-  showToast('✅ บันทึกการแก้ไขแล้ว');
-  closeModal();filterRender();
+// ─── EXPORT ───
+async function exportPage(num) {
+  const el = document.getElementById('rp'+num);
+  await doExport([el], `บันทึกเวร_หน้า${num}_${getFileSuffix()}`);
 }
 
-// ── Save image ──
-function saveImg(id,filename){
-  showToast('📸 กำลังสร้างภาพ...');
-  var el=document.getElementById(id);
-  html2canvas(el,{scale:2.5,backgroundColor:'#ffffff',useCORS:true,logging:false,
-    onclone:function(doc){
-      // ซ่อนปุ่มในรูป
-      doc.querySelectorAll('.btn-row,.btn-img,.btn-edit').forEach(e=>e.style.display='none');
+async function exportBoth() {
+  await doExport([document.getElementById('rp1')], `บันทึกเวร_หน้า1_${getFileSuffix()}`);
+  await new Promise(r=>setTimeout(r,400));
+  await doExport([document.getElementById('rp2')], `บันทึกเวร_หน้า2_${getFileSuffix()}`);
+  toast('✅ Export ทั้ง 2 หน้าเสร็จแล้ว','success');
+}
+
+function getFileSuffix(){
+  const d = document.getElementById('f-date').value || new Date().toISOString().split('T')[0];
+  const s = document.getElementById('f-shift').value || 'เวร';
+  return `${d}_${s}`;
+}
+
+async function doExport(elements, filename) {
+  showProg('กำลังสร้างรูปภาพ...');
+  try {
+    for(const el of elements){
+      const canvas = await html2canvas(el, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+      });
+      const link = document.createElement('a');
+      link.download = filename + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
-  }).then(canvas=>{
-    var a=document.createElement('a');
-    a.href=canvas.toDataURL('image/png');
-    a.download=filename+'.png';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    showToast('✅ ดาวน์โหลดรูปแล้ว');
-  }).catch(e=>{console.error(e);showToast('❌ เกิดข้อผิดพลาด');});
+    hideProg();
+    toast('📥 บันทึกรูปภาพสำเร็จ!','success');
+  } catch(e){
+    hideProg();
+    toast('เกิดข้อผิดพลาด: '+e.message,'error');
+  }
 }
 
-// ── Toast ──
-function showToast(msg){
-  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+function showProg(msg){
+  document.getElementById('po-msg').textContent=msg;
+  document.getElementById('prog-overlay').classList.add('show');
 }
+function hideProg(){document.getElementById('prog-overlay').classList.remove('show');}
+
+// ─── SUBMIT ───
+async function submitF(){
+  const v=id=>document.getElementById(id)?.value||'';
+  const n=id=>parseFloat(document.getElementById(id)?.value)||0;
+  if(!v('f-date')){toast('กรุณาเลือกวันที่','error');return;}
+  if(!v('f-shift')){toast('กรุณาเลือกเวร','error');return;}
+  if(!v('f-charge')){toast('กรุณาเลือกหัวหน้าเวร','error');return;}
+  const rowData=[
+    Date.now(),v('f-date'),v('f-shift'),
+    n('f-prev'),n('f-new'),n('f-tin'),n('f-tout'),n('f-dc'),n('f-refer'),n('f-dead'),n('f-total'),
+    n('f-t4'),n('f-t3'),n('f-t2'),n('f-t1'),
+    n('f-prod'),n('f-occ'),n('f-prodT'),
+    n('f-tube'),n('f-rn'),n('f-aide'),n('f-worker'),
+    n('f-trauma'),n('f-neuro'),n('f-plastic'),n('f-multi'),
+    v('f-emg'),v('f-defib'),v('f-o2'),
+    n('f-fall'),n('f-bedsore'),n('f-pex'),n('f-pop'),n('f-dup'),n('f-sim'),
+    v('f-val'),v('f-valD'),v('f-valS'),
+    v('f-pend'),v('f-pendD'),v('f-pendS'),
+    v('f-riskMain'),
+    v('f-r1t'),v('f-r1d'),v('f-r1h'),
+    v('f-r2t'),v('f-r2d'),v('f-r2h'),
+    v('f-r3t'),v('f-r3d'),v('f-r3h'),
+    v('f-rExtra'),
+    v('f-allergy'),v('f-aD'),'',v('f-aCard'),
+    n('f-staff'),v('f-absent'),v('f-absentD'),
+    v('f-off'),'',
+    v('f-charge'),v('f-wh')
+  ];
+  ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
+  ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='inline-block';});
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({rowData}),headers:{'Content-Type':'application/json'}});
+    const r=await res.json();
+    if(r.status==='success'){toast('✅ บันทึกสำเร็จ! แถวที่ '+r.row,'success');}
+    else toast('เกิดข้อผิดพลาด: '+(r.msg||''),'error');
+  }catch(e){toast('ส่งไม่ได้: '+e.message,'error');}
+  finally{
+    ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;});
+    ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='none';});
+  }
+}
+
+// ─── CLEAR ───
+function clearF(){
+  document.querySelectorAll('#page-form input,#page-form select,#page-form textarea').forEach(el=>{
+    if(el.id==='f-wh') el.value='อัญญารัตน์';
+    else if(el.id==='f-date') el.value=new Date().toISOString().split('T')[0];
+    else el.value='';
+  });
+  toast('ล้างข้อมูลแล้ว','info');
+}
+
+// ─── HISTORY ───
+async function loadH(){
+  try{
+    const res=await fetch(`${GAS_URL}?action=getData`);
+    const data=await res.json();
+    if(Array.isArray(data)&&data.length>1){allData=data;filterH();}
+    else document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ยังไม่มีข้อมูล</div>';
+  }catch(e){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--red);">โหลดไม่ได้: '+e.message+'</div>';}
+}
+
+function filterH(){
+  const s=document.getElementById('hSearch').value.toLowerCase();
+  const sf=document.getElementById('hShift').value;
+  const rows=(allData.slice(1)||[]).filter(r=>r[0]!=='');
+  const filt=rows.filter(r=>(!sf||r[2]===sf)&&r.join(' ').toLowerCase().includes(s)).reverse();
+  document.getElementById('histCount').textContent=`${filt.length} รายการ`;
+  if(!filt.length){document.getElementById('histList').innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">ไม่พบข้อมูล</div>';return;}
+  const pc=s=>s==='ดึก'?'sdawn':s==='เช้า'?'smorn':'safte';
+  document.getElementById('histList').innerHTML=filt.map(r=>`
+    <div class="mr">
+      <div class="top">
+        <div style="font-weight:700;font-size:13px;">${fmt(r[1])}</div>
+        <span class="sp ${pc(r[2])}">${r[2]||'—'}</span>
+      </div>
+      <div class="info">
+        <div><div class="k">คงพยาบาล</div><div class="v" style="color:var(--purple);font-size:15px;">${r[10]||0}</div></div>
+        <div><div class="k">รับใหม่</div><div class="v">${r[4]||0}</div></div>
+        <div><div class="k">กลับบ้าน</div><div class="v">${r[7]||0}</div></div>
+        <div><div class="k">Productivity</div><div class="v">${r[15]?r[15]+'%':'—'}</div></div>
+        <div><div class="k">ครองเตียง</div><div class="v">${r[16]?r[16]+'%':'—'}</div></div>
+        <div><div class="k">หน.เวร</div><div class="v">${r[61]||'—'}</div></div>
+      </div>
+      ${(r[41]==='มี'||r[42]||r[45]||r[48])?'<div style="margin-top:6px;"><span class="bg bgr">⚠️ มีความเสี่ยง</span></div>':''}
+    </div>`).join('');
+}
+
+// ─── SETTINGS ───
+function saveU(){const u=document.getElementById('gasUrl').value.trim();if(!u){toast('กรุณากรอก URL','error');return;}GAS_URL=u;localStorage.setItem('gasUrl',u);toast('บันทึก URL แล้ว','success');}
+async function testC(){
+  const u=document.getElementById('gasUrl').value.trim()||GAS_URL;
+  const el=document.getElementById('cStatus');
+  el.style.display='block';el.className='cs';el.textContent='🔄 กำลังทดสอบ...';
+  try{const r=await fetch(`${u}?action=getLastShift`);const d=await r.json();el.className='cs cok';el.textContent=`✅ สำเร็จ! คงพยาบาลล่าสุด: ${d.value||'—'}`;}
+  catch(e){el.className='cs cerr';el.textContent='❌ ไม่ได้: '+e.message;}
+}
+
+// ─── TOAST ───
+function toast(msg,type='info'){
+  const c=document.getElementById('toast');
+  const el=document.createElement('div');
+  el.className=`ti ${type}`;el.textContent=msg;
+  c.appendChild(el);setTimeout(()=>el.remove(),3000);
+}
+
+function fmt(d){if(!d)return'—';try{const dt=d instanceof Date?d:new Date(d);return dt.toLocaleDateString('th-TH',{day:'2-digit',month:'short'});}catch{return String(d);}}
 </script>
 </body>
 </html>
