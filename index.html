@@ -285,7 +285,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 #detailModal { display: none; }
 #detailModal.open { display: flex !important; }
 /* modal mbox grids: 2-col mobile, 4-col desktop */
-@media(min-width:480px){
+@media(min-width:500px){
   #modal-body [style*="repeat(2,1fr)"] { grid-template-columns: repeat(4,1fr) !important; }
 }
 @media(max-width:599px){
@@ -1100,7 +1100,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
         <table class="rtbl" style="margin-bottom:10px;">
           <tr><td class="rk">Productivity</td><td class="rv" id="m-prod">—</td></tr>
           <tr><td class="rk">ครองเตียง</td><td class="rv" id="m-occ">—</td></tr>
-          <tr><td class="rk">Productivity รวม</td><td class="rv" id="m-prodT">—</td></tr>
+          <tr id="m-prodT-row"><td class="rk">Prod. รวม</td><td class="rv" id="m-prodT">—</td></tr>
           <tr><td class="rk">Tube</td><td class="rv" id="m-tube">—</td></tr>
         </table>
         <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประเภทผู้ป่วย / โรค</div><div class="rs-line"></div></div>
@@ -1126,7 +1126,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
         <div class="rs"><div class="rs-dot" style="background:var(--red)"></div><div class="rs-label">เหตุการณ์ความเสี่ยง</div><div class="rs-line"></div></div>
         <div id="m-riskList" style="margin-bottom:10px;"></div>
         <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">เฝ้าระวัง</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:10px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:10px;">
           <div class="mbox"><div class="mk">Fall</div><div class="mv bad" id="m-fall">—</div></div>
           <div class="mbox"><div class="mk">Bed sore</div><div class="mv warn" id="m-bedsore">—</div></div>
           <div class="mbox"><div class="mk">ชื่อซ้ำ</div><div class="mv warn" id="m-dup">—</div></div>
@@ -2523,7 +2523,10 @@ async function openDetail(rowIdx){
   si('m-tin',r[5]); si('m-tout',r[6]); si('m-refer',r[8]); si('m-dead',r[9]);
   si('m-prod',r[15]?parseFloat(r[15]).toFixed(1)+'%':'—');
   si('m-occ',r[16]?parseFloat(r[16]).toFixed(2)+'%':'—');
-  si('m-prodT',r[17]?parseFloat(r[17]).toFixed(2)+'%':'แสดงเฉพาะเวรบ่าย');
+  const hasMProdT = r[2]==='บ่าย' && r[17];
+  const mProdTRow = document.getElementById('m-prodT-row');
+  if(mProdTRow) mProdTRow.style.display = hasMProdT ? '' : 'none';
+  si('m-prodT', hasMProdT ? parseFloat(r[17]).toFixed(2)+'%' : '—');
   si('m-tube',r[18]);
   si('m-t4',r[11]); si('m-t3',r[12]); si('m-t2',r[13]); si('m-t1',r[14]);
   si('m-trauma',r[22]); si('m-neuro',r[23]); si('m-plastic',r[24]); si('m-multi',r[25]);
