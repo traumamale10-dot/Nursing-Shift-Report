@@ -284,6 +284,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 /* ─── MODAL RESPONSIVE ─── */
 #detailModal { display: none; }
 #detailModal.open { display: flex !important; }
+/* modal mbox grids: 2-col mobile, 4-col desktop */
+@media(min-width:480px){
+  #modal-body [style*="repeat(2,1fr)"] { grid-template-columns: repeat(4,1fr) !important; }
+}
 @media(max-width:599px){
   #detailModal { padding: 0 !important; align-items: flex-end !important; }
   #detailModal > div { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; }
@@ -1100,13 +1104,13 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <tr><td class="rk">Tube</td><td class="rv" id="m-tube">—</td></tr>
         </table>
         <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">ประเภทผู้ป่วย / โรค</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:8px;">
           <div class="mbox"><div class="mk">ประเภท 4</div><div class="mv bad" id="m-t4">—</div></div>
           <div class="mbox"><div class="mk">ประเภท 3</div><div class="mv warn" id="m-t3">—</div></div>
           <div class="mbox"><div class="mk">ประเภท 2</div><div class="mv" id="m-t2">—</div></div>
           <div class="mbox"><div class="mk">ประเภท 1</div><div class="mv good" id="m-t1">—</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">
           <div class="mbox"><div class="mk">Trauma</div><div class="mv purple" id="m-trauma">—</div></div>
           <div class="mbox"><div class="mk">Neuro</div><div class="mv teal" id="m-neuro">—</div></div>
           <div class="mbox"><div class="mk">Plastic</div><div class="mv" id="m-plastic">—</div></div>
@@ -1134,7 +1138,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <!-- staff panel -->
       <div id="mpanel-staff" style="display:none;">
         <div class="rs"><div class="rs-dot" style="background:var(--green)"></div><div class="rs-label">บุคลากร</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:10px;">
           <div class="mbox"><div class="mk">RN</div><div class="mv purple" id="m-rn">—</div></div>
           <div class="mbox"><div class="mk">Aide/PN</div><div class="mv" id="m-aide">—</div></div>
           <div class="mbox"><div class="mk">Worker</div><div class="mv" id="m-worker">—</div></div>
@@ -2533,7 +2537,8 @@ async function openDetail(rowIdx){
   document.getElementById('m-riskExtra').textContent = r[51] || '—';
 
   // fill staff panel
-  si('m-rn',r[19]); si('m-aide',r[20]); si('m-worker',r[21]); si('m-staff',r[56]);
+  si('m-rn',r[19]); si('m-aide',r[20]); si('m-worker',r[21]);
+  si('m-staff', (parseInt(r[19])||0)+(parseInt(r[20])||0)+(parseInt(r[21])||0));
   si('m-absent',r[57]); si('m-absentD',r[58]); si('m-off',r[59]);
   document.getElementById('m-devices').innerHTML = 
     [['🚑','Emergency',r[26]],['⚡','Defib',r[27]],['🫁','Oxygen',r[28]]].map(([ic,l,v])=>{
