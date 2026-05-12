@@ -1249,7 +1249,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzEPG9T0ppzZjX9xTrwHcD80EM-fVrZZq2eUBgmzAW-AhZbrOaitnwHP0Ee-zaa5SrMuw/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyF5YqzrbPenoCE441Kr4zoo4Q1_aFzHUxOmHAnJ51Ddjfmde-P9ZASJiwckzqxkbmuBA/exec';
 // Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
 const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
   window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
@@ -1475,6 +1475,7 @@ function toggleRiskFields(){
 // ─── GAS POST — ใช้ google.script.run ใน GAS context, fetch นอก GAS ───
 function gasPost(payload){
   return new Promise((resolve, reject)=>{
+    // google.script.run (GAS context)
     if(typeof google !== 'undefined' && google.script && google.script.run){
       google.script.run
         .withSuccessHandler(d => resolve(d))
@@ -1482,14 +1483,28 @@ function gasPost(payload){
         .saveRowFromClient(payload);
       return;
     }
-    fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {'Content-Type': 'application/json'}
-    })
-    .then(r => r.json())
-    .then(d => resolve(d))
-    .catch(e => reject(e));
+    // ใช้ GET แทน POST เพื่อหลีกเลี่ยง CORS preflight
+    // แบ่งข้อมูลเป็น chunks ถ้ายาวเกิน
+    const json = JSON.stringify(payload);
+    const sep = GAS_URL.includes('?') ? '&' : '?';
+    const url = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(json);
+    
+    // ถ้า URL ยาวเกิน 8000 chars ให้ compress rowData เป็น index-based
+    if(url.length > 7500){
+      // ส่ง rowData แบบ compact: index|value pairs เฉพาะที่มีค่า
+      const rd = payload.rowData;
+      const compact = rd.map((v,i) => v !== '' && v !== 0 && v !== null ? i+':'+v : '').filter(Boolean).join('~');
+      const p2 = {...payload, rowData: undefined, compact, len: rd.length};
+      const url2 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p2));
+      fetch(url2, {method:'GET', mode:'cors', credentials:'omit', cache:'no-cache'})
+        .then(r => r.json()).then(d => resolve(d)).catch(e => reject(e));
+      return;
+    }
+    
+    fetch(url, {method:'GET', mode:'cors', credentials:'omit', cache:'no-cache'})
+      .then(r => r.json())
+      .then(d => resolve(d))
+      .catch(e => reject(e));
   });
 }
 
@@ -2144,27 +2159,27 @@ async function loadH(){
 function normDate(v){
   if(!v && v!==0) return '';
   if(typeof v === 'number' && v > 1000){
-    const ms=(v-25569)*86400*1000;
-    const d=new Date(ms);
-    return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+    const ms=(v-25569)*86400*1000, d=new Date(ms);
+    return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
   }
   if(v instanceof Date){
-    return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}-${String(v.getDate()).padStart(2,'0')}`;
+    return v.getFullYear()+'-'+String(v.getMonth()+1).padStart(2,'0')+'-'+String(v.getDate()).padStart(2,'0');
   }
   const s=String(v).trim();
+  // ISO with time e.g. "2026-05-10T17:00:00.000Z" → use LOCAL time (UTC+7 = next day)
   if(/^\d{4}-\d{2}-\d{2}T/.test(s)){
     const d=new Date(s);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   }
   if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
   const p=s.split('/');
   if(p.length===3){
-    const a=parseInt(p[0]),b=parseInt(p[1]),c=parseInt(p[2]);
-    if(c>2400) return `${c-543}-${String(b).padStart(2,'0')}-${String(a).padStart(2,'0')}`;
-    if(c>100){const[d2,m,y]=a>12?[a,b,c]:[b,a,c];return `${y}-${String(m).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;}
-    if(a>100) return `${a}-${String(b).padStart(2,'0')}-${String(c).padStart(2,'0')}`;
+    const[a,b,c]=[parseInt(p[0]),parseInt(p[1]),parseInt(p[2])];
+    if(c>2400) return (c-543)+'-'+String(b).padStart(2,'0')+'-'+String(a).padStart(2,'0');
+    if(c>100){const[d2,m,y]=a>12?[a,b,c]:[b,a,c];return y+'-'+String(m).padStart(2,'0')+'-'+String(d2).padStart(2,'0');}
+    if(a>100) return a+'-'+String(b).padStart(2,'0')+'-'+String(c).padStart(2,'0');
   }
-  try{const d=new Date(s);if(!isNaN(d))return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}catch{}
+  try{const d=new Date(s);if(!isNaN(d))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}catch{}
   return s.substring(0,10);
 }
 
