@@ -1126,11 +1126,11 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
         <div class="rs"><div class="rs-dot" style="background:var(--red)"></div><div class="rs-label">เหตุการณ์ความเสี่ยง</div><div class="rs-line"></div></div>
         <div id="m-riskList" style="margin-bottom:10px;"></div>
         <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">เฝ้าระวัง</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:10px;">
-          <div class="mbox"><div class="mk">Fall</div><div class="mv bad" id="m-fall">—</div></div>
-          <div class="mbox"><div class="mk">Bed sore</div><div class="mv warn" id="m-bedsore">—</div></div>
-          <div class="mbox"><div class="mk">ชื่อซ้ำ</div><div class="mv warn" id="m-dup">—</div></div>
-        </div>
+        <table class="rtbl" style="margin-bottom:10px;">
+          <tr><td class="rk">Fall</td><td class="rv bad" id="m-fall">—</td></tr>
+          <tr><td class="rk">Bed sore</td><td class="rv warn" id="m-bedsore" style="word-break:break-word;">—</td></tr>
+          <tr><td class="rk">ชื่อซ้ำ</td><td class="rv warn" id="m-dup">—</td></tr>
+        </table>
         <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">📌 เหตุการณ์เพิ่มเติม</div><div class="rs-line"></div></div>
         <div id="m-riskExtra" style="font-size:12px;color:var(--text2);background:var(--gray1);border-radius:7px;padding:9px 11px;min-height:40px;"></div>
       </div>
@@ -1176,10 +1176,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <tr><td class="rk">สถานะบัตร</td><td class="rv" id="m-aCard">—</td></tr>
         </table>
         <div class="rs"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">เตรียม</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-          <div class="mbox"><div class="mk">เตรียมตรวจ</div><div class="mv" id="m-pex">—</div></div>
-          <div class="mbox"><div class="mk">เตรียมผ่าตัด</div><div class="mv" id="m-pop">—</div></div>
-        </div>
+        <table class="rtbl">
+          <tr><td class="rk">เตรียมตรวจ</td><td class="rv" id="m-pex">—</td></tr>
+          <tr><td class="rk">เตรียมผ่าตัด</td><td class="rv" id="m-pop">—</td></tr>
+        </table>
       </div>
 
       <!-- edit panel -->
