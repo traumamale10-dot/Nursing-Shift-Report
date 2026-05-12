@@ -1,7 +1,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trauma Male — บันทึกเวร + Export</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -36,19 +36,20 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 /* ─── HEADER ─── */
 .header{background:var(--purple);padding:0;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(107,79,160,.3);}
-.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 6px;max-width:700px;margin:0 auto;}
 .hbrand{display:flex;align-items:center;gap:10px;}
 .hlogo{width:34px;height:34px;background:rgba(255,255,255,.2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
 .htitle{font-family:'Kanit',sans-serif;font-weight:700;font-size:14px;color:#fff;line-height:1.2;}
 .hsub{font-size:10px;color:rgba(255,255,255,.75);}
 .nav{display:flex;background:var(--purple-dk);overflow-x:auto;scrollbar-width:none;}
+.nav-inner{display:flex;max-width:700px;margin:0 auto;width:100%;}
 .nav::-webkit-scrollbar{display:none;}
-.nb{flex:1;min-width:64px;padding:9px 4px 7px;background:none;border:none;color:rgba(255,255,255,.6);font-family:'Sarabun',sans-serif;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;transition:.2s;}
+.nb{flex:0 1 140px;min-width:64px;padding:9px 12px 7px;background:none;border:none;color:rgba(255,255,255,.6);font-family:'Sarabun',sans-serif;font-size:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;transition:.2s;}
 .nb span{font-size:16px;}
 .nb.active{color:#fff;border-bottom-color:rgba(255,255,255,.9);}
 
 /* ─── MAIN ─── */
-.main{padding:14px;max-width:480px;margin:0 auto;padding-bottom:90px;}
+.main{padding:16px;max-width:700px;margin:0 auto;padding-bottom:90px;}
 .page{display:none;}
 .page.active{display:block;animation:fu .22s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
@@ -145,9 +146,13 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
    REPORT PAGES (A4 ratio, 390px wide)
    ══════════════════════════════════════════════ */
 .report-wrap{display:flex;flex-direction:column;gap:16px;margin-bottom:12px;}
+@media(min-width:820px){
+  .report-wrap{flex-direction:row;align-items:flex-start;}
+  .rpage{width:380px;flex-shrink:0;}
+}
 
 .rpage{
-  width:390px;
+  width:min(390px,100%);
   background:#fff;
   border-radius:14px;
   overflow:hidden;
@@ -275,6 +280,34 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .po-bar{height:5px;background:var(--gray2);border-radius:3px;margin-top:10px;overflow:hidden;}
 .po-fill{height:100%;background:var(--purple);border-radius:3px;animation:pf 1.5s ease infinite;}
 @keyframes pf{0%{width:0}70%{width:90%}100%{width:100%}}
+
+/* ─── RESPONSIVE ─── */
+.stat-grid-dash{grid-template-columns:repeat(2,1fr);}
+@media(min-width:600px){
+  .stat-grid-dash{grid-template-columns:repeat(4,1fr);}
+  .fr.three{grid-template-columns:1fr 1fr 1fr;}
+  .fr{grid-template-columns:1fr 1fr;}
+}
+@media(min-width:600px){
+  .fr.three{grid-template-columns:1fr 1fr 1fr;}
+  .fr{grid-template-columns:1fr 1fr;}
+  .card{border-radius:14px;}
+  .main{padding:20px;}
+  .stat-grid-dash{grid-template-columns:repeat(4,1fr)!important;}
+}
+@media(min-width:600px) and (max-width:699px){
+  .main{max-width:600px;}
+}
+/* card grid on desktop */
+@media(min-width:600px){
+  #page-dashboard > div:nth-child(3){
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  #page-dashboard > div:nth-child(3) > .card{margin-bottom:0;}
+}
+
 </style>
 </head>
 <body>
@@ -324,7 +357,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 
   <!-- Stat grid -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;">
+  <div class="stat-grid-dash" style="display:grid;gap:9px;margin-bottom:12px;">
     <div class="card" style="margin-bottom:0;border-top:3px solid var(--purple);text-align:center;padding:12px 8px;">
       <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">คงพยาบาล</div>
       <div id="ds-total" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--purple);">—</div>
@@ -535,16 +568,16 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="stitle">เฝ้าระวัง</div>
       <div class="fr">
-        <div class="f"><label>Fall</label><input type="number" id="f-fall" min="0" placeholder="0"></div>
-        <div class="f"><label>Bed sore</label><input type="number" id="f-bedsore" min="0" placeholder="0"></div>
+        <div class="f"><label>Fall</label><input type="text" id="f-fall" placeholder="ชื่อ-สกุล / HN..."></div>
+        <div class="f"><label>Bed sore</label><input type="text" id="f-bedsore" placeholder="ชื่อ-สกุล / HN..."></div>
       </div>
       <div class="fr">
-        <div class="f"><label>เตรียมตรวจ</label><input type="number" id="f-pex" min="0" placeholder="0"></div>
-        <div class="f"><label>เตรียมผ่าตัด</label><input type="number" id="f-pop" min="0" placeholder="0"></div>
+        <div class="f"><label>เตรียมตรวจ</label><input type="text" id="f-pex" placeholder="รายละเอียด..."></div>
+        <div class="f"><label>เตรียมผ่าตัด</label><input type="text" id="f-pop" placeholder="รายละเอียด..."></div>
       </div>
       <div class="fr">
-        <div class="f"><label>ชื่อซ้ำ</label><input type="number" id="f-dup" min="0" placeholder="0"></div>
-        <div class="f"><label>ชื่อคล้าย</label><input type="number" id="f-sim" min="0" placeholder="0"></div>
+        <div class="f"><label>ชื่อซ้ำ</label><input type="text" id="f-dup" placeholder="ระบุชื่อ..."></div>
+        <div class="f"><label>ชื่อคล้าย</label><input type="text" id="f-sim" placeholder="ระบุชื่อ..."></div>
       </div>
     </div>
   </div>
@@ -1003,7 +1036,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 <!-- ════════ DETAIL MODAL ════════ -->
 <div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;padding:16px;">
-  <div style="background:var(--white);border-radius:14px;max-width:460px;margin:0 auto;overflow:hidden;">
+  <div style="background:var(--white);border-radius:14px;max-width:520px;width:100%;margin:0 auto;overflow:hidden;">
     <!-- Modal header -->
     <div style="background:linear-gradient(135deg,#4e3880,#8B6FC0);padding:14px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -1249,7 +1282,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyF5YqzrbPenoCE441Kr4zoo4Q1_aFzHUxOmHAnJ51Ddjfmde-P9ZASJiwckzqxkbmuBA/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzuaGvkJRI-cpYHLEqkmLNyMP3CWB8u-MvoQJGcmXpEX959K6dlC0e4pLcfT_HJ0HuPuQ/exec';
 // Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
 const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
   window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
@@ -1405,35 +1438,61 @@ function gasGet(params){
       return;
     }
     const sep = GAS_URL.includes('?') ? '&' : '?';
-    fetch(GAS_URL + sep + params, {method:'GET', mode:'cors', credentials:'omit', cache:'no-cache'})
-      .then(r => r.json())
-      .then(d => resolve(d))
-      .catch(e => reject(e));
+    const url = GAS_URL + sep + params + '&t=' + Date.now();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      cache: 'no-store',
+      signal: controller.signal
+    })
+    .then(r => { clearTimeout(timer); return r.json(); })
+    .then(d => resolve(d))
+    .catch(e => { clearTimeout(timer); reject(e); });
   });
 }
 
 // ─── FETCH LAST SHIFT คงพยาบาล ───
 async function fetchLastShift(){
   const spinner = document.getElementById('prev-loading');
+  const prevEl  = document.getElementById('f-prev');
+
+  // Allow manual edit immediately while loading
+  prevEl.readOnly = false;
+  prevEl.placeholder = '0';
+  if(spinner){ spinner.textContent='⟳'; spinner.style.color='var(--teal)'; }
+
+  // Timeout wrapper — 8 seconds max
+  const withTimeout = (promise, ms) => Promise.race([
+    promise,
+    new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))
+  ]);
+
   try{
-    const data = await gasGet('action=getLastShift');
-    
+    const data = await withTimeout(gasGet('action=getLastShift'), 8000);
     const val = data.value;
-    const prevEl = document.getElementById('f-prev');
-    prevEl.value = val || 0;
-    if(spinner) spinner.textContent = val ? `✓ ${val} คน` : '✓';
-    if(spinner) spinner.style.color = 'var(--green)';
-    // also load all data for prodT calculation
+    // Only fill if user hasn't typed yet
+    if(!prevEl.value || prevEl.value === '0'){
+      prevEl.value = val || 0;
+      // restore readonly style
+      prevEl.readOnly = true;
+      prevEl.style.background = 'var(--teal-lt)';
+      prevEl.style.borderColor = '#9fd8d2';
+      prevEl.style.color = 'var(--teal)';
+    }
+    if(spinner){ spinner.textContent = val ? `✓ ${val} คน` : '✓'; spinner.style.color='var(--green)'; }
     await loadAllDataSilent();
     calcT();
   } catch(e){
-    if(spinner){ spinner.textContent='⚠ ไม่ได้'; spinner.style.color='var(--orange)'; }
-    // fallback: allow manual edit
-    document.getElementById('f-prev').readOnly = false;
-    document.getElementById('f-prev').style.background = '';
-    document.getElementById('f-prev').style.borderColor = '';
-    document.getElementById('f-prev').style.color = '';
-    document.getElementById('f-prev').placeholder = '0';
+    if(spinner){ spinner.textContent='⚠ กรอกเอง'; spinner.style.color='var(--orange)'; }
+    prevEl.readOnly = false;
+    prevEl.style.background = '';
+    prevEl.style.borderColor = '';
+    prevEl.style.color = '';
+    prevEl.value = '';
+    prevEl.placeholder = '0';
   }
 }
 
@@ -1472,10 +1531,9 @@ function toggleRiskFields(){
   }
 }
 
-// ─── GAS POST — ใช้ google.script.run ใน GAS context, fetch นอก GAS ───
+// ─── GAS POST ───
 function gasPost(payload){
   return new Promise((resolve, reject)=>{
-    // google.script.run (GAS context)
     if(typeof google !== 'undefined' && google.script && google.script.run){
       google.script.run
         .withSuccessHandler(d => resolve(d))
@@ -1483,25 +1541,33 @@ function gasPost(payload){
         .saveRowFromClient(payload);
       return;
     }
-    // ใช้ GET แทน POST เพื่อหลีกเลี่ยง CORS preflight
-    // แบ่งข้อมูลเป็น chunks ถ้ายาวเกิน
-    const json = JSON.stringify(payload);
     const sep = GAS_URL.includes('?') ? '&' : '?';
-    const url = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(json);
-    
-    // ถ้า URL ยาวเกิน 8000 chars ให้ compress rowData เป็น index-based
-    if(url.length > 7500){
-      // ส่ง rowData แบบ compact: index|value pairs เฉพาะที่มีค่า
+    const json = JSON.stringify(payload);
+    const encoded = encodeURIComponent(json);
+    const url = GAS_URL + sep + 'action=save&data=' + encoded;
+
+    // GAS URL limit ~8000 chars — split rowData into 2 parts if needed
+    if(url.length > 7000){
+      // Send as two requests: first meta+part1, then part2
       const rd = payload.rowData;
-      const compact = rd.map((v,i) => v !== '' && v !== 0 && v !== null ? i+':'+v : '').filter(Boolean).join('~');
-      const p2 = {...payload, rowData: undefined, compact, len: rd.length};
+      const half = Math.ceil(rd.length / 2);
+      const p1 = {...payload, rowData: rd.slice(0, half), part: 1, total: rd.length};
+      const p2 = {updateById: payload.updateById, rowData: rd.slice(half), part: 2, partStart: half, total: rd.length};
+      const url1 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p1));
       const url2 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p2));
-      fetch(url2, {method:'GET', mode:'cors', credentials:'omit', cache:'no-cache'})
-        .then(r => r.json()).then(d => resolve(d)).catch(e => reject(e));
+      fetch(url1, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store'})
+        .then(r => r.json())
+        .then(d1 => {
+          if(d1.status !== 'success' && d1.status !== 'partial') throw new Error(d1.msg||'part1 failed');
+          return fetch(url2, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store'});
+        })
+        .then(r => r.json())
+        .then(d => resolve(d))
+        .catch(e => reject(e));
       return;
     }
-    
-    fetch(url, {method:'GET', mode:'cors', credentials:'omit', cache:'no-cache'})
+
+    fetch(url, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store'})
       .then(r => r.json())
       .then(d => resolve(d))
       .catch(e => reject(e));
@@ -2038,7 +2104,7 @@ async function submitF(){
   ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
   ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='inline-block';});
   try{
-    const r=await gasPost({rowData});
+    const r=await gasPost({rowData, checkDate: v('f-date'), checkShift: v('f-shift')});
     if(r.status==='success'){toast('✅ บันทึกสำเร็จ! แถวที่ '+r.row,'success');}
     else toast('เกิดข้อผิดพลาด: '+(r.msg||''),'error');
   }catch(e){
@@ -2236,7 +2302,7 @@ function filterH(){
   });
   if(histTab==='risk')    filt=filt.filter(r=>r[41]==='มี'||r[42]||r[45]||r[48]);
   if(histTab==='extra')   filt=filt.filter(r=>r[51]&&String(r[51]).trim());
-  if(histTab==='absent')  filt=filt.filter(r=>r[57]==='มี'||r[59]==='มี');
+  if(histTab==='absent')  filt=filt.filter(r=>r[57]==='มี');
   if(histTab==='val')     filt=filt.filter(r=>r[35]==='มี'||r[38]==='มี');
   if(histTab==='allergy') filt=filt.filter(r=>r[52]==='มี');
   filt=filt.reverse();
@@ -2314,20 +2380,15 @@ function filterH(){
       </div>`;
     }
 
-    // ── TAB: ขาดลา/ผัน ──
+    // ── TAB: ขาดลา/มาสาย ──
     if(histTab==='absent'){
       const absentHtml = r[57]==='มี' ? `
-        <div style="background:var(--orange-bg);border-left:3px solid var(--orange);border-radius:0 7px 7px 0;padding:8px 10px;margin-bottom:6px;">
+        <div style="background:var(--orange-bg);border-left:3px solid var(--orange);border-radius:0 7px 7px 0;padding:8px 10px;">
           <div style="font-size:10px;font-weight:700;color:var(--orange);margin-bottom:3px;">🚶 การขาดลา / มาสาย</div>
           <div style="font-size:12px;color:var(--text);">${r[58]||'ไม่ระบุรายละเอียด'}</div>
         </div>` : '';
-      const offHtml = r[59]==='มี' ? `
-        <div style="background:var(--orange-bg);border-left:3px solid var(--orange);border-radius:0 7px 7px 0;padding:8px 10px;">
-          <div style="font-size:10px;font-weight:700;color:var(--orange);margin-bottom:3px;">🔄 การผัน / Off เวร</div>
-          <div style="font-size:12px;color:var(--text);">${r[60]||'ไม่ระบุรายละเอียด'}</div>
-        </div>` : '';
       return `<div class="mr">${dateHead}
-        <div style="margin-top:8px;">${absentHtml}${offHtml}</div>
+        <div style="margin-top:8px;">${absentHtml}</div>
         ${moreBtn}
       </div>`;
     }
@@ -2530,7 +2591,7 @@ async function saveEdit(){
   const sp=document.getElementById('editSpin');
   btn.disabled=true; sp.style.display='inline-block';
   try{
-    const result = await gasPost({rowData, updateById: orig[0]});
+    const result = await gasPost({rowData, updateById: orig[0], checkDate: normDate(orig[1]), checkShift: String(orig[2]||'')});
     if(result.status==='success'){
       toast('✅ แก้ไขสำเร็จ!','success');
       closeModal();
