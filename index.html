@@ -1055,8 +1055,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <!-- ════════ DETAIL MODAL ════════ -->
-<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;align-items:flex-start;justify-content:center;">
-  <div style="background:var(--white);border-radius:14px;max-width:560px;width:100%;margin:auto;overflow:hidden;flex-shrink:0;">
+<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;align-items:flex-start;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;max-width:560px;width:100%;margin:auto;overflow:hidden;flex-shrink:0;box-shadow:0 8px 40px rgba(0,0,0,.3);">
     <!-- Modal header -->
     <div style="background:linear-gradient(135deg,#4e3880,#8B6FC0);padding:14px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -1080,13 +1080,13 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       <!-- info panel -->
       <div id="mpanel-info">
         <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">จำนวนผู้ป่วย</div><div class="rs-line"></div></div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:10px;">
           <div class="mbox"><div class="mk">ยกมา</div><div class="mv" id="m-prev">—</div></div>
           <div class="mbox"><div class="mk">รับใหม่</div><div class="mv teal" id="m-new">—</div></div>
           <div class="mbox"><div class="mk">กลับบ้าน</div><div class="mv" id="m-dc">—</div></div>
           <div class="mbox"><div class="mk">คงพยาบาล</div><div class="mv purple" id="m-total">—</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:10px;">
           <div class="mbox"><div class="mk">รับย้าย</div><div class="mv" id="m-tin">—</div></div>
           <div class="mbox"><div class="mk">ย้ายออก</div><div class="mv" id="m-tout">—</div></div>
           <div class="mbox"><div class="mk">Refer</div><div class="mv bad" id="m-refer">—</div></div>
@@ -2494,9 +2494,17 @@ let currentModalRow = null;
 let currentModalRowIdx = -1;
 let currentModalTab = 'info';
 
-function openDetail(rowIdx){
+async function openDetail(rowIdx){
+  // ถ้า allData ว่าง ให้โหลดก่อน
+  if(!allData.length){
+    try{
+      const data = await gasGet('action=getData');
+      if(Array.isArray(data)&&data.length>1) allData=data;
+    }catch(e){}
+  }
+  // หา row ใหม่จาก index ที่ส่งมา
   const r = allData[rowIdx];
-  if(!r) return;
+  if(!r){ toast('ไม่พบข้อมูล','error'); return; }
   currentModalRow = r;
   currentModalRowIdx = rowIdx;
   currentModalTab = 'info';
