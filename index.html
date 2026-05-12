@@ -281,6 +281,18 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .po-fill{height:100%;background:var(--purple);border-radius:3px;animation:pf 1.5s ease infinite;}
 @keyframes pf{0%{width:0}70%{width:90%}100%{width:100%}}
 
+/* ─── MODAL RESPONSIVE ─── */
+#detailModal { display: none; }
+#detailModal.open { display: flex !important; }
+@media(max-width:599px){
+  #detailModal { padding: 0 !important; align-items: flex-end !important; }
+  #detailModal > div { border-radius: 16px 16px 0 0 !important; max-width: 100% !important; width: 100% !important; }
+  #modal-body { max-height: 75dvh !important; }
+}
+@media(min-width:600px){
+  #detailModal { padding: 20px !important; align-items: center !important; }
+  #modal-body { max-height: calc(85vh - 120px) !important; }
+}
 /* ─── RESPONSIVE ─── */
 .stat-grid-dash{grid-template-columns:repeat(2,1fr);}
 @media(min-width:600px){
@@ -837,7 +849,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
             <table class="rtbl">
               <tr><td class="rk">Productivity</td><td class="rv purple" id="r-prod">—</td></tr>
               <tr><td class="rk">ครองเตียง</td><td class="rv teal" id="r-occ">—</td></tr>
-              <tr><td class="rk">Prod. รวม</td><td class="rv" id="r-prodT">—</td></tr>
+              <tr id="r-prodT-row" style="display:none;"><td class="rk">Prod. รวม</td><td class="rv" id="r-prodT">—</td></tr>
               <tr><td class="rk">Tube</td><td class="rv" id="r-tube">—</td></tr>
             </table>
           </div>
@@ -1043,8 +1055,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 </div>
 
 <!-- ════════ DETAIL MODAL ════════ -->
-<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;padding:16px;">
-  <div style="background:var(--white);border-radius:14px;max-width:520px;width:100%;margin:0 auto;overflow:hidden;">
+<div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(45,37,64,.7);z-index:500;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;align-items:flex-start;justify-content:center;">
+  <div style="background:var(--white);border-radius:14px;max-width:560px;width:100%;margin:auto;overflow:hidden;flex-shrink:0;">
     <!-- Modal header -->
     <div style="background:linear-gradient(135deg,#4e3880,#8B6FC0);padding:14px 16px;color:#fff;display:flex;align-items:center;justify-content:space-between;">
       <div>
@@ -1064,7 +1076,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     </div>
 
     <!-- Modal content panels -->
-    <div id="modal-body" style="padding:14px;max-height:70vh;overflow-y:auto;">
+    <div id="modal-body" style="padding:14px;max-height:calc(100dvh - 160px);overflow-y:auto;-webkit-overflow-scrolling:touch;">
       <!-- info panel -->
       <div id="mpanel-info">
         <div class="rs"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">จำนวนผู้ป่วย</div><div class="rs-line"></div></div>
@@ -1877,7 +1889,10 @@ function updateReportFromRow(r){
   // indicators
   setText('r-prod',  fmt1dp(r[15]));
   setText('r-occ',   fmt2dp(r[16]));
-  setText('r-prodT', r[2]==='บ่าย' ? (r[17]?parseFloat(r[17]).toFixed(2)+'%':'—') : 'แสดงเฉพาะเวรบ่าย');
+  const hasProdT = r[2]==='บ่าย' && r[17];
+  const prodTRowEl = document.getElementById('r-prodT-row');
+  if(prodTRowEl) prodTRowEl.style.display = hasProdT ? '' : 'none';
+  setText('r-prodT', hasProdT ? parseFloat(r[17]).toFixed(2)+'%' : '—');
   set('r-tube',r[18]||0);
 
   // types
@@ -1972,7 +1987,9 @@ function updateReport(){
   const prodTEl = document.getElementById('f-prodT');
   const prodTVal = parseFloat(prodTEl?.value)||0;
   const isBaai = v('f-shift') === 'บ่าย';
-  setText('r-prodT', isBaai && prodTVal ? prodTVal.toFixed(2)+'%' : (isBaai ? '—' : 'แสดงเฉพาะเวรบ่าย'));
+  const prodTRow = document.getElementById('r-prodT-row');
+  if(prodTRow) prodTRow.style.display = (isBaai && prodTVal) ? '' : 'none';
+  setText('r-prodT', isBaai && prodTVal ? prodTVal.toFixed(2)+'%' : '—');
   setText('r-tube',  n('f-tube'));
 
   // Types
@@ -2567,17 +2584,19 @@ function openDetail(rowIdx){
   // charge nurse
   sv('e-charge',r[61]); sv('e-wh',r[62]);
 
-  // open on info tab first so user sees filled data, then can switch to edit
   setModalTab('info');
-  // Small delay to ensure DOM is ready before showing
-  setTimeout(()=>{ document.getElementById('detailModal').scrollTop=0; }, 50);
-  document.getElementById('detailModal').style.display='block';
-  document.body.style.overflow='hidden';
+  const modal = document.getElementById('detailModal');
+  modal.style.display = 'flex';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(()=>{ modal.scrollTop = 0; }, 50);
 }
 
 function closeModal(){
-  document.getElementById('detailModal').style.display='none';
-  document.body.style.overflow='';
+  const modal = document.getElementById('detailModal');
+  modal.style.display = 'none';
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function setModalTab(tab){
