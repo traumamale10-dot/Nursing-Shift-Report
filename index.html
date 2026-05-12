@@ -808,6 +808,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <div class="rh-shift-pill" id="r-shiftpill">—</div>
           <div class="rh-pg">หน้า 1 / 2</div>
         </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.15);">
+          <div style="font-size:10px;opacity:.8;">👤 หน.เวร: <span id="r-charge-h1" style="font-weight:700;">—</span></div>
+          <div style="font-size:10px;opacity:.8;">🏷️ หน.หอ: <span id="r-wh-h1" style="font-weight:700;">—</span></div>
+        </div>
       </div>
       <div class="rb">
 
@@ -900,6 +904,10 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <div class="rh-date" id="r-date2">—</div>
           <div class="rh-shift-pill" id="r-shiftpill2">—</div>
           <div class="rh-pg">หน้า 2 / 2</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.15);">
+          <div style="font-size:10px;opacity:.8;">👤 หน.เวร: <span id="r-charge-h2" style="font-weight:700;">—</span></div>
+          <div style="font-size:10px;opacity:.8;">🏷️ หน.หอ: <span id="r-wh-h2" style="font-weight:700;">—</span></div>
         </div>
       </div>
       <div class="rb">
@@ -1918,6 +1926,9 @@ function updateReportFromRow(r){
 
   // signature
   setText('r-charge',r[61]||'—'); setText('r-wh',r[62]||'—');
+  // header names (both pages)
+  ['r-charge-h1','r-charge-h2'].forEach(id=>setText(id, r[61]||'—'));
+  ['r-wh-h1','r-wh-h2'].forEach(id=>setText(id, r[62]||'—'));
 
   // print time
   document.getElementById('r-printTime').textContent = new Date().toLocaleString('th-TH');
@@ -2031,6 +2042,9 @@ function updateReport(){
   // Signature
   setText('r-charge', v('f-charge')||'—');
   setText('r-wh',     v('f-wh')    ||'—');
+  // Header names (both pages)
+  ['r-charge-h1','r-charge-h2'].forEach(id=>setText(id, v('f-charge')||'—'));
+  ['r-wh-h1','r-wh-h2'].forEach(id=>setText(id, v('f-wh')||'—'));
 
   // Print time
   document.getElementById('r-printTime').textContent = new Date().toLocaleString('th-TH');
