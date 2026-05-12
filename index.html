@@ -504,7 +504,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="fr">
         <div class="f"><label>Worker</label><input type="number" id="f-worker" min="0" placeholder="0"></div>
-        <div class="f"><label>รวมบุคลากร</label><input type="number" id="f-staff" min="0" placeholder="0"></div>
+        <div class="f"><label>รวมบุคลากร <span style="font-size:10px;color:var(--teal);">RN+Aide+Worker</span></label><input type="number" id="f-staff" placeholder="อัตโนมัติ" readonly style="background:var(--teal-lt);border-color:#9fd8d2;color:var(--teal);font-weight:700;"></div>
       </div>
     </div>
   </div>
@@ -1306,6 +1306,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   // listen to trauma/neuro/plastic/total for Multiple Injury
   ['f-trauma','f-neuro','f-plastic','f-total'].forEach(id=>
     document.getElementById(id)?.addEventListener('input', calcMulti));
+  // listen to RN/Aide/Worker for staff total
+  ['f-rn','f-aide','f-worker'].forEach(id=>
+    document.getElementById(id)?.addEventListener('input', calcStaff));
   // load last shift คงพยาบาล
   fetchLastShift();
   // load dashboard data
@@ -1347,6 +1350,7 @@ function calcT(){
   calcOcc(total);
   calcProdT();
   calcMulti();
+  calcStaff();
 }
 
 // ─── CALC OCCUPANCY: คงพยาบาล * 100 / 30 ───
@@ -1365,6 +1369,14 @@ function calcMulti(){
   const multi   = Math.max(0, total - sumKnown);
   const el = document.getElementById('f-multi');
   if(el){ el.value = multi; }
+}
+
+// ─── CALC STAFF: RN + Aide/PN + Worker ───
+function calcStaff(){
+  const n=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const total = n('f-rn') + n('f-aide') + n('f-worker');
+  const el = document.getElementById('f-staff');
+  if(el) el.value = total;
 }
 
 // ─── SHOW/HIDE PRODТ ROW: เฉพาะเวรบ่าย ───
@@ -1623,7 +1635,8 @@ function fillFormFromRow(r){
   sn('f-trauma', r[22]); sn('f-neuro', r[23]); sn('f-plastic', r[24]); sn('f-multi', r[25]);
 
   // บุคลากร
-  sn('f-rn', r[19]);   sn('f-aide', r[20]); sn('f-worker', r[21]); sn('f-staff', r[56]);
+  sn('f-rn', r[19]);   sn('f-aide', r[20]); sn('f-worker', r[21]);
+  calcStaff(); // auto-calculate staff total
 
   // อุปกรณ์
   sv('f-emg', r[26]);  sv('f-defib', r[27]); sv('f-o2', r[28]);
@@ -1864,7 +1877,9 @@ function updateReportFromRow(r){
   set('r-trauma',r[22]||0); set('r-neuro',r[23]||0); set('r-plastic',r[24]||0); set('r-multi',r[25]||0);
 
   // staff
-  set('r-rn',r[19]||0); set('r-aide',r[20]||0); set('r-worker',r[21]||0); set('r-staff',r[56]||0);
+  const rnR=parseInt(r[19])||0, aideR=parseInt(r[20])||0, workerR=parseInt(r[21])||0;
+  set('r-rn',rnR); set('r-aide',aideR); set('r-worker',workerR);
+  set('r-staff', rnR+aideR+workerR);
   setText('r-absent',r[57]||'—'); setText('r-off',r[59]||'—');
   setText('r-absentD',(r[58]||'—'));
 
@@ -1953,8 +1968,10 @@ function updateReport(){
   set('r-t4',n('f-t4')); set('r-t3',n('f-t3')); set('r-t2',n('f-t2')); set('r-t1',n('f-t1'));
   set('r-trauma',n('f-trauma')); set('r-neuro',n('f-neuro')); set('r-plastic',n('f-plastic')); set('r-multi',n('f-multi'));
 
-  // Staff
-  set('r-rn',n('f-rn')); set('r-aide',n('f-aide')); set('r-worker',n('f-worker')); set('r-staff',n('f-staff'));
+  // Staff — รวมคำนวณอัตโนมัติ
+  const rnVal=n('f-rn'), aideVal=n('f-aide'), workerVal=n('f-worker');
+  set('r-rn',rnVal); set('r-aide',aideVal); set('r-worker',workerVal);
+  set('r-staff', rnVal+aideVal+workerVal);
   setText('r-absent', v('f-absent')||'—');
   setText('r-off',    v('f-off')   ||'—');
   setText('r-absentD',v('f-absentD')||'—');
@@ -2121,7 +2138,7 @@ function clearF(){
   document.querySelectorAll('#page-form input,#page-form select,#page-form textarea').forEach(el=>{
     if(el.id==='f-wh') el.value='อัญญารัตน์';
     else if(el.id==='f-date') el.value=new Date().toISOString().split('T')[0];
-    else if(['f-prev','f-occ','f-prodT','f-multi'].includes(el.id)){} // auto-calculated, don't clear
+    else if(['f-prev','f-occ','f-prodT','f-multi','f-staff'].includes(el.id)){} // auto-calculated, don't clear
     else el.value='';
   });
   // hide all conditional detail panels
@@ -2174,7 +2191,7 @@ function renderDash(data){
       ${[['T4',last[11],'bad'],['T3',last[12],'warn'],['T2',last[13],''],['T1',last[14],'good']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
-      ${[['RN',last[19],'purple'],['Aide',last[20],''],['Worker',last[21],''],['รวม',last[56]||0,'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+      ${[['RN',last[19],'purple'],['Aide',last[20],''],['Worker',last[21],''],['รวม',(parseInt(last[19]||0)+parseInt(last[20]||0)+parseInt(last[21]||0)),'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
     </div>`;
   document.getElementById('ds-devices').innerHTML='<div class="dev-row">'+
     [['🚑','Emergency',last[26]],['⚡','Defib',last[27]],['🫁','Oxygen',last[28]]].map(([ic,l,v])=>{
