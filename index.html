@@ -106,16 +106,16 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .cond-box .f label{color:var(--text2);}
 .cond-box input,.cond-box select,.cond-box textarea{background:#fff;}
 /* ─── QUICK RANGE BUTTONS ─── */
-.qrbtn{padding:5px 10px;background:var(--purple-bg);border:1.5px solid var(--purple-soft);border-radius:20px;color:var(--purple);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:.15s;}
+.qrbtn{padding:7px 14px;background:var(--purple-bg);border:1.5px solid var(--purple-soft);border-radius:20px;color:var(--purple);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;}
 .qrbtn:active,.qrbtn.active{background:var(--purple);color:#fff;border-color:var(--purple);}
 /* ─── HISTORY TABS ─── */
-.htab{flex:1;min-width:60px;padding:6px 8px;background:none;border:none;color:var(--text3);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px;transition:.15s;white-space:nowrap;}
+.htab{flex:0 0 auto;padding:7px 14px;background:none;border:none;color:var(--text3);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px;transition:.15s;white-space:nowrap;}
 .htab.active{background:var(--white);color:var(--purple);box-shadow:0 1px 4px rgba(107,79,160,.15);}
 /* ─── MODAL TABS ─── */
 .mtab{flex:1;min-width:55px;padding:9px 6px;background:none;border:none;color:var(--text3);font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;}
 .mtab.active{color:var(--purple);border-bottom-color:var(--purple);background:var(--white);}
 
-.mr{background:var(--white);border-radius:9px;padding:11px;margin-bottom:8px;box-shadow:0 2px 8px rgba(107,79,160,.07);border-left:3px solid var(--purple);}
+.mr{background:var(--white);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(107,79,160,.07);border-left:3px solid var(--purple);}
 .mr .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .mr .info{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;font-size:13px;color:var(--text2);}
 .mr .info .k{color:var(--text3);font-size:12px;}
@@ -1005,7 +1005,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   <div style="font-size:11px;color:var(--text3);margin-bottom:10px;" id="histCount">—</div>
 
   <!-- Search + shift filter -->
-  <div style="display:flex;gap:7px;margin-bottom:8px;">
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
     <input id="hSearch" placeholder="🔍 ค้นหา วันที่ / หน.เวร..." oninput="filterH()"
       style="flex:1;background:var(--white);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 10px;font-family:'Sarabun',sans-serif;font-size:12px;outline:none;">
     <select id="hShift" onchange="filterH()"
@@ -1016,7 +1016,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 
   <!-- Date range filter -->
-  <div style="background:var(--white);border-radius:10px;padding:11px 12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(107,79,160,.07);border:1.5px solid var(--gray2);">
+  <div style="background:var(--white);border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(107,79,160,.07);border:1.5px solid var(--gray2);">
     <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
       <span>📅 ช่วงวันที่</span>
       <button id="dateRangeClear" onclick="clearDateRange()" style="display:none;background:var(--red-bg);border:none;border-radius:20px;color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;cursor:pointer;">✕ ล้าง</button>
@@ -1033,7 +1033,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
     <!-- Quick range buttons -->
-    <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
       <button class="qrbtn" onclick="setQuickRange(7)">7 วัน</button>
       <button class="qrbtn" onclick="setQuickRange(14)">14 วัน</button>
       <button class="qrbtn" onclick="setQuickRange(30)">30 วัน</button>
@@ -1043,7 +1043,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 
   <!-- View mode tabs -->
-  <div style="display:flex;gap:0;background:var(--gray2);border-radius:8px;padding:3px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;">
+  <div style="display:flex;gap:3px;background:var(--gray2);border-radius:10px;padding:4px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
     <button class="htab active" id="htab-all" onclick="setHistTab('all')">ทั้งหมด</button>
     <button class="htab" id="htab-risk" onclick="setHistTab('risk')">⚠️ ความเสี่ยง</button>
     <button class="htab" id="htab-extra" onclick="setHistTab('extra')">📌 เพิ่มเติม</button>
