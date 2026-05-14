@@ -1736,9 +1736,9 @@ function fillFormFromRow(r){
   setO2Value(r[28]||'');
 
   // เฝ้าระวัง
-  sn('f-fall', r[29]);    sn('f-bedsore', r[30]);
-  sn('f-pex', r[31]);     sn('f-pop', r[32]);
-  sn('f-dup', r[33]);     sn('f-sim', r[34]);
+  sv('f-fall', r[29]);    sv('f-bedsore', r[30]);
+  sv('f-pex', r[31]);     sv('f-pop', r[32]);
+  sv('f-dup', r[33]);     sv('f-sim', r[34]);
 
   // ขาดลา/ผัน — แสดง conditional panel ถ้ามี
   sv('f-absent', r[57]);
@@ -1988,9 +1988,9 @@ function updateReportFromRow(r){
   }).join('');
 
   // page 2 — surveillance
-  set('r-fall',r[29]||0); set('r-bedsore',r[30]||0);
-  set('r-pex',r[31]||0);  set('r-pop',r[32]||0);
-  set('r-dup',r[33]||0);  set('r-sim',r[34]||0);
+  set('r-fall',r[29]||'—'); set('r-bedsore',r[30]||'—');
+  set('r-pex',r[31]||'—');  set('r-pop',r[32]||'—');
+  set('r-dup',r[33]||'—');  set('r-sim',r[34]||'—');
 
   // valuables
   setText('r-val',r[35]||'—'); setText('r-valD',r[36]||'—'); setText('r-valS',r[37]||'—');
@@ -2273,7 +2273,7 @@ async function submitF(){
     n('f-tube'),n('f-rn'),n('f-aide'),n('f-worker'),
     n('f-trauma'),n('f-neuro'),n('f-plastic'),n('f-multi'),
     v('f-emg'),v('f-defib'),v('f-o2'),
-    n('f-fall'),n('f-bedsore'),n('f-pex'),n('f-pop'),n('f-dup'),n('f-sim'),
+    v('f-fall'),v('f-bedsore'),v('f-pex'),v('f-pop'),v('f-dup'),v('f-sim'),
     v('f-val'),v('f-valD'),v('f-valS'),
     v('f-pend'),v('f-pendD'),v('f-pendS'),
     v('f-riskMain'),
