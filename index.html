@@ -1437,7 +1437,8 @@ function tc(el){
 // ─── CALC TOTAL ───
 function calcT(){
   const n=id=>parseFloat(document.getElementById(id)?.value)||0;
-  const total = Math.max(0, n('f-prev')+n('f-new')+n('f-tin')-n('f-tout')-n('f-dc')-n('f-refer')-n('f-dead'));
+  // (ยอดยกมา + รับใหม่ + รับย้าย) - กลับบ้าน - Refer - ย้ายออก - ถึงแก่กรรม
+  const total = Math.max(0, (n('f-prev')+n('f-new')+n('f-tin')) - n('f-dc') - n('f-refer') - n('f-tout') - n('f-dead'));
   document.getElementById('f-total').value = total;
   calcOcc(total);
   calcProdT();
