@@ -1317,6 +1317,11 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 
 <script>
 const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzuaGvkJRI-cpYHLEqkmLNyMP3CWB8u-MvoQJGcmXpEX959K6dlC0e4pLcfT_HJ0HuPuQ/exec';
+// ─── LOCAL DATE HELPER (แก้ timezone: ใช้เวลาไทย ไม่ใช่ UTC) ───
+function localDateStr(d){
+  const dt = d || new Date();
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+}
 // Auto-detect: ถ้าเปิดจาก GAS URL ให้ใช้ URL ปัจจุบัน
 const GAS_SELF = (typeof window !== 'undefined' && window.location && window.location.href && 
   window.location.href.includes('script.googleusercontent.com')) ? window.location.href.split('?')[0] : null;
@@ -1327,7 +1332,8 @@ let allData = [];
 window.addEventListener('DOMContentLoaded',()=>{
   const now = new Date();
   document.getElementById('hDate').innerHTML = now.toLocaleDateString('th-TH',{weekday:'short',day:'2-digit',month:'short'})+'<br>'+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('f-date').value = now.toISOString().split('T')[0];
+  const localDate = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  document.getElementById('f-date').value = localDate;
   document.getElementById('gasUrl').value = GAS_URL;
   ['f-new','f-tin','f-tout','f-dc','f-refer','f-dead'].forEach(id=>
     document.getElementById(id)?.addEventListener('input',calcT));
@@ -1362,7 +1368,7 @@ function sw(name){
   if(name==='dashboard') loadDash();
   if(name==='preview' && previewMode==='sheet'){
     const d=document.getElementById('pv-date').value;
-    if(!d) document.getElementById('pv-date').value=new Date().toISOString().split('T')[0];
+    if(!d) document.getElementById('pv-date').value=localDateStr();
     if(allData.length) showAvailableShifts(document.getElementById('pv-date').value);
     else loadPreviewSheetData().then(()=>showAvailableShifts(document.getElementById('pv-date').value));
   }
@@ -1813,7 +1819,7 @@ function setPreviewMode(mode){
   document.getElementById('preview-form-hint').style.display   = mode==='form'  ? '' : 'none';
   // set today as default date when switching to sheet mode
   if(mode==='sheet' && !document.getElementById('pv-date').value){
-    document.getElementById('pv-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('pv-date').value = localDateStr();
     onPreviewDateChange();
   }
 }
@@ -2165,7 +2171,7 @@ async function exportBoth() {
 }
 
 function getFileSuffix(){
-  const d = document.getElementById('f-date').value || new Date().toISOString().split('T')[0];
+  const d = document.getElementById('f-date').value || localDateStr();
   const s = document.getElementById('f-shift').value || 'เวร';
   return `${d}_${s}`;
 }
@@ -2305,7 +2311,7 @@ async function submitF(){
 function clearF(){
   document.querySelectorAll('#page-form input,#page-form select,#page-form textarea').forEach(el=>{
     if(el.id==='f-wh') el.value='อัญญารัตน์';
-    else if(el.id==='f-date') el.value=new Date().toISOString().split('T')[0];
+    else if(el.id==='f-date') el.value=localDateStr();
     else if(['f-prev','f-occ','f-prodT','f-multi','f-staff'].includes(el.id)){} // auto-calculated, don't clear
     else el.value='';
   });
@@ -2459,7 +2465,7 @@ function normDate(v){
 
 function setQuickRange(range){
   const now = new Date();
-  const to = now.toISOString().split('T')[0];
+  const to = localDateStr(now);
   let from='';
   if(range==='all'){
     document.getElementById('hDateFrom').value='';
@@ -2469,11 +2475,11 @@ function setQuickRange(range){
     filterH();
     return;
   } else if(range==='month'){
-    from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+    from = localDateStr(new Date(now.getFullYear(), now.getMonth(), 1));
   } else {
     const d = new Date(now);
     d.setDate(d.getDate()-range+1);
-    from = d.toISOString().split('T')[0];
+    from = localDateStr(d);
   }
   document.getElementById('hDateFrom').value = from;
   document.getElementById('hDateTo').value = to;
