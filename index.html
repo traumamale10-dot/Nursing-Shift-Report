@@ -362,8 +362,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
   <nav class="nav">
     <button class="nb active" onclick="sw('dashboard')"><span>📊</span>Dashboard</button>
-    <button class="nb" onclick="sw('form')"><span>📝</span>บันทึกเวร</button>
-    <button class="nb" onclick="sw('preview')"><span>🖼️</span>ตัวอย่าง</button>
+    <button class="nb" onclick="sw('form')"><span>📝</span>ลงบันทึกเหตุการณ์เวร</button>
+    <button class="nb" onclick="sw('preview')"><span>🖼️</span>Export รูปภาพ</button>
     <button class="nb" onclick="sw('history')"><span>📋</span>ประวัติ</button>
     <button class="nb" onclick="sw('settings')"><span>⚙️</span>ตั้งค่า</button>
   </nav>
@@ -383,6 +383,32 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     </button>
   </div>
 
+
+  <!-- Date Range Filter -->
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ch" onclick="toggleDashFilter()" style="cursor:pointer;">
+      <div class="chi p">📅</div>
+      <div class="cl">ช่วงวันที่</div>
+      <span id="dashFilterBadge" style="display:none;margin-left:6px;background:var(--purple);color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;"></span>
+      <button id="dashRangeClear" onclick="event.stopPropagation();clearDashRange()" style="display:none;margin-left:6px;background:var(--red-bg);border:none;border-radius:20px;padding:3px 10px;color:var(--red);font-family:'Sarabun',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">✕ ล้าง</button>
+      <span id="dashFilterToggle" style="margin-left:auto;color:var(--text3);font-size:11px;">▼</span>
+    </div>
+    <div class="cb" id="dashFilterBody" style="display:none;padding:10px 13px 12px;">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-bottom:10px;">
+        <div class="f"><label>จากวันที่</label><input type="date" id="dDateFrom" onchange="onDashDateChange()"></div>
+        <div style="color:var(--text3);font-size:16px;margin-top:16px;">→</div>
+        <div class="f"><label>ถึงวันที่</label><input type="date" id="dDateTo" onchange="onDashDateChange()"></div>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;">
+        <button class="qrbtn" onclick="setDashRange(7,event)">7 วัน</button>
+        <button class="qrbtn" onclick="setDashRange(14,event)">14 วัน</button>
+        <button class="qrbtn" onclick="setDashRange(30,event)">30 วัน</button>
+        <button class="qrbtn" onclick="setDashRange('month',event)">เดือนนี้</button>
+        <button class="qrbtn" onclick="setDashRange('all',event)">ทั้งหมด</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Last shift banner -->
   <div id="lastBanner" style="display:none;background:linear-gradient(135deg,#4e3880,#8B6FC0);border-radius:var(--r);padding:12px 14px;color:#fff;margin-bottom:12px;">
     <div style="font-size:10px;opacity:.75;margin-bottom:2px;">เวรล่าสุด</div>
@@ -393,22 +419,42 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 
   <!-- Stat grid -->
-  <div class="stat-grid-dash" style="display:grid;gap:9px;margin-bottom:12px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
     <div class="card" style="margin-bottom:0;border-top:3px solid var(--purple);text-align:center;padding:12px 8px;">
       <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">คงพยาบาล</div>
       <div id="ds-total" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--purple);">—</div>
     </div>
-    <div class="card" style="margin-bottom:0;border-top:3px solid var(--teal);text-align:center;padding:12px 8px;">
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--green);text-align:center;padding:12px 8px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ยอดรวม (ยกมา+ใหม่+ย้ายเข้า)</div>
+      <div id="ds-grand" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--green);">—</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px;">
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--teal);text-align:center;padding:10px 6px;">
       <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">รับใหม่</div>
-      <div id="ds-new" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--teal);">—</div>
+      <div id="ds-new" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--teal);">—</div>
     </div>
-    <div class="card" style="margin-bottom:0;border-top:3px solid var(--orange);text-align:center;padding:12px 8px;">
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--purple-lt);text-align:center;padding:10px 6px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">รับย้าย</div>
+      <div id="ds-tin" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--purple-lt);">—</div>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--gray4);text-align:center;padding:10px 6px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ย้ายออก</div>
+      <div id="ds-tout" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--gray4);">—</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px;">
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--orange);text-align:center;padding:10px 6px;">
       <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">กลับบ้าน</div>
-      <div id="ds-dc" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--orange);">—</div>
+      <div id="ds-dc" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--orange);">—</div>
     </div>
-    <div class="card" style="margin-bottom:0;border-top:3px solid var(--red);text-align:center;padding:12px 8px;">
-      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Refer/เสียชีวิต</div>
-      <div id="ds-ref" style="font-family:'Kanit',sans-serif;font-size:28px;font-weight:800;color:var(--red);">—</div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid var(--red);text-align:center;padding:10px 6px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Refer</div>
+      <div id="ds-refer" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:var(--red);">—</div>
+    </div>
+    <div class="card" style="margin-bottom:0;border-top:3px solid #444;text-align:center;padding:10px 6px;">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">ถึงแก่กรรม</div>
+      <div id="ds-dead" style="font-family:'Kanit',sans-serif;font-size:22px;font-weight:800;color:#444;">—</div>
     </div>
   </div>
 
@@ -2332,6 +2378,57 @@ function clearF(){
 }
 
 // ─── DASHBOARD ───
+// ─── DASHBOARD DATE RANGE ───
+function toggleDashFilter(){
+  const body = document.getElementById('dashFilterBody');
+  const tog  = document.getElementById('dashFilterToggle');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  tog.textContent = open ? '▼' : '▲';
+}
+
+function setDashRange(range, e){
+  const now = new Date();
+  const to = localDateStr(now);
+  let from = '';
+  if(range==='all'){
+    document.getElementById('dDateFrom').value='';
+    document.getElementById('dDateTo').value='';
+    document.getElementById('dashRangeClear').style.display='none';
+    document.querySelectorAll('#page-dashboard .qrbtn').forEach(b=>b.classList.remove('active'));
+    renderDash(allData);
+    return;
+  } else if(range==='month'){
+    from = localDateStr(new Date(now.getFullYear(), now.getMonth(), 1));
+  } else {
+    const d = new Date(now);
+    d.setDate(d.getDate()-range+1);
+    from = localDateStr(d);
+  }
+  document.getElementById('dDateFrom').value = from;
+  document.getElementById('dDateTo').value = to;
+  document.getElementById('dashRangeClear').style.display='';
+  document.querySelectorAll('#page-dashboard .qrbtn').forEach(b=>b.classList.remove('active'));
+  if(e && e.target) e.target.classList.add('active');
+  renderDash(allData);
+}
+
+function clearDashRange(){
+  document.getElementById('dDateFrom').value='';
+  document.getElementById('dDateTo').value='';
+  document.getElementById('dashRangeClear').style.display='none';
+  document.querySelectorAll('#page-dashboard .qrbtn').forEach(b=>b.classList.remove('active'));
+  renderDash(allData);
+}
+
+function onDashDateChange(){
+  const from=document.getElementById('dDateFrom').value;
+  const to=document.getElementById('dDateTo').value;
+  document.getElementById('dashRangeClear').style.display=(from||to)?'':'none';
+  document.querySelectorAll('#page-dashboard .qrbtn').forEach(b=>b.classList.remove('active'));
+  renderDash(allData);
+}
+
 async function loadDash(){
   document.getElementById('rfSpin').style.display='inline-block';
   try{
@@ -2346,28 +2443,111 @@ async function loadDash(){
 }
 
 function renderDash(data){
-  const rows=data.slice(1).filter(r=>r[0]!=='');
-  if(!rows.length){document.getElementById('dashSub').textContent='ยังไม่มีข้อมูล';return;}
+  const fromVal=document.getElementById('dDateFrom')?.value||'';
+  const toVal=document.getElementById('dDateTo')?.value||'';
+  let rows=(Array.isArray(data)?data:allData).slice(1).filter(r=>r[0]!=='');
+  if(fromVal||toVal){
+    rows=rows.filter(r=>{
+      const rd=normDate(r[1]);
+      if(fromVal && rd<fromVal) return false;
+      if(toVal   && rd>toVal)   return false;
+      return true;
+    });
+  }
+  if(!rows.length){document.getElementById('dashSub').textContent='ยังไม่มีข้อมูลในช่วงที่เลือก';return;}
   const last=rows[rows.length-1];
-  document.getElementById('dashSub').textContent=`ล่าสุด: ${fmt(last[1])} เวร${last[2]||'—'} | ${rows.length} รายการ`;
+  let subTxt=`ล่าสุด: ${fmt(last[1])} เวร${last[2]||'—'} | ${rows.length} รายการ`;
+  if(fromVal&&toVal) subTxt+=` (${fmtShort(fromVal)}–${fmtShort(toVal)})`;
+  else if(fromVal) subTxt+=` (ตั้งแต่ ${fmtShort(fromVal)})`;
+  else if(toVal)   subTxt+=` (ถึง ${fmtShort(toVal)})`;
+  document.getElementById('dashSub').textContent=subTxt;
   document.getElementById('lastBanner').style.display='block';
   document.getElementById('lastBannerText').textContent=`${fmt(last[1])} เวร ${last[2]||'—'}`;
   document.getElementById('lastBannerNurse').textContent=`หน.เวร: ${last[61]||'—'}`;
-  document.getElementById('ds-total').textContent=last[10]||0;
-  document.getElementById('ds-new').textContent=last[4]||0;
-  document.getElementById('ds-dc').textContent=last[7]||0;
-  document.getElementById('ds-ref').textContent=(parseInt(last[8]||0)+parseInt(last[9]||0));
-  const prod=parseFloat(last[15])||0, occ=parseFloat(last[16])||0;
+
+  // ── ตรวจว่ามีการเลือกช่วงหรือไม่ ──
+  const hasFilter = !!(fromVal || toVal);
+
+  // ── คงพยาบาล = เวรล่าสุดเสมอ ──
+  document.getElementById('ds-total').textContent = last[10]||0;
+
+  if(!hasFilter){
+    // ไม่ได้เลือกช่วง: แสดงข้อมูลเวรล่าสุดเพียงเวรเดียว
+    document.getElementById('ds-grand').textContent  = (parseInt(last[3]||0)+parseInt(last[4]||0)+parseInt(last[5]||0));
+    document.getElementById('ds-new').textContent    = last[4]||0;
+    document.getElementById('ds-tin').textContent    = last[5]||0;
+    document.getElementById('ds-tout').textContent   = last[6]||0;
+    document.getElementById('ds-dc').textContent     = last[7]||0;
+    document.getElementById('ds-refer').textContent  = last[8]||0;
+    document.getElementById('ds-dead').textContent   = last[9]||0;
+    const badge=document.getElementById('dashFilterBadge');
+    if(badge){badge.style.display='none';}
+  } else {
+    // มีการเลือกช่วง: ผลรวม
+    const sumNew   = rows.reduce((a,r)=>a+(parseInt(r[4])||0),0);
+    const sumTin   = rows.reduce((a,r)=>a+(parseInt(r[5])||0),0);
+    const sumTout  = rows.reduce((a,r)=>a+(parseInt(r[6])||0),0);
+    const sumDc    = rows.reduce((a,r)=>a+(parseInt(r[7])||0),0);
+    const sumRefer = rows.reduce((a,r)=>a+(parseInt(r[8])||0),0);
+    const sumDead  = rows.reduce((a,r)=>a+(parseInt(r[9])||0),0);
+    const firstRow = rows[0];
+    const grandTotal = (parseInt(firstRow[3]||0)) + sumNew + sumTin;
+    document.getElementById('ds-grand').textContent   = grandTotal;
+    document.getElementById('ds-new').textContent     = sumNew;
+    document.getElementById('ds-tin').textContent     = sumTin;
+    document.getElementById('ds-tout').textContent    = sumTout;
+    document.getElementById('ds-dc').textContent      = sumDc;
+    document.getElementById('ds-refer').textContent   = sumRefer;
+    document.getElementById('ds-dead').textContent    = sumDead;
+    // badge แสดงช่วงที่เลือก
+    const badge=document.getElementById('dashFilterBadge');
+    if(badge){
+      badge.style.display='';
+      badge.textContent = fromVal&&toVal ? `${fmtShort(fromVal)}–${fmtShort(toVal)}` : fromVal?`ตั้งแต่ ${fmtShort(fromVal)}`:`ถึง ${fmtShort(toVal)}`;
+    }
+  }
+
+  // ── Productivity & ครองเตียง: เวรล่าสุด หรือ เฉลี่ยเมื่อเลือกช่วง ──
+  let prod, occ, kpiLabel;
+  if(!hasFilter){
+    prod = parseFloat(last[15])||0;
+    occ  = parseFloat(last[16])||0;
+    kpiLabel = '';
+  } else {
+    const prodVals=rows.map(r=>parseFloat(r[15])).filter(v=>!isNaN(v)&&v>0);
+    const occVals =rows.map(r=>parseFloat(r[16])).filter(v=>!isNaN(v)&&v>0);
+    prod=prodVals.length ? prodVals.reduce((a,b)=>a+b,0)/prodVals.length : 0;
+    occ =occVals.length  ? occVals.reduce((a,b)=>a+b,0)/occVals.length   : 0;
+    kpiLabel = rows.length>1 ? ` (เฉลี่ย ${rows.length} เวร)` : '';
+  }
   document.getElementById('ds-prod').textContent=prod?prod.toFixed(1)+'%':'—';
   document.getElementById('ds-occ').textContent=occ?occ.toFixed(1)+'%':'—';
   document.getElementById('ds-prod-bar').style.width=Math.min(prod,100)+'%';
   document.getElementById('ds-occ-bar').style.width=Math.min(occ,100)+'%';
+  // update KPI card label
+  const kpiCard=document.getElementById('ds-kpi');
+  if(kpiCard){
+    const kpiHead=kpiCard.closest('.card')?.querySelector('.cl');
+    if(kpiHead) kpiHead.textContent='ตัวชี้วัด'+kpiLabel;
+  }
+
+  // ── ประเภทผู้ป่วย + บุคลากร ──
+  let t4,t3,t2,t1,rn,aide,worker;
+  if(!hasFilter){
+    t4=parseInt(last[11])||0; t3=parseInt(last[12])||0; t2=parseInt(last[13])||0; t1=parseInt(last[14])||0;
+    rn=parseInt(last[19])||0; aide=parseInt(last[20])||0; worker=parseInt(last[21])||0;
+  } else {
+    t4=rows.reduce((a,r)=>a+(parseInt(r[11])||0),0); t3=rows.reduce((a,r)=>a+(parseInt(r[12])||0),0);
+    t2=rows.reduce((a,r)=>a+(parseInt(r[13])||0),0); t1=rows.reduce((a,r)=>a+(parseInt(r[14])||0),0);
+    rn=rows.reduce((a,r)=>a+(parseInt(r[19])||0),0); aide=rows.reduce((a,r)=>a+(parseInt(r[20])||0),0);
+    worker=rows.reduce((a,r)=>a+(parseInt(r[21])||0),0);
+  }
   document.getElementById('ds-type').innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;">
-      ${[['ประเภท 4',last[11],'bad'],['ประเภท 3',last[12],'warn'],['ประเภท 2',last[13],''],['ประเภท 1',last[14],'good']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+      ${[['ประเภท 4',t4,'bad'],['ประเภท 3',t3,'warn'],['ประเภท 2',t2,''],['ประเภท 1',t1,'good']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v}</div></div>`).join('')}
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
-      ${[['RN',last[19],'purple'],['Aide',last[20],''],['Worker',last[21],''],['รวม',(parseInt(last[19]||0)+parseInt(last[20]||0)+parseInt(last[21]||0)),'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v||0}</div></div>`).join('')}
+      ${[['RN',rn,'purple'],['Aide',aide,''],['Worker',worker,''],['รวม',rn+aide+worker,'teal']].map(([l,v,c])=>`<div class="mbox"><div class="mk">${l}</div><div class="mv ${c}">${v}</div></div>`).join('')}
     </div>`;
   document.getElementById('ds-devices').innerHTML='<div class="dev-row">'+
     [['🚑','Emergency',last[26]],['⚡','Defib',last[27]],['🫁','Oxygen',last[28]]].map(([ic,l,v])=>{
