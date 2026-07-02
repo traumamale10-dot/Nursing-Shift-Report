@@ -98,6 +98,31 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .cok{background:var(--green-bg);color:var(--green);}
 .cerr{background:var(--red-bg);color:var(--red);}
 
+/* ─── ASSIGNMENT ตามทีม ─── */
+.asg-team{border:1.5px solid var(--gray2);border-radius:10px;padding:10px 11px;margin-bottom:10px;background:var(--gray1);}
+.asg-team-h{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.asg-team-badge{font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;color:#fff;background:var(--purple);border-radius:14px;padding:3px 11px;}
+.asg-team-range{font-size:11px;color:var(--text3);font-weight:600;}
+.asg-nrow{background:#fff;border:1.5px solid var(--gray2);border-radius:9px;padding:8px 9px;margin-bottom:7px;}
+.asg-nrow-top{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.asg-nrow-top select{flex:1;background:var(--gray1);border:1.5px solid var(--gray2);border-radius:7px;color:var(--text);padding:8px 26px 8px 10px;font-family:'Sarabun',sans-serif;font-size:14px;outline:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%238a7fa8' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+.asg-del{flex:0 0 auto;width:30px;height:30px;border:none;border-radius:7px;background:var(--red-bg);color:var(--red);font-size:15px;font-weight:700;cursor:pointer;line-height:1;}
+.asg-beds{display:flex;flex-wrap:wrap;gap:5px;}
+.asg-bed{min-width:34px;padding:6px 0;text-align:center;border-radius:7px;border:1.5px solid var(--gray2);background:var(--gray1);color:var(--text2);font-family:'Kanit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.12s;user-select:none;}
+.asg-bed.sel{background:var(--purple);border-color:var(--purple);color:#fff;}
+.asg-bed.taken{background:var(--gray2);color:var(--text3);border-style:dashed;cursor:not-allowed;opacity:.65;}
+.asg-add{width:100%;padding:8px;border:1.5px dashed var(--purple-soft);border-radius:8px;background:var(--purple-bg);color:var(--purple);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.asg-sub{font-size:12px;font-weight:700;color:var(--text2);margin:8px 0 5px;}
+.asg-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.asg-chip{padding:6px 12px;border-radius:16px;border:1.5px solid var(--gray2);background:#fff;color:var(--text2);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.12s;user-select:none;}
+.asg-chip.sel{background:var(--teal);border-color:var(--teal);color:#fff;}
+.asg-worker-box{border:1.5px solid var(--gray2);border-radius:10px;padding:10px 11px;background:var(--gray1);}
+.asg-bedsum{font-size:11px;color:var(--teal);font-weight:700;margin-top:5px;}
+/* report */
+.asg-rtbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px;}
+.asg-rtbl th{background:var(--purple-bg);color:var(--purple);font-weight:700;padding:4px 6px;text-align:left;border:1px solid var(--gray2);}
+.asg-rtbl td{padding:4px 6px;border:1px solid var(--gray2);color:var(--text);vertical-align:top;}
+.asg-rtbl td.tm{font-weight:700;color:var(--purple);white-space:nowrap;}
 /* ─── CONDITIONAL REVEAL BOX ─── */
 .cond-box{border-radius:9px;padding:12px;border-left:3px solid transparent;animation:fu .2s ease;}
 .cond-orange{background:var(--orange-bg);border-left-color:var(--orange);}
@@ -591,6 +616,15 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
     </div>
   </div>
 
+  <!-- 3a Assignment ตามทีม -->
+  <div class="card">
+    <div class="ch"><div class="chi p">🛏️</div><div class="cl">Assignment ตามทีม</div><div class="ctog" onclick="tc(this)">▼</div></div>
+    <div class="cb">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">แบ่ง 4 ทีม ทีมละ 10 เตียง — เลือกพยาบาลได้มากกว่า 1 คนต่อทีม แล้วแตะเลขเตียงที่แต่ละคนรับผิดชอบ</div>
+      <div id="asg-container"></div>
+    </div>
+  </div>
+
   <!-- 3b การขาดลา/มาสาย -->
   <div class="card">
     <div class="ch"><div class="chi o">🚶</div><div class="cl">การขาดลา / มาสาย</div></div>
@@ -946,6 +980,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <div class="mbox"><div class="mk">Worker</div><div class="mv" id="r-worker">0</div></div>
           <div class="mbox"><div class="mk">รวม</div><div class="mv teal" id="r-staff">0</div></div>
         </div>
+        <div id="r-assign"></div>
         <div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--orange)"></div><div class="rs-label">การเฝ้าระวัง</div><div class="rs-line"></div></div>
         <table class="rtbl">
           <tr><td class="rk">Fall</td><td class="rv bad" id="r-fall" style="word-break:break-word;">—</td></tr>
@@ -1166,6 +1201,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
           <div class="mbox"><div class="mk">Worker</div><div class="mv" id="m-worker">—</div></div>
           <div class="mbox"><div class="mk">รวม</div><div class="mv teal" id="m-staff">—</div></div>
         </div>
+        <div id="m-assign" style="margin-bottom:8px;"></div>
         <table class="rtbl" style="margin-bottom:8px;">
           <tr><td class="rk">ขาดลา/มาสาย</td><td class="rv" id="m-absent">—</td></tr>
           <tr><td class="rk">รายละเอียด</td><td class="rv" id="m-absentD" style="font-size:11px;word-break:break-word;">—</td></tr>
@@ -1361,7 +1397,7 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 <div id="toast"></div>
 
 <script>
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzuaGvkJRI-cpYHLEqkmLNyMP3CWB8u-MvoQJGcmXpEX959K6dlC0e4pLcfT_HJ0HuPuQ/exec';
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbwTbAdXo4McNrlr_COfrV5xtuXjAJExldcU2OZ3JQ83x_vu-0FZBhqweQ4gGcB0KAYclg/exec';
 // ─── LOCAL DATE HELPER (แก้ timezone: ใช้เวลาไทย ไม่ใช่ UTC) ───
 function localDateStr(d){
   const dt = d || new Date();
@@ -1394,11 +1430,190 @@ window.addEventListener('DOMContentLoaded',()=>{
   // listen to RN/Aide/Worker for staff total
   ['f-rn','f-aide','f-worker'].forEach(id=>
     document.getElementById(id)?.addEventListener('input', calcStaff));
+  // Assignment ตามทีม — เริ่มต้นด้วยพยาบาลทีมละ 1 ช่อง
+  asg = newAsg();
+  asg.teams.forEach(t=>t.nurses.push({name:'',beds:[]}));
+  renderAsg();
   // load last shift คงพยาบาล
   fetchLastShift();
   // load dashboard data
   loadDash();
 });
+
+// ─── ASSIGNMENT ตามทีม ───
+const ASG_RN = ['สุรีรัตน์','จันจิรา','คำพุด','เบญจมาศ','สาคร','นวลตา','สุนันทา',
+  'อัญชลี','จารุวรรณ','พิศา','ฐิตินันท์','สรวงสุดา','ศิริรัตน์','พุทธชาติ',
+  'อรอุมา','สุพรรณี','อริสรา','อุ้มบุญ','ชนาภา','กนกพร','วริศรา',
+  'ภูวิศ','อริสา','อนัญญา','สิตานัน'];
+const ASG_PNNA = ['PN สุดารัตน์','PN กมลวรรณ','NA พศิกา','NA วันทกาล'];
+const ASG_WORKER = ['สกล','เกียรติภูมิ','สมภพ','มีชัย'];
+const ASG_RANGE = [[1,10],[11,20],[21,30],[31,40]]; // ทีม 1-4
+
+function newAsg(){
+  return {
+    teams:[
+      {nurses:[],pnna:[]},
+      {nurses:[],pnna:[]},
+      {nurses:[],pnna:[]},
+      {nurses:[],pnna:[]}   // ทีม 4 ไม่ใช้ pnna
+    ],
+    workerIn:[], workerOut:[]
+  };
+}
+let asg = newAsg();
+
+function asgEsc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderAsg(){
+  const c = document.getElementById('asg-container');
+  if(!c) return;
+  let html = '';
+  for(let t=0;t<4;t++){
+    const [lo,hi]=ASG_RANGE[t];
+    const team=asg.teams[t];
+    // เตียงที่ถูกจองแล้ว → เจ้าของ
+    const owner={};
+    team.nurses.forEach((nu,ni)=>nu.beds.forEach(b=>owner[b]=ni));
+    html += `<div class="asg-team">
+      <div class="asg-team-h"><span class="asg-team-badge">ทีม ${t+1}</span><span class="asg-team-range">เตียง ${lo}–${hi}</span></div>`;
+    team.nurses.forEach((nu,ni)=>{
+      let opts = '<option value="">-- เลือกพยาบาล --</option>' + ASG_RN.map(n=>`<option${n===nu.name?' selected':''}>${n}</option>`).join('');
+      let chips='';
+      for(let b=lo;b<=hi;b++){
+        const mine = nu.beds.includes(b);
+        const takenBy = (!mine && owner[b]!==undefined) ? owner[b] : -1;
+        chips += `<div class="asg-bed${mine?' sel':''}${takenBy>=0?' taken':''}" onclick="asgBed(${t},${ni},${b})" ${takenBy>=0?`title="เลือกโดย ${asgEsc(team.nurses[takenBy].name||('คนที่ '+(takenBy+1)))}"`:''}>${b}</div>`;
+      }
+      const bedsTxt = nu.beds.length ? 'เตียง: '+asgBedStr(nu.beds) : '';
+      html += `<div class="asg-nrow">
+        <div class="asg-nrow-top">
+          <select onchange="asgName(${t},${ni},this.value)">${opts}</select>
+          <button class="asg-del" onclick="asgDelNurse(${t},${ni})" title="ลบ">✕</button>
+        </div>
+        <div class="asg-beds">${chips}</div>
+        ${bedsTxt?`<div class="asg-bedsum">${bedsTxt}</div>`:''}
+      </div>`;
+    });
+    html += `<button class="asg-add" onclick="asgAddNurse(${t})">➕ เพิ่มพยาบาล ทีม ${t+1}</button>`;
+    // PN/NA เฉพาะทีม 1-3
+    if(t<3){
+      html += `<div class="asg-sub">PN / NA ประจำทีม ${t+1}</div><div class="asg-chips">`;
+      html += ASG_PNNA.map(p=>`<div class="asg-chip${team.pnna.includes(p)?' sel':''}" onclick="asgPnna(${t},'${p}')">${p}</div>`).join('');
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+  // Worker
+  html += `<div class="asg-worker-box">
+    <div class="asg-sub" style="margin-top:0;">Worker คนใน</div>
+    <div class="asg-chips">${ASG_WORKER.map(w=>`<div class="asg-chip${asg.workerIn.includes(w)?' sel':''}" onclick="asgWorker('in','${w}')">${w}</div>`).join('')}</div>
+    <div class="asg-sub">Worker คนนอก</div>
+    <div class="asg-chips">${ASG_WORKER.map(w=>`<div class="asg-chip${asg.workerOut.includes(w)?' sel':''}" onclick="asgWorker('out','${w}')">${w}</div>`).join('')}</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;">แตะชื่อเพื่อเลือก — เลือกได้หลายคน ถ้าเลือกชื่อเดิมข้ามกลุ่ม ระบบจะย้ายให้อัตโนมัติ</div>
+  </div>`;
+  c.innerHTML = html;
+}
+
+function asgAddNurse(t){asg.teams[t].nurses.push({name:'',beds:[]});renderAsg();}
+function asgDelNurse(t,ni){asg.teams[t].nurses.splice(ni,1);renderAsg();}
+function asgName(t,ni,val){asg.teams[t].nurses[ni].name=val;renderAsg();}
+function asgBed(t,ni,b){
+  const team=asg.teams[t];
+  const nu=team.nurses[ni];
+  const i=nu.beds.indexOf(b);
+  if(i>=0){nu.beds.splice(i,1);renderAsg();return;}
+  // ถ้าเตียงนี้ถูกคนอื่นในทีมเลือกไว้ → ไม่ให้เลือกซ้ำ
+  for(let k=0;k<team.nurses.length;k++){
+    if(k!==ni && team.nurses[k].beds.includes(b)){
+      toast(`เตียง ${b} ถูกเลือกโดย ${team.nurses[k].name||('พยาบาลคนที่ '+(k+1))} แล้ว`,'error');
+      return;
+    }
+  }
+  nu.beds.push(b);nu.beds.sort((a,c)=>a-c);renderAsg();
+}
+function asgPnna(t,name){
+  const arr=asg.teams[t].pnna;
+  const i=arr.indexOf(name);
+  if(i>=0)arr.splice(i,1);else arr.push(name);
+  renderAsg();
+}
+function asgWorker(group,name){
+  const me = group==='in' ? asg.workerIn : asg.workerOut;
+  const other = group==='in' ? asg.workerOut : asg.workerIn;
+  const i=me.indexOf(name);
+  if(i>=0){ me.splice(i,1); }        // แตะซ้ำ = เอาออก
+  else{
+    const j=other.indexOf(name);      // อยู่อีกกลุ่ม → ย้ายมา
+    if(j>=0) other.splice(j,1);
+    me.push(name);
+  }
+  renderAsg();
+}
+
+// สร้างข้อความช่วงเตียง เช่น 1-5,7
+function asgBedStr(beds){
+  if(!beds||!beds.length)return'';
+  const s=[...beds].sort((a,b)=>a-b);
+  const out=[];let st=s[0],pv=s[0];
+  for(let i=1;i<=s.length;i++){
+    if(i<s.length && s[i]===pv+1){pv=s[i];continue;}
+    out.push(st===pv?String(st):st+'-'+pv);
+    if(i<s.length){st=s[i];pv=s[i];}
+  }
+  return out.join(', ');
+}
+
+// serialize / restore
+function asgJSON(){
+  const hasData = asg.teams.some(tm=>tm.nurses.some(n=>n.name||n.beds.length)||tm.pnna.length)
+    || asg.workerIn.length || asg.workerOut.length;
+  return hasData ? JSON.stringify(asg) : '';
+}
+function asgFromJSON(s){
+  asg = newAsg();
+  if(s){
+    try{
+      const o = JSON.parse(s);
+      if(o && Array.isArray(o.teams)){
+        for(let t=0;t<4;t++){
+          const src=o.teams[t]||{};
+          asg.teams[t].nurses = Array.isArray(src.nurses)?src.nurses.map(n=>({name:String(n.name||''),beds:(Array.isArray(n.beds)?n.beds.map(Number).filter(x=>!isNaN(x)):[])})):[];
+          asg.teams[t].pnna = Array.isArray(src.pnna)?src.pnna.map(String):[];
+        }
+        asg.workerIn = Array.isArray(o.workerIn)?o.workerIn.map(String):[];
+        // รองรับทั้ง array (ใหม่) และ string คั่น , (ข้อมูลเก่า)
+        if(Array.isArray(o.workerOut)) asg.workerOut = o.workerOut.map(String);
+        else asg.workerOut = String(o.workerOut||'').split(',').map(s=>s.trim()).filter(Boolean);
+      }
+    }catch(e){ asg = newAsg(); }
+  }
+  renderAsg();
+}
+
+// HTML สำหรับหน้า preview / modal
+function asgReportHTML(a){
+  if(!a) return '';
+  let obj=a;
+  if(typeof a==='string'){ try{obj=JSON.parse(a);}catch(e){return'';} }
+  if(!obj||!Array.isArray(obj.teams))return'';
+  const rows=[];
+  for(let t=0;t<4;t++){
+    const tm=obj.teams[t]||{nurses:[],pnna:[]};
+    const nurses=(tm.nurses||[]).filter(n=>n.name||(n.beds&&n.beds.length));
+    if(!nurses.length && !(tm.pnna||[]).length) continue;
+    const nTxt = nurses.map(n=>`${asgEsc(n.name||'—')}${n.beds&&n.beds.length?` <span style="color:var(--text3);">(เตียง ${asgBedStr(n.beds)})</span>`:''}`).join('<br>') || '—';
+    const pTxt = (tm.pnna||[]).map(asgEsc).join(', ') || (t<3?'—':'');
+    rows.push(`<tr><td class="tm">ทีม ${t+1}<br><span style="font-weight:400;color:var(--text3);">เตียง ${ASG_RANGE[t][0]}–${ASG_RANGE[t][1]}</span></td><td>${nTxt}</td><td>${pTxt}</td></tr>`);
+  }
+  const wIn=(obj.workerIn||[]).map(asgEsc).join(', ');
+  const wOut=Array.isArray(obj.workerOut) ? obj.workerOut.map(asgEsc).join(', ') : asgEsc(String(obj.workerOut||'').trim());
+  if(!rows.length && !wIn && !wOut) return '';
+  let h='<table class="asg-rtbl"><tr><th style="width:64px;">ทีม</th><th>พยาบาล (เตียงที่รับผิดชอบ)</th><th style="width:26%;">PN / NA</th></tr>'+rows.join('')+'</table>';
+  if(wIn||wOut){
+    h+=`<div style="font-size:11px;color:var(--text);margin-bottom:6px;"><b>Worker</b> — คนใน: ${wIn||'—'} &nbsp;|&nbsp; คนนอก: ${wOut||'—'}</div>`;
+  }
+  return `<div class="rs" style="margin-top:8px;"><div class="rs-dot" style="background:var(--purple)"></div><div class="rs-label">Assignment ตามทีม</div><div class="rs-line"></div></div>`+h;
+}
 
 // ─── TABS ───
 function sw(name){
@@ -1708,13 +1923,14 @@ function gasPost(payload){
       const rd = payload.rowData;
       const half = Math.ceil(rd.length / 2);
       const p1 = {...payload, rowData: rd.slice(0, half), part: 1, total: rd.length};
-      const p2 = {updateById: payload.updateById, rowData: rd.slice(half), part: 2, partStart: half, total: rd.length};
       const url1 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p1));
-      const url2 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p2));
       fetch(url1, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store'})
         .then(r => r.json())
         .then(d1 => {
           if(d1.status !== 'success' && d1.status !== 'partial') throw new Error(d1.msg||'part1 failed');
+          // ใช้ key ที่ part 1 ส่งกลับมา — แก้ปัญหา cache miss ตอนบันทึกใหม่ (ไม่มี updateById)
+          const p2 = {updateById: payload.updateById || d1.key, rowData: rd.slice(half), part: 2, partStart: half, total: rd.length};
+          const url2 = GAS_URL + sep + 'action=save&data=' + encodeURIComponent(JSON.stringify(p2));
           return fetch(url2, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store'});
         })
         .then(r => r.json())
@@ -1835,6 +2051,9 @@ function fillFormFromRow(r){
 
   // หัวหน้าเวร
   sv('f-charge', r[61]); sv('f-wh', r[62]);
+
+  // Assignment ตามทีม
+  asgFromJSON(r[63]||'');
 
   // recalculate auto fields
   calcT();
@@ -2028,6 +2247,8 @@ function updateReportFromRow(r){
   const rnR=parseInt(r[19])||0, aideR=parseInt(r[20])||0, workerR=parseInt(r[21])||0;
   set('r-rn',rnR); set('r-aide',aideR); set('r-worker',workerR);
   set('r-staff', rnR+aideR+workerR);
+  const rAsgEl2=document.getElementById('r-assign');
+  if(rAsgEl2) rAsgEl2.innerHTML = asgReportHTML(r[63]||'');
   setText('r-absent',r[57]||'—'); setText('r-absentD',r[58]||'—');
   setText('r-off',r[59]||'—');   setText('r-offD',r[60]||'—');
 
@@ -2124,6 +2345,8 @@ function updateReport(){
   const rnVal=n('f-rn'), aideVal=n('f-aide'), workerVal=n('f-worker');
   set('r-rn',rnVal); set('r-aide',aideVal); set('r-worker',workerVal);
   set('r-staff', rnVal+aideVal+workerVal);
+  const rAsgEl=document.getElementById('r-assign');
+  if(rAsgEl) rAsgEl.innerHTML = asgReportHTML(asg);
   setText('r-absent', v('f-absent')||'—');
   setText('r-absentD',v('f-absentD')||'—');
   setText('r-off',    v('f-off')   ||'—');
@@ -2335,7 +2558,8 @@ async function submitF(){
     v('f-allergy'),v('f-aD'),'',v('f-aCard'),
     n('f-staff'),v('f-absent'),v('f-absentD'),
     v('f-off'),v('f-offD'),
-    v('f-charge'),v('f-wh')
+    v('f-charge'),v('f-wh'),
+    asgJSON()
   ];
   ['submitBtn','submitBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
   ['subSpin','subSpin2'].forEach(id=>{const s=document.getElementById(id);if(s)s.style.display='inline-block';});
@@ -2367,6 +2591,8 @@ function clearF(){
   });
   // reset O2 multi-select
   o2Selected = []; updateO2Display();
+  // reset assignment
+  asg = newAsg(); renderAsg();
   document.getElementById('prodT-row').style.display='none';
   document.getElementById('prodT-note').style.display='none';
   // re-fetch last shift
@@ -2883,6 +3109,8 @@ async function openDetail(rowIdx){
   // fill staff panel
   si('m-rn',r[19]); si('m-aide',r[20]); si('m-worker',r[21]);
   si('m-staff', (parseInt(r[19])||0)+(parseInt(r[20])||0)+(parseInt(r[21])||0));
+  const mAsgEl=document.getElementById('m-assign');
+  if(mAsgEl) mAsgEl.innerHTML = asgReportHTML(r[63]||'');
   si('m-absent',r[57]); si('m-absentD',r[58]); si('m-off',r[59]);
   document.getElementById('m-devices').innerHTML = 
     [['🚑','Emergency',r[26]],['⚡','Defib',r[27]],['🫁','Oxygen',r[28]]].map(([ic,l,v])=>{
@@ -2998,7 +3226,8 @@ async function saveEdit(){
     v('e-allergy'),v('e-aD'),orig[54]||'',v('e-aCard'),
     n('e-staff'),v('e-absent'),v('e-absentD'),
     v('e-off'),v('e-offD'),
-    v('e-charge'),v('e-wh')
+    v('e-charge'),v('e-wh'),
+    orig[63]||''
   ];
   // The GAS script finds the row by ID in column A
   const btn=document.getElementById('editSaveBtn');
